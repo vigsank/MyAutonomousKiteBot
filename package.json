@@ -1,0 +1,52 @@
+{
+  "name": "my-autonomous-kite-vault",
+  "version": "0.1.0",
+  "description": "Personal agentic stock trading bot for Zerodha Kite with human-in-the-loop control, paper trading, and AI-driven sentiment analysis.",
+  "license": "GPL-3.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "lint": "tsc --noEmit",
+    "simulate": "ts-node test/backtest/simulate.ts",
+    "backtest": "ts-node test/backtest/backtest.ts",
+    "optimize": "ts-node test/backtest/optimize.ts",
+    "chart": "ts-node test/backtest/chart_equity.ts",
+    "test:backtest": "ts-node test/backtest/test_backtest_path.ts"
+  },
+  "keywords": [
+    "zerodha",
+    "kite",
+    "trading",
+    "bot",
+    "paper-trading",
+    "typescript",
+    "human-in-the-loop"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@debut/indicators": "^1.2.0",
+    "@tavily/core": "^0.7.7",
+    "better-sqlite3": "^9.4.3",
+    "dotenv": "^16.4.5",
+    "kiteconnect": "^4.0.1",
+    "node-telegram-bot-api": "^0.64.0",
+    "openai": "^4.50.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "rss-parser": "^3.13.0",
+    "yahoo-finance2": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.14.0",
+    "@types/node-telegram-bot-api": "^0.64.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

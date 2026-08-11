@@ -1,0 +1,25 @@
+{
+  "comment": "Volatile mid/small-cap NSE watchlist for testing whether the breakout+options edge strengthens on more volatile symbols.",
+  "symbols": [
+    { "tradingsymbol": "ADANIENT", "exchange": "NSE", "quantity": 10, "enabled": true },
+    { "tradingsymbol": "ADANIPOWER", "exchange": "NSE", "quantity": 50, "enabled": true },
+    { "tradingsymbol": "ADANIGREEN", "exchange": "NSE", "quantity": 10, "enabled": true },
+    { "tradingsymbol": "IRCTC", "exchange": "NSE", "quantity": 20, "enabled": true },
+    { "tradingsymbol": "ZOMATO", "exchange": "NSE", "quantity": 100, "enabled": true },
+    { "tradingsymbol": "PAYTM", "exchange": "NSE", "quantity": 20, "enabled": true },
+    { "tradingsymbol": "POLICYBZR", "exchange": "NSE", "quantity": 30, "enabled": true },
+    { "tradingsymbol": "NYKAA", "exchange": "NSE", "quantity": 20, "enabled": true },
+    { "tradingsymbol": "TATAPOWER", "exchange": "NSE", "quantity": 100, "enabled": true },
+    { "tradingsymbol": "SUZLON", "exchange": "NSE", "quantity": 500, "enabled": true },
+    { "tradingsymbol": "YESBANK", "exchange": "NSE", "quantity": 500, "enabled": true },
+    { "tradingsymbol": "PNB", "exchange": "NSE", "quantity": 200, "enabled": true },
+    { "tradingsymbol": "VEDL", "exchange": "NSE", "quantity": 50, "enabled": true },
+    { "tradingsymbol": "JINDALSTEL", "exchange": "NSE", "quantity": 20, "enabled": true },
+    { "tradingsymbol": "HINDCOPPER", "exchange": "NSE", "quantity": 50, "enabled": true },
+    { "tradingsymbol": "BHEL", "exchange": "NSE", "quantity": 100, "enabled": true },
+    { "tradingsymbol": "HAL", "exchange": "NSE", "quantity": 10, "enabled": true },
+    { "tradingsymbol": "BEL", "exchange": "NSE", "quantity": 50, "enabled": true },
+    { "tradingsymbol": "IRFC", "exchange": "NSE", "quantity": 200, "enabled": true },
+    { "tradingsymbol": "RVNL", "exchange": "NSE", "quantity": 100, "enabled": true }
+  ]
+}

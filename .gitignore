@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment & secrets
+.env
+.env.local
+*.env
+
+# Data
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+data/state.json
+
+# Generated data outputs (keep watchlist JSON, ignore reports/charts)
+data/*.csv
+data/*.html
+data/equity_curves/
+data/backtest/
+data/sim/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
