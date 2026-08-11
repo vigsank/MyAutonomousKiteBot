@@ -2,9 +2,9 @@
  * Test the live AI pipeline: Ollama LLM + Tavily search + RSS sentiment.
  * Usage: npx ts-node test/backtest/test_live_pipeline.ts
  */
-import { loadConfig } from '../../src/AppConfig';
-import { LlmManager } from '../../src/LlmManager';
-import { NewsSentimentEngine } from '../../src/NewsSentimentEngine';
+import { loadConfig } from '../../src/server/AppConfig';
+import { LlmManager } from '../../src/server/LlmManager';
+import { NewsSentimentEngine } from '../../src/server/NewsSentimentEngine';
 
 async function main() {
   const config = loadConfig();

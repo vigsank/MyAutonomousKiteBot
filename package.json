@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node src/server/index.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "lint": "tsc --noEmit",
@@ -15,7 +15,13 @@
     "backtest": "ts-node test/backtest/backtest.ts",
     "optimize": "ts-node test/backtest/optimize.ts",
     "chart": "ts-node test/backtest/chart_equity.ts",
-    "test:backtest": "ts-node test/backtest/test_backtest_path.ts"
+    "test:backtest": "ts-node test/backtest/test_backtest_path.ts",
+    "dev:ui": "npm --prefix src/client run dev",
+    "build:ui": "npm --prefix src/client run build",
+    "typecheck:ui": "npm --prefix src/client run typecheck",
+    "mock:ui": "ts-node test/backtest/mock_ui.ts",
+    "audit:code": "node run_code_audit.mjs",
+    "audit:strategy": "node run_strategy_audit.mjs"
   },
   "keywords": [
     "zerodha",
@@ -34,18 +40,22 @@
     "@tavily/core": "^0.7.7",
     "better-sqlite3": "^9.4.3",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "kiteconnect": "^4.0.1",
     "node-telegram-bot-api": "^0.64.0",
     "openai": "^4.50.0",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "rss-parser": "^3.13.0",
+    "ws": "^8.18.0",
     "yahoo-finance2": "^4.0.2"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.9",
+    "@types/express": "^4.17.21",
     "@types/node": "^20.14.0",
     "@types/node-telegram-bot-api": "^0.64.0",
+    "@types/ws": "^8.5.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

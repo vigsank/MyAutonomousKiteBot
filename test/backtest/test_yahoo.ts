@@ -1,4 +1,4 @@
-import { YahooFinanceProvider } from '../../src/providers/YahooFinanceProvider';
+import { YahooFinanceProvider } from '../../src/server/providers/YahooFinanceProvider';
 
 async function main() {
   const p = new YahooFinanceProvider();

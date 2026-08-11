@@ -3,18 +3,18 @@
  * Feeds synthetic OHLC candles through MarketAgent.onCandle and verifies
  * trades are produced. Usage: npx ts-node src/test_backtest_path.ts
  */
-import { loadConfig } from '../../src/AppConfig';
-import { Ledger } from '../../src/Ledger';
-import { RiskEngine } from '../../src/RiskEngine';
-import { PaperTrader } from '../../src/PaperTrader';
-import { MarketAgent } from '../../src/MarketAgent';
-import { NotificationService } from '../../src/NotificationService';
-import { NewsSentimentEngine } from '../../src/NewsSentimentEngine';
-import { LlmManager } from '../../src/LlmManager';
-import { TelegramHITL } from '../../src/TelegramHITL';
-import { OptionsEngine } from '../../src/OptionsEngine';
-import { OptionsTrader } from '../../src/OptionsTrader';
-import { Candle } from '../../src/types';
+import { loadConfig } from '../../src/server/AppConfig';
+import { Ledger } from '../../src/server/Ledger';
+import { RiskEngine } from '../../src/server/RiskEngine';
+import { PaperTrader } from '../../src/server/PaperTrader';
+import { MarketAgent } from '../../src/server/MarketAgent';
+import { NotificationService } from '../../src/server/NotificationService';
+import { NewsSentimentEngine } from '../../src/server/NewsSentimentEngine';
+import { LlmManager } from '../../src/server/LlmManager';
+import { TelegramHITL } from '../../src/server/TelegramHITL';
+import { OptionsEngine } from '../../src/server/OptionsEngine';
+import { OptionsTrader } from '../../src/server/OptionsTrader';
+import { Candle } from '../../src/server/types';
 
 class MockStreamer {
   getInstrument(token: number) {

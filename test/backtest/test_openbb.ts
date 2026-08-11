@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { OpenBBProvider } from '../../src/providers/OpenBBProvider';
+import { OpenBBProvider } from '../../src/server/providers/OpenBBProvider';
 
 // Mock OpenBB server returning the documented historical REST shape.
 const server = http.createServer((req, res) => {

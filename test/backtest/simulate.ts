@@ -8,20 +8,20 @@
  * Usage:  npx ts-node src/simulate.ts
  */
 
-import { loadConfig } from '../../src/AppConfig';
-import { Ledger, newTradeId } from '../../src/Ledger';
-import { RiskEngine } from '../../src/RiskEngine';
-import { PaperTrader } from '../../src/PaperTrader';
-import { MarketAgent } from '../../src/MarketAgent';
-import { NotificationService } from '../../src/NotificationService';
-import { NewsSentimentEngine } from '../../src/NewsSentimentEngine';
-import { LlmManager } from '../../src/LlmManager';
-import { TelegramHITL } from '../../src/TelegramHITL';
-import { OptionsEngine } from '../../src/OptionsEngine';
-import { OptionsTrader } from '../../src/OptionsTrader';
-import { KiteStreamer } from '../../src/KiteStreamer';
-import { logger } from '../../src/Logger';
-import { Tick, TradeFill, SignalDirection } from '../../src/types';
+import { loadConfig } from '../../src/server/AppConfig';
+import { Ledger, newTradeId } from '../../src/server/Ledger';
+import { RiskEngine } from '../../src/server/RiskEngine';
+import { PaperTrader } from '../../src/server/PaperTrader';
+import { MarketAgent } from '../../src/server/MarketAgent';
+import { NotificationService } from '../../src/server/NotificationService';
+import { NewsSentimentEngine } from '../../src/server/NewsSentimentEngine';
+import { LlmManager } from '../../src/server/LlmManager';
+import { TelegramHITL } from '../../src/server/TelegramHITL';
+import { OptionsEngine } from '../../src/server/OptionsEngine';
+import { OptionsTrader } from '../../src/server/OptionsTrader';
+import { KiteStreamer } from '../../src/server/KiteStreamer';
+import { logger } from '../../src/server/Logger';
+import { Tick, TradeFill, SignalDirection } from '../../src/server/types';
 import * as fs from 'fs';
 import * as path from 'path';
 

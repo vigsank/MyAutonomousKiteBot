@@ -17,20 +17,20 @@
  *   BACKTEST_VOLUME_MULT  - volume confirmation multiplier (default 1.0)
  */
 
-import { loadConfig } from '../../src/AppConfig';
-import { Ledger } from '../../src/Ledger';
-import { RiskEngine } from '../../src/RiskEngine';
-import { PaperTrader } from '../../src/PaperTrader';
-import { createHistoricalProvider } from '../../src/providers/factory';
-import { NewsSentimentEngine } from '../../src/NewsSentimentEngine';
-import { TelegramHITL } from '../../src/TelegramHITL';
-import { LlmManager } from '../../src/LlmManager';
-import { MarketAgent } from '../../src/MarketAgent';
-import { OptionsEngine } from '../../src/OptionsEngine';
-import { OptionsTrader } from '../../src/OptionsTrader';
-import { NotificationService } from '../../src/NotificationService';
-import { logger } from '../../src/Logger';
-import { Candle } from '../../src/types';
+import { loadConfig } from '../../src/server/AppConfig';
+import { Ledger } from '../../src/server/Ledger';
+import { RiskEngine } from '../../src/server/RiskEngine';
+import { PaperTrader } from '../../src/server/PaperTrader';
+import { createHistoricalProvider } from '../../src/server/providers/factory';
+import { NewsSentimentEngine } from '../../src/server/NewsSentimentEngine';
+import { TelegramHITL } from '../../src/server/TelegramHITL';
+import { LlmManager } from '../../src/server/LlmManager';
+import { MarketAgent } from '../../src/server/MarketAgent';
+import { OptionsEngine } from '../../src/server/OptionsEngine';
+import { OptionsTrader } from '../../src/server/OptionsTrader';
+import { NotificationService } from '../../src/server/NotificationService';
+import { logger } from '../../src/server/Logger';
+import { Candle } from '../../src/server/types';
 import * as fs from 'fs';
 import * as path from 'path';
 

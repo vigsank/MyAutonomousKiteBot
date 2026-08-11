@@ -75,12 +75,12 @@ export class KiteStreamer implements HistoricalDataProvider, LiveDataProvider {
   }
 
   /**
-   * Load the full instrument master list for an exchange (e.g. 'NFO').
-   * Cached in memory; call once at startup.
+   * Load the full instrument master list for an exchange (e.g. 'NSE' or 'NFO').
+   * Merges into the existing map so multiple exchanges can coexist (NSE equity
+   * for the watchlist + NFO for options). Call once per exchange at startup.
    */
   async loadInstruments(exchange: Segment = 'NFO'): Promise<void> {
     const rows = await this.kite.getInstruments(exchange);
-    this.instruments.clear();
     for (const r of rows as any[]) {
       this.instruments.set(Number(r.instrument_token), {
         instrument_token: Number(r.instrument_token),

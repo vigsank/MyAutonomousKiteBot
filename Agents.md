@@ -27,24 +27,35 @@
 
 ```
 MyAutonomousKiteVault/
-├── src/                 # PURE source code only (no scripts/tests)
-│   ├── types.ts         # shared domain types
-│   ├── AppConfig.ts     # config loader
-│   ├── Logger.ts        # pino logger
-│   ├── MigrationRunner.ts
-│   ├── NotificationService.ts
-│   ├── RiskEngine.ts    # immutable risk gatekeeper
-│   ├── MarketAgent.ts   # strategy brain
-│   ├── OptionsEngine.ts # v2 scaffold
-│   ├── KiteStreamer.ts  # live provider (Kite)
-│   ├── Ledger.ts        # SQLite persistence
-│   ├── PaperTrader.ts   # simulated execution
-│   ├── NewsSentimentEngine.ts
-│   ├── LlmManager.ts
-│   ├── TelegramHITL.ts
-│   ├── MarketDataProvider.ts   # provider interfaces
-│   ├── providers/       # factory + Yahoo/OpenBB providers
-│   └── *.d.ts           # ambient declarations
+├── src/
+│   ├── server/            # PURE production source (bot + dashboard backend)
+│   │   ├── types.ts       # shared domain types
+│   │   ├── AppConfig.ts   # config loader
+│   │   ├── Logger.ts      # pino logger
+│   │   ├── MigrationRunner.ts
+│   │   ├── NotificationService.ts
+│   │   ├── RiskEngine.ts  # immutable risk gatekeeper
+│   │   ├── MarketAgent.ts # strategy brain
+│   │   ├── OptionsEngine.ts # v2 scaffold
+│   │   ├── KiteStreamer.ts  # live provider (Kite)
+│   │   ├── Ledger.ts      # SQLite persistence
+│   │   ├── PaperTrader.ts # simulated execution
+│   │   ├── NewsSentimentEngine.ts
+│   │   ├── LlmManager.ts
+│   │   ├── TelegramHITL.ts
+│   │   ├── MarketDataProvider.ts   # provider interfaces
+│   │   ├── providers/     # factory + Yahoo/OpenBB providers
+│   │   ├── api/           # UI backend: Express routes + WS + read queries
+│   │   └── *.d.ts         # ambient declarations
+│   └── client/            # React dashboard (Vite + shadcn/ui, own package.json)
+│       └── src/
+│           ├── lib/       # API client, types, formatting
+│           ├── components/
+│           │   ├── ui/        # shadcn/ui primitives
+│           │   ├── charts/    # Lightweight-Charts + Recharts wrappers
+│           │   └── layout/    # app shell / sidebar
+│           ├── hooks/    # WebSocket refresh hook
+│           └── pages/    # one page per route
 ├── test/backtest/       # backtest/simulate/optimize scripts (NOT in src/)
 ├── migrations/          # SQL migrations (V001__*.sql)
 ├── data/                # runtime data (git-ignored DBs, watchlist.json)
@@ -104,7 +115,7 @@ Market data goes through `MarketDataProvider` interfaces:
 - `LiveDataProvider` — for live ticks (Kite).
 
 Add a new source by implementing the interface and registering it in
-`src/providers/factory.ts`. **Never** hardcode a provider into strategy logic.
+`src/server/providers/factory.ts`. **Never** hardcode a provider into strategy logic.
 
 ### Strategy guards
 All entry guards live in `MarketAgent.checkEntry`. Each guard is a small,
@@ -124,6 +135,25 @@ migration.
 ### Notifications
 All user-facing messages go through `NotificationService` (DB-first, Telegram
 optional). Never call Telegram directly from strategy code.
+
+### UI parity (mandatory)
+The React dashboard (`src/client/`) is a first-class surface for understanding
+bot state — not an afterthought. **Any change that alters a number, statistic,
+or data point the UI shows MUST keep the UI in sync.** Concretely:
+
+- If a server-side change adds, renames, or changes the meaning of a field the
+  dashboard renders, update the matching client (`src/client/src/lib/types.ts`,
+  `src/client/src/lib/api.ts`, and the affected page/chart) in the **same**
+  change. Do not merge a backend change that silently breaks the UI.
+- New persisted state that is meaningful to an operator belongs in the UI. Add
+  the REST route in `src/server/api/server.ts`, the read query in
+  `src/server/api/queries.ts`, the client type/API function, and a page section
+  in the same change.
+- Never return `undefined` for a previously-rendered field — either keep the
+  schema stable or update the client. The dashboard must never show stale,
+  mislabeled, or `undefined` numbers.
+- Keep the API contract in `src/server/api/queries.ts` and
+  `src/client/src/lib/types.ts` in lockstep; they mirror each other.
 
 ---
 
@@ -186,6 +216,10 @@ optional). Never call Telegram directly from strategy code.
 
 A change is done when:
 - [ ] `npm run typecheck` passes (zero errors).
+- [ ] `npm run typecheck:ui` passes (zero errors) if the change touches the
+      dashboard or the data contract it renders.
+- [ ] Any UI-affecting server change has its matching client change in the same
+      commit (see “UI parity” above).
 - [ ] No new `any` in `src/` (or documented).
 - [ ] Uses the shared logger, types, and DI patterns.
 - [ ] Risk limits are respected (not bypassed).

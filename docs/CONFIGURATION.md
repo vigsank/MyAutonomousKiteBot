@@ -28,7 +28,7 @@ environment variables (loaded from `.env`). A few things live in JSON files
 ## Environment variables overview
 
 All values are read from `.env` (see `.env.example`). The bot loads them at
-startup via `dotenv` in `src/AppConfig.ts`. **Never commit `.env`** — it is
+startup via `dotenv` in `src/server/AppConfig.ts`. **Never commit `.env`** — it is
 git-ignored.
 
 | Variable | Purpose | Default |
@@ -295,7 +295,7 @@ There are **two ways** to switch models:
    (bullish/bearish word matching) so sentiment still functions.
 
 The score is cached per symbol and refreshed on a **10-minute cadence**
-(`NEWS_INTERVAL_MS` in `src/MarketAgent.ts`).
+(`NEWS_INTERVAL_MS` in `src/server/MarketAgent.ts`).
 
 ### 2.6 JSON mode (`LLM_JSON_MODE`)
 
@@ -560,7 +560,7 @@ they don't exist, and all 16 tables are created by the initial migration.
 
 ## 8. Quantitative risk configuration
 
-These are the **hard guardrails** in `src/RiskEngine.ts`. The AI/strategy can
+These are the **hard guardrails** in `src/server/RiskEngine.ts`. The AI/strategy can
 **never** override them.
 
 | Variable | Meaning |
@@ -585,7 +585,7 @@ AUTO_TRADE_TICKET_THRESHOLD=5000
 
 ## 9. Strategy tuning
 
-These tune the strategy in `src/MarketAgent.ts`. The strategy has **three modes**,
+These tune the strategy in `src/server/MarketAgent.ts`. The strategy has **three modes**,
 selected via `STRATEGY_MODE`:
 
 | Mode | Entry | Best for |

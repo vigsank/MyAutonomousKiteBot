@@ -74,6 +74,12 @@ export class MarketAgent {
   /** Timestamp until which entries are halted (circuit breaker). */
   private circuitBreakerUntil = 0;
 
+  /**
+   * Serializes risk-check + execution so concurrent proposals can't both pass
+   * the capital gate. Each proposal runs only after the previous completes.
+   */
+  private tradeQueue: Promise<void> = Promise.resolve();
+
   private readonly NEWS_INTERVAL_MS = 10 * 60 * 1000;
   private readonly TAVILY_DETAIL_INTERVAL_MS = 5 * 60 * 1000;
   private lastTavilyRun = new Map<string, number>();
@@ -152,14 +158,8 @@ export class MarketAgent {
       const price = tick.last_price;
       this.lastPrices.set(symbol, price);
 
-      // RSI from close prices.
-      const r = this.rsiFor(symbol).nextValue(price);
-      if (r !== undefined) this.rsiValues.set(symbol, r);
-
-      // SMAs for the pullback-in-uptrend strategy.
-      this.feedSma(symbol, price);
-
-      // Accumulate OHLC bar.
+      // Accumulate OHLC bar. Indicators (RSI/SMA/ADX/ATR) are updated on bar
+      // close in finalizeBar — never on raw ticks — to avoid signal noise.
       this.accumulateBar(symbol, price, tick.volume_traded ?? 0, now);
     }
 
@@ -268,11 +268,23 @@ export class MarketAgent {
   }
 
   private finalizeBar(symbol: string, bar: { high: number; low: number; close: number; volume: number }): void {
+    // Update indicators on the CLOSED bar only (not on raw ticks).
+    const r = this.rsiFor(symbol).nextValue(bar.close);
+    if (r !== undefined) this.rsiValues.set(symbol, r);
+    this.feedSma(symbol, bar.close);
+
     const adxRes = this.adxFor(symbol).nextValue(bar.high, bar.low, bar.close);
     if (adxRes && adxRes.adx !== undefined) this.adxValues.set(symbol, adxRes.adx);
 
     const atr = this.atrFor(symbol).nextValue(bar.high, bar.low, bar.close);
     if (atr !== undefined) this.atrValues.set(symbol, atr);
+
+    // Track rolling highs for breakout detection (live path).
+    const lookback = this.config.strategy.breakoutLookback;
+    const highs = this.breakoutHighs.get(symbol) ?? [];
+    highs.push(bar.high);
+    if (highs.length > lookback) highs.shift();
+    this.breakoutHighs.set(symbol, highs);
 
     // Track volume sample for confirmation.
     const samples = this.volumeSamples.get(symbol) ?? [];
@@ -773,7 +785,16 @@ export class MarketAgent {
    * Route a proposed trade through the risk engine and HITL approval, then
    * execute in paper mode.
    */
-  private async proposeTrade(trade: TradeRequest): Promise<void> {
+  private proposeTrade(trade: TradeRequest): void {
+    // Enqueue so risk-check + execution are serialized (no race past the gate).
+    this.tradeQueue = this.tradeQueue
+      .then(() => this.executeProposedTrade(trade))
+      .catch((err: any) => {
+        logger.error({ err: err?.message, symbol: trade.symbol }, 'Trade execution error');
+      });
+  }
+
+  private async executeProposedTrade(trade: TradeRequest): Promise<void> {
     // 1. Hard risk gate - the AI can never override this.
     const risk = this.risk.evaluate(trade);
     if (!risk.allowed) {

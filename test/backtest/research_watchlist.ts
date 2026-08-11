@@ -4,7 +4,7 @@
  * data/watchlist.json.
  * Usage: npx ts-node test/backtest/research_watchlist.ts
  */
-import { loadConfig } from '../../src/AppConfig';
+import { loadConfig } from '../../src/server/AppConfig';
 import { tavily } from '@tavily/core';
 
 async function main() {

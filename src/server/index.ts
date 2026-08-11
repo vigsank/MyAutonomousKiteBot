@@ -10,6 +10,7 @@ import { OptionsTrader } from './OptionsTrader';
 import { MarketAgent } from './MarketAgent';
 import { NotificationService } from './NotificationService';
 import { createLiveProvider } from './providers/factory';
+import { startUiServer } from './api/server';
 import { logger } from './Logger';
 import { Tick } from './types';
 
@@ -44,6 +45,10 @@ async function main(): Promise<void> {
   logger.info({ dir: config.dataDir }, 'Running database migrations...');
   ledger.runMigrations();
   logger.info('Migrations complete.');
+
+  // --- UI server (dashboard REST + WebSocket) -----------------------------
+  const ui = await startUiServer(config, ledger);
+  logger.info('Dashboard UI available at the configured UI_PORT.');
 
   // --- Session ------------------------------------------------------------
   const sessionId = ledger.startSession('PAPER');
@@ -87,6 +92,9 @@ async function main(): Promise<void> {
   // --- Warmup RSI from historical data (needs Kite configured) -------------
   if (streamer.isConfigured) {
     try {
+      // Load NSE equity (watchlist) + NFO derivatives (options) so instrument
+      // lookups for both succeed. loadInstruments merges across exchanges.
+      await streamer.loadInstruments('NSE');
       await streamer.loadInstruments('NFO');
       const to = new Date();
       const from = new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -183,6 +191,7 @@ async function main(): Promise<void> {
 
     streamer.stopTicker();
     telegram.stopPolling();
+    await ui.close();
     ledger.endSession(sessionId, 'COMPLETED');
     notify.info('Bot shut down', 'Clean shutdown complete.');
     ledger.close();
