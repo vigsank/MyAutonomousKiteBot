@@ -56,10 +56,20 @@ MyAutonomousKiteVault/
 │           │   └── layout/    # app shell / sidebar
 │           ├── hooks/    # WebSocket refresh hook
 │           └── pages/    # one page per route
-├── test/backtest/       # backtest/simulate/optimize scripts (NOT in src/)
-├── migrations/          # SQL migrations (V001__*.sql)
+├── test/backtest/       # backtest/simulate/optimize/validate scripts (NOT in src/)
+│   ├── backtest.ts / optimize.ts / simulate.ts
+│   ├── walk_forward.ts  # OOS / walk-forward validation
+│   └── mock_ui.ts       # seed mock DB + start the dashboard
+├── migrations/          # SQL migrations (V001__*.sql … V004__llm_traces.sql)
 ├── data/                # runtime data (git-ignored DBs, watchlist.json)
-├── docs/                # documentation
+├── run_code_audit.mjs   # LLM code audit CLI (architecture + guardrails)
+├── run_strategy_audit.mjs # LLM strategy/market-logic audit CLI
+├── docs/
+│   ├── CONFIGURATION.md # every configurable entity
+│   ├── CAPABILITIES.md  # what the bot can do + live-readiness
+│   ├── BACKTESTING.md   # backtest/optimize/walk-forward workflow
+│   ├── UI_DASHBOARD.md  # web dashboard + mock UI
+│   └── OBSERVABILITY.md # LLM audit scripts + llm_traces
 └── Agents.md            # this file
 ```
 

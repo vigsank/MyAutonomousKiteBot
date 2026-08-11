@@ -2,6 +2,7 @@ import type {
   Candle,
   DailySummary,
   Health,
+  LlmTrace,
   Notification,
   Order,
   Overview,
@@ -40,4 +41,5 @@ export const api = {
   candles: (symbol: string, interval?: string, limit?: number) =>
     get<Candle[]>('/candles', { symbol, interval, limit }),
   candleIntervals: () => get<string[]>('/candle-intervals'),
+  llmTraces: () => get<LlmTrace[]>('/llm-traces'),
 };

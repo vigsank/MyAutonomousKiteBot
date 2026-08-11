@@ -120,3 +120,15 @@ export interface Candle {
   close: number;
   volume: number;
 }
+
+export interface LlmTrace {
+  purpose: string;
+  symbol: string | null;
+  model: string;
+  prompt: string;
+  response: string;
+  latencyMs: number;
+  tokensIn: number | null;
+  tokensOut: number | null;
+  createdAt: string;
+}

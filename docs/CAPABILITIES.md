@@ -99,8 +99,8 @@ simulations before ever considering real money.
 
 - **Does not place real orders.** Everything is paper/simulated. Real execution
   is a deliberate future step (v2) after backtest validation.
-- **No options execution.** The `OptionsEngine` is a scaffold; v1 trades
-  equities only.
+- **Paper-only.** Everything is simulated; real execution is a deliberate,
+  gated future step (see "Live trading readiness" below).
 - **No true account-free live streaming.** Live ticks require a broker account
   (Kite) or a paid provider. Yahoo is historical-only.
 - **Not financial advice.** It is a research/validation tool, not a guarantee
@@ -145,3 +145,62 @@ flowchart LR
 
 See `docs/CONFIGURATION.md` for full configuration and
 `docs/BACKTESTING.md` for the backtest/optimize workflow.
+
+
+---
+
+## 6. Trade-quality gates
+
+- **Regime gating** (`REGIME_GATING_ENABLED`): a rule-based regime classifier
+  (trending_up / trending_down / ranging / volatile) gates entries — mean
+  reversion only in ranging markets; momentum/breakout only in trending.
+- **Signal confidence floor** (`MIN_SIGNAL_CONFIDENCE`): evidence-based
+  confidence from indicator/sentiment agreement must meet a minimum.
+- **Minimum reward:risk** (`MIN_RISK_REWARD`): every entry must have target /
+  stop risk-reward at or above the configured minimum.
+
+## 7. Realistic paper fills (net of costs)
+
+`PaperTrader` applies adverse **slippage** and NSE-style **charges** (brokerage,
+statutory, GST) so paper P&L reflects what a live account would keep. Configurable
+via `PAPER_SLIPPAGE_BPS`, `PAPER_BROKERAGE_BPS`, `PAPER_BROKERAGE_MAX`,
+`PAPER_STATUTORY_BPS`, `PAPER_GST_PCT`.
+
+## 8. LLM analyst verdict
+
+On a candidate trade, the LLM may act as a final analyst (AGREE / CAUTION / AVOID
++ risk score) using code-computed indicators and news sentiment. It is a **soft
+filter** — the immutable `RiskEngine` always runs first, and the analyst can only
+reject a trade, never force one past risk limits. Enabled with
+`ANALYST_ENABLED=true`.
+
+## 9. Options layer (now executed & persisted)
+
+Buys options only (defined risk = premium), priced via Black-Scholes with
+**dynamic volatility** (ATR-derived), gated through the **RiskEngine**, and
+**persisted to the ledger** so option exposure is visible and survives restarts.
+
+## 10. Web dashboard & observability
+
+- **Web dashboard** (React): overview, candlestick charts, positions/orders/
+  trades, signals, risk audit, notifications, and an **LLM Traces** page.
+- **`llm_traces`**: every LLM call (sentiment + analyst verdict) is logged with
+  prompt/response/latency/tokens so you can inspect *why* an agent decided X.
+- **LLM audit scripts**: `npm run audit:code` and `npm run audit:strategy`
+  produce architecture/guardrail/strategy review reports.
+
+## 11. Walk-forward validation
+
+`npm run validate:strategy` runs the live signal engine on rolling out-of-sample
+folds **net of costs** and prints a blunt `VALIDATED` / `NOT VALIDATED` verdict
+(≥30 OOS trades, positive net expectancy + return, edge in >50% of folds). A
+green verdict is *necessary, not sufficient* (survivorship bias caveat).
+
+## 12. Live trading readiness
+
+The bot is **paper-only today** — there is no live execution path. It is built on
+the real **Kite Connect SDK**, so it can be extended to live behind a hard
+`ALLOW_LIVE_ORDERS` gate (mirroring RakshaQuant's safety design), ideally with a
+**shadow mode** first plus order idempotency and broker reconciliation. Real
+orders must remain off by default and only be enabled after extensive paper
+testing and a passing walk-forward verdict.

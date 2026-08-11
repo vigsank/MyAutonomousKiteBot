@@ -24,6 +24,11 @@ export interface ApprovalResult {
 export class TelegramHITL {
   private bot: TelegramBot | null = null;
   private stopped = false;
+  /**
+   * Serializes approvals so only one is pending at a time — a single
+   * "approve" message can't resolve multiple simultaneously-pending trades.
+   */
+  private approvalQueue: Promise<unknown> = Promise.resolve();
 
   constructor(
     private readonly config: AppConfig,
@@ -97,7 +102,19 @@ export class TelegramHITL {
     if (!this.enabled || !this.bot) {
       return { decision: 'DISABLED' };
     }
-    const bot = this.bot;
+
+    // Serialize: only one approval is pending at a time, so a single
+    // "approve"/"reject" message resolves only the current trade.
+    const run = this.approvalQueue.then(() => this.runApproval(trade, timeoutMs));
+    this.approvalQueue = run.catch(() => undefined);
+    return run;
+  }
+
+  private async runApproval(
+    trade: TradeRequest,
+    timeoutMs: number,
+  ): Promise<ApprovalResult> {
+    const bot = this.bot!;
 
     await this.sendTelegram(this.tradePrompt(trade));
 
@@ -140,7 +157,7 @@ export class TelegramHITL {
       `• Quantity: <b>${trade.quantity}</b>\n` +
       `• Est. price: <b>₹${trade.entryPrice.toFixed(2)}</b>\n` +
       `• Ticket size: <b>₹${trade.ticketSize.toFixed(2)}</b>\n` +
-      `• Reason: ${trade.reason}\n\n` +
+      `• Reason: ${escapeHtml(trade.reason)}\n\n` +
       `Reply <b>approve</b> or <b>reject</b> within 2 minutes.`
     );
   }

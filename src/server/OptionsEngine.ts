@@ -75,6 +75,16 @@ export class OptionsEngine {
 
   constructor(private readonly config: AppConfig) {}
 
+  /**
+   * Estimate annualized volatility from ATR (per-bar) and spot price, so option
+   * premiums reflect the underlying's actual volatility instead of a flat 30%.
+   */
+  static estimateSigmaFromAtr(atr: number, spot: number): number {
+    if (atr <= 0 || spot <= 0) return 0.3;
+    const sigma = (atr / spot) * 8;
+    return Math.max(0.05, Math.min(1.5, sigma));
+  }
+
   get enabled(): boolean {
     return this.config.options.enabled;
   }
@@ -96,11 +106,19 @@ export class OptionsEngine {
   }
 
   /** Price an option via Black-Scholes. */
-  premium(spot: number, strike: number, type: 'CE' | 'PE', daysToExpiry: number): number {
+  premium(
+    spot: number,
+    strike: number,
+    type: 'CE' | 'PE',
+    daysToExpiry: number,
+    sigma = this.SIGMA,
+  ): number {
+    // Guard against zero/negative volatility (division by zero in Black-Scholes).
+    const vol = sigma > 0 ? sigma : this.SIGMA;
     const T = Math.max(0.001, daysToExpiry / 365);
     const p = type === 'CE'
-      ? bsCall(spot, strike, T, this.RATE, this.SIGMA)
-      : bsPut(spot, strike, T, this.RATE, this.SIGMA);
+      ? bsCall(spot, strike, T, this.RATE, vol)
+      : bsPut(spot, strike, T, this.RATE, vol);
     return Number(p.toFixed(2));
   }
 
@@ -110,13 +128,14 @@ export class OptionsEngine {
     direction: SignalDirection,
     spot: number,
     now: Date = new Date(),
+    sigma = this.SIGMA,
   ): OptionContract | null {
     if (direction === 'NEUTRAL') return null;
     const type: 'CE' | 'PE' = direction === 'LONG' ? 'CE' : 'PE';
     const strike = this.selectStrike(spot, direction);
     const daysToExpiry = this.config.options.expiryDays;
     const expiry = new Date(now.getTime() + daysToExpiry * 24 * 60 * 60 * 1000);
-    const premium = this.premium(spot, strike, type, daysToExpiry);
+    const premium = this.premium(spot, strike, type, daysToExpiry, sigma);
     return {
       symbol,
       type,

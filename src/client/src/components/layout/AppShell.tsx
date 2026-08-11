@@ -4,6 +4,7 @@ import {
   Activity,
   ArrowLeftRight,
   Bell,
+  Bot,
   LayoutDashboard,
   ListOrdered,
   Menu,
@@ -26,6 +27,7 @@ const NAV = [
   { to: '/orders', label: 'Orders', icon: ListOrdered },
   { to: '/trades', label: 'Trades', icon: ArrowLeftRight },
   { to: '/signals', label: 'Signals', icon: Activity },
+  { to: '/llm-traces', label: 'LLM Traces', icon: Bot },
   { to: '/risk', label: 'Risk', icon: ShieldAlert },
   { to: '/notifications', label: 'Activity', icon: Bell },
 ];
@@ -37,6 +39,7 @@ const TITLES: Record<string, string> = {
   '/orders': 'Orders',
   '/trades': 'Trades',
   '/signals': 'Signals & Sentiment',
+  '/llm-traces': 'LLM Traces',
   '/risk': 'Risk & Audit',
   '/notifications': 'Activity Feed',
 };

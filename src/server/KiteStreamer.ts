@@ -64,14 +64,20 @@ export class KiteStreamer implements HistoricalDataProvider, LiveDataProvider {
       from,
       to,
     );
-    return (data as any[]).map((c: any) => ({
-      date: new Date(c.date),
-      open: c.open,
-      high: c.high,
-      low: c.low,
-      close: c.close,
-      volume: c.volume ?? 0,
-    }));
+    if (!Array.isArray(data)) {
+      logger.warn({ instrumentToken, interval }, 'Kite historical data is not an array');
+      return [];
+    }
+    return (data as any[])
+      .filter((c: any) => c && typeof c.date !== 'undefined' && typeof c.close === 'number')
+      .map((c: any) => ({
+        date: new Date(c.date),
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+        volume: c.volume ?? 0,
+      }));
   }
 
   /**

@@ -5,9 +5,10 @@ import { Ledger } from './Ledger';
 import { RiskEngine } from './RiskEngine';
 import { PaperTrader } from './PaperTrader';
 import { TelegramHITL, ApprovalResult } from './TelegramHITL';
-import { NewsSentimentEngine } from './NewsSentimentEngine';
+import { NewsSentimentEngine, AnalystVerdict } from './NewsSentimentEngine';
 import { NotificationService } from './NotificationService';
 import { OptionsTrader } from './OptionsTrader';
+import { OptionsEngine } from './OptionsEngine';
 import { logger } from './Logger';
 import {
   Position,
@@ -94,7 +95,10 @@ export class MarketAgent {
     private readonly news: NewsSentimentEngine,
     private readonly notify: NotificationService,
     private readonly options: OptionsTrader,
-  ) {}
+  ) {
+    // Restore persisted runtime state (e.g. circuit breaker) across restarts.
+    this.restoreState();
+  }
 
   /* ================================================================ */
   /* Indicator helpers                                                  */
@@ -200,6 +204,19 @@ export class MarketAgent {
         this.atrValues.set(symbol, t);
       }
       this.feedSma(symbol, c.close);
+
+      // Track rolling highs for breakout detection.
+      const lookback = this.config.strategy.breakoutLookback;
+      const highs = this.breakoutHighs.get(symbol) ?? [];
+      highs.push(c.high);
+      if (highs.length > lookback) highs.shift();
+      this.breakoutHighs.set(symbol, highs);
+
+      // Volume sample for confirmation.
+      const samples = this.volumeSamples.get(symbol) ?? [];
+      samples.push(c.volume || 1);
+      if (samples.length > 30) samples.shift();
+      this.volumeSamples.set(symbol, samples);
     }
     return { rsi: rsiV, adx: adxV, atr: atrV };
   }
@@ -304,18 +321,139 @@ export class MarketAgent {
     const rsiValue = this.rsiValues.get(symbol);
     if (rsiValue === undefined || rsiValue === null) return;
 
-    const position = this.ledger.getPosition(symbol);
+    const position = this.ledger.getPosition(symbol, this.exchangeFor(symbol));
     const sentiment = this.sentiment.get(symbol) ?? 0;
 
     if (position) {
       this.checkExit(symbol, position, price, rsiValue, now);
-    } else if (this.config.strategy.mode === 'breakout') {
+      return;
+    }
+
+    // Regime gate: only trade when the detected regime suits the strategy mode.
+    if (this.config.strategy.regimeGatingEnabled) {
+      const { regime } = this.classifyRegime(symbol);
+      const mode = this.config.strategy.mode;
+      const regimeOk =
+        mode === 'mean_reversion'
+          ? regime === 'ranging'
+          : regime === 'trending_up' || regime === 'trending_down';
+      if (!regimeOk) {
+        this.ledger.recordSignal({
+          symbol,
+          direction: 'NEUTRAL',
+          rsi: rsiValue,
+          price,
+          reason: `Skipped: regime ${regime} not suitable for ${mode}`,
+          timestamp: now,
+          exchange: this.exchangeFor(symbol),
+        });
+        return;
+      }
+    }
+
+    // Evidence-based confidence floor.
+    if (this.config.strategy.minSignalConfidence > 0) {
+      const conf = this.computeSignalConfidence(symbol, rsiValue, sentiment);
+      if (conf < this.config.strategy.minSignalConfidence) {
+        this.ledger.recordSignal({
+          symbol,
+          direction: 'NEUTRAL',
+          rsi: rsiValue,
+          price,
+          reason: `Skipped: confidence ${conf.toFixed(2)} < ${this.config.strategy.minSignalConfidence}`,
+          timestamp: now,
+          exchange: this.exchangeFor(symbol),
+        });
+        return;
+      }
+    }
+
+    // Minimum reward:risk gate.
+    if (this.config.strategy.minRiskReward > 0) {
+      const stopDist = this.stopDistance(symbol, price);
+      const atr = this.atrValues.get(symbol) ?? 0;
+      const targetDist = atr * this.config.strategy.targetAtrMultiplier;
+      const rr = stopDist > 0 ? targetDist / stopDist : 0;
+      if (rr < this.config.strategy.minRiskReward) {
+        this.ledger.recordSignal({
+          symbol,
+          direction: 'NEUTRAL',
+          rsi: rsiValue,
+          price,
+          reason: `Skipped: R:R ${rr.toFixed(2)} < ${this.config.strategy.minRiskReward}`,
+          timestamp: now,
+          exchange: this.exchangeFor(symbol),
+        });
+        return;
+      }
+    }
+
+    if (this.config.strategy.mode === 'breakout') {
       this.checkEntryBreakout(symbol, price, sentiment, now);
     } else if (this.config.strategy.mode === 'pullback_trend') {
       this.checkEntryPullback(symbol, price, rsiValue, sentiment, now);
     } else {
       this.checkEntry(symbol, price, rsiValue, sentiment, now);
     }
+  }
+
+  /** Rule-based market regime classifier with a rough confidence estimate. */
+  private classifyRegime(
+    symbol: string,
+  ): { regime: 'trending_up' | 'trending_down' | 'ranging' | 'volatile'; confidence: number } {
+    const cfg = this.config.strategy;
+    const adx = this.adxValues.get(symbol);
+    const atr = this.atrValues.get(symbol);
+    const price = this.lastPrices.get(symbol);
+    const fast = this.smaFastValues.get(symbol);
+    const slow = this.smaSlowValues.get(symbol);
+
+    const volRatio = atr && price ? atr / price : 0;
+    const trending = adx !== undefined && adx >= cfg.adxTrendThreshold;
+    const upTrend = fast !== undefined && slow !== undefined && fast > slow;
+    const downTrend = fast !== undefined && slow !== undefined && fast < slow;
+    const highlyTrending = adx !== undefined && adx >= cfg.adxTrendThreshold + 10;
+    const volatile = volRatio > 0.02;
+
+    if (volatile && !trending) return { regime: 'volatile', confidence: 0.5 };
+    if (trending && upTrend) return { regime: 'trending_up', confidence: highlyTrending ? 0.8 : 0.6 };
+    if (trending && downTrend) return { regime: 'trending_down', confidence: highlyTrending ? 0.8 : 0.6 };
+    return { regime: 'ranging', confidence: 0.5 };
+  }
+
+  /** Evidence-based confidence from indicator/sentiment agreement (0-1). */
+  private computeSignalConfidence(symbol: string, rsiValue: number, sentiment: number): number {
+    const cfg = this.config.strategy;
+    const adx = this.adxValues.get(symbol);
+    const fast = this.smaFastValues.get(symbol);
+    const slow = this.smaSlowValues.get(symbol);
+
+    let agree = 0;
+    let total = 0;
+
+    if (cfg.mode === 'mean_reversion') {
+      total += 1;
+      if (rsiValue < cfg.rsiEntryThreshold) agree += 1;
+    } else {
+      total += 1;
+      if (fast !== undefined && slow !== undefined && fast > slow) agree += 1;
+      if (adx !== undefined && adx >= cfg.adxTrendThreshold) {
+        total += 1;
+        agree += 1;
+      }
+    }
+
+    total += 1;
+    if (sentiment > 0) agree += 1;
+
+    return total > 0 ? agree / total : 0;
+  }
+
+  /** Volatility-adaptive stop distance for a symbol at a price. */
+  private stopDistance(symbol: string, price: number): number {
+    const cfg = this.config.strategy;
+    const atr = this.atrValues.get(symbol) ?? 0;
+    return Math.max(atr * cfg.atrStopMultiplier, price * (cfg.stopLossPercent / 100) * 0.5);
   }
 
   /**
@@ -368,6 +506,7 @@ export class MarketAgent {
         reason: `Skipped entry: ${reasons.join('; ')}`,
         timestamp: new Date(),
         sentiment_score: sentiment,
+        exchange: this.exchangeFor(symbol),
       });
       return;
     }
@@ -412,6 +551,7 @@ export class MarketAgent {
       reason,
       timestamp: new Date(),
       sentiment_score: sentiment,
+      exchange: this.exchangeFor(symbol),
     });
 
     this.proposeTrade({
@@ -517,6 +657,7 @@ export class MarketAgent {
       reason,
       timestamp: new Date(),
       sentiment_score: sentiment,
+      exchange: this.exchangeFor(symbol),
     });
 
     this.proposeTrade({
@@ -610,6 +751,7 @@ export class MarketAgent {
       reason,
       timestamp: new Date(),
       sentiment_score: sentiment,
+      exchange: this.exchangeFor(symbol),
     });
 
     this.proposeTrade({
@@ -625,7 +767,8 @@ export class MarketAgent {
 
     // Options layer: buy a CALL on the upside breakout (if enabled).
     if (this.options.enabled) {
-      const fill = this.options.open(symbol, 'LONG', price, now);
+      const sigma = OptionsEngine.estimateSigmaFromAtr(this.atrValues.get(symbol) ?? 0, price);
+      const fill = this.options.open(symbol, 'LONG', price, now, sigma);
       if (fill) {
         this.notify.trade(
           `Option BUY ${fill.symbol} ${fill.type}${fill.strike}`,
@@ -687,7 +830,8 @@ export class MarketAgent {
 
     // Options layer: close the option position when the equity exits.
     if (this.options.enabled) {
-      const fill = this.options.close(symbol, price, now);
+      const sigma = OptionsEngine.estimateSigmaFromAtr(this.atrValues.get(symbol) ?? 0, price);
+      const fill = this.options.close(symbol, price, now, sigma);
       if (fill) {
         this.notify.trade(
           `Option SELL ${fill.symbol} ${fill.type}${fill.strike}`,
@@ -722,8 +866,8 @@ export class MarketAgent {
 
     const riskSized = Math.floor(budget / riskPerShare);
     if (riskSized <= 0) return 0;
-    // Cap at the watchlist quantity but never exceed it.
-    return Math.max(1, Math.min(watchQuantity, riskSized));
+    // Risk-parity size; RiskEngine enforces max allocation separately.
+    return Math.max(1, riskSized);
   }
 
   /** Limit how many positions can be opened at the same time (correlation). */
@@ -741,6 +885,7 @@ export class MarketAgent {
     if (recent.length >= cfg.circuitBreakerTrades) {
       this.circuitBreakerUntil =
         now.getTime() + cfg.circuitBreakerHaltMinutes * 60 * 1000;
+      this.persistCircuitBreaker();
       this.notify.warn(
         'Circuit breaker engaged',
         `${recent.length} trades in ${cfg.circuitBreakerWindowMinutes} min. Halting entries for ${cfg.circuitBreakerHaltMinutes} min.`,
@@ -754,6 +899,33 @@ export class MarketAgent {
   private recordTradeTime(now: Date): void {
     this.tradeTimes.push(now.getTime());
     if (this.tradeTimes.length > 100) this.tradeTimes.shift();
+    this.persistCircuitBreaker();
+  }
+
+  /** Persist circuit-breaker state so it survives a restart. */
+  private persistCircuitBreaker(): void {
+    this.ledger.setState('cb.tradeTimes', JSON.stringify(this.tradeTimes));
+    this.ledger.setState('cb.circuitBreakerUntil', String(this.circuitBreakerUntil));
+  }
+
+  /** Restore circuit-breaker state from the ledger at startup. */
+  restoreState(): void {
+    const times = this.ledger.getState('cb.tradeTimes');
+    if (times) {
+      try {
+        const parsed = JSON.parse(times);
+        if (Array.isArray(parsed)) {
+          this.tradeTimes = parsed.filter((n) => typeof n === 'number');
+        }
+      } catch {
+        /* ignore malformed state */
+      }
+    }
+    const until = this.ledger.getState('cb.circuitBreakerUntil');
+    if (until) {
+      const n = Number(until);
+      if (Number.isFinite(n)) this.circuitBreakerUntil = n;
+    }
   }
 
   /**
@@ -777,6 +949,23 @@ export class MarketAgent {
     return true;
   }
 
+  /** Ask the LLM analyst for a verdict + risk score on a candidate trade. */
+  private async analystVerdictFor(trade: TradeRequest): Promise<AnalystVerdict | null> {
+    if (!this.news.aiConfigured) return null;
+    return this.news.analystVerdict({
+      symbol: trade.symbol,
+      direction: trade.direction,
+      quantity: trade.quantity,
+      entryPrice: trade.entryPrice,
+      ticketSize: trade.ticketSize,
+      rsi: this.rsiValues.get(trade.symbol) ?? null,
+      adx: this.adxValues.get(trade.symbol) ?? null,
+      atr: this.atrValues.get(trade.symbol) ?? null,
+      sentiment: this.sentiment.get(trade.symbol) ?? 0,
+      reason: trade.reason,
+    });
+  }
+
   /* ================================================================ */
   /* Trade execution path                                              */
   /* ================================================================ */
@@ -794,6 +983,11 @@ export class MarketAgent {
       });
   }
 
+  /** Await any pending trade executions (used by backtest/walk-forward harnesses). */
+  async flush(): Promise<void> {
+    await this.tradeQueue;
+  }
+
   private async executeProposedTrade(trade: TradeRequest): Promise<void> {
     // 1. Hard risk gate - the AI can never override this.
     const risk = this.risk.evaluate(trade);
@@ -806,7 +1000,29 @@ export class MarketAgent {
       return;
     }
 
-    // 2. HITL: auto-trade below threshold, else ask the human.
+    // 2. Optional LLM analyst verdict (soft filter - RiskEngine stays the hard gate).
+    if (this.config.strategy.analystEnabled) {
+      const verdict = await this.analystVerdictFor(trade);
+      if (verdict && (verdict.verdict === 'AVOID' || verdict.riskScore >= this.config.strategy.analystRejectThreshold)) {
+        this.notify.warn(
+          `Analyst rejected trade: ${trade.symbol}`,
+          `Risk ${verdict.riskScore}/100 (${verdict.verdict}) - ${verdict.rationale}`,
+          { symbol: trade.symbol, direction: trade.direction, analystRisk: verdict.riskScore },
+        );
+        this.ledger.recordSignal({
+          symbol: trade.symbol,
+          direction: trade.direction,
+          rsi: this.rsiValues.get(trade.symbol) ?? 0,
+          price: trade.entryPrice,
+          reason: `Analyst rejected (${verdict.verdict}, risk ${verdict.riskScore}): ${verdict.rationale}`,
+          timestamp: new Date(),
+          exchange: trade.exchange,
+        });
+        return;
+      }
+    }
+
+    // 3. HITL: auto-trade below threshold, else ask the human.
     const needsApproval =
       trade.ticketSize > this.config.risk.autoTradeTicketThreshold;
 
@@ -846,13 +1062,18 @@ export class MarketAgent {
     }
   }
 
-  /** Temporary symbol cursor used by sizedQuantity (avoid threading). */
-  private currentSymbol = '';
-
   /** True when a symbol is enabled in the watchlist. */
   private isTracked(symbol: string): boolean {
     return this.config.watchlist.some(
       (s) => s.tradingsymbol === symbol && s.enabled,
+    );
+  }
+
+  /** Exchange for a symbol from the watchlist (defaults to NSE). */
+  private exchangeFor(symbol: string): string {
+    return (
+      this.config.watchlist.find((s) => s.tradingsymbol === symbol)?.exchange ??
+      'NSE'
     );
   }
 

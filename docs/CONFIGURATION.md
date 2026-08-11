@@ -761,3 +761,45 @@ Run `npm run dev` and watch the startup log. Then confirm:
 ---
 
 *See also the architecture overview and quick start in the root `README.md`.*
+
+---
+
+## New configuration knobs
+
+### Paper costs (realism)
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `PAPER_SLIPPAGE_BPS` | `2` | Adverse slippage on fills (basis points) |
+| `PAPER_BROKERAGE_BPS` | `3` | Brokerage as bps of notional |
+| `PAPER_BROKERAGE_MAX` | `20` | Per-order brokerage cap (INR; 0 = uncapped) |
+| `PAPER_STATUTORY_BPS` | `10` | Combined STT + txn + SEBI + stamp as bps |
+| `PAPER_GST_PCT` | `18` | GST as % of brokerage |
+
+### Trade-quality gates
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `MIN_RISK_REWARD` | `1.5` | Minimum target/stop reward:risk for an entry |
+| `TARGET_ATR_MULTIPLIER` | `3` | Target distance = ATR * this multiple |
+| `REGIME_GATING_ENABLED` | `false` | Only trade when regime suits the strategy mode |
+| `MIN_SIGNAL_CONFIDENCE` | `0` | Evidence-based confidence floor (0 = disabled) |
+
+### LLM analyst verdict
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `ANALYST_ENABLED` | `false` | Enable the LLM analyst pre-trade filter (soft) |
+| `ANALYST_REJECT_THRESHOLD` | `70` | Risk score above which the analyst blocks the trade |
+
+### UI / dashboard
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `UI_PORT` | `3000` | Dashboard/API port |
+| `UI_HOST` | `0.0.0.0` | Bind host |
+| `UI_API_TARGET` | `http://localhost:3000` | Vite dev proxy target |
+
+### Walk-forward validation (script)
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `BACKTEST_INTERVAL` | `day` | Bar interval for `validate:strategy` |
+| `BACKTEST_DAYS` | `400` | Lookback window |
+| `BACKTEST_WARMUP_BARS` | `60` | Leading warm-up bars (excluded from eval) |
+| `BACKTEST_FOLD_BARS` | `50` | OOS fold size |

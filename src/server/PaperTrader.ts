@@ -12,6 +12,10 @@ import { Position, TradeFill, TradeRequest } from './types';
  * All buy/sell actions are simulated. Nothing touches a real Kite order.
  * Every fill is persisted to the SQLite ledger so the strategy can be
  * evaluated and backtested before any real capital is used.
+ *
+ * Paper fills are made realistic by applying adverse slippage to the fill
+ * price and NSE-style charges (brokerage + statutory + GST) so paper P&L is
+ * net of costs rather than optimistically zero-fee.
  */
 export class PaperTrader {
   constructor(
@@ -19,21 +23,46 @@ export class PaperTrader {
     private readonly ledger: Ledger,
   ) {}
 
+  /** Apply adverse slippage: a BUY fills a touch higher, a SELL a touch lower. */
+  private applySlippage(price: number, side: 'BUY' | 'SELL'): number {
+    const adj = price * this.config.costs.slippageBps / 10000;
+    return side === 'BUY' ? price + adj : price - adj;
+  }
+
+  /** Total charges (brokerage capped + statutory + GST) on a leg's notional. */
+  private charges(notional: number): number {
+    const c = this.config.costs;
+    const n = Math.abs(notional);
+    let brokerage = (n * c.brokerageBps) / 10000;
+    if (c.brokerageMax > 0) brokerage = Math.min(brokerage, c.brokerageMax);
+    const statutory = (n * c.statutoryBps) / 10000;
+    const gst = (brokerage * c.gstPct) / 100;
+    return brokerage + statutory + gst;
+  }
+
   /**
    * Execute a paper trade request and return the fill. The risk engine must
    * already have approved this request; this method just simulates the fill.
    */
   execute(request: TradeRequest): TradeFill {
     const side = directionToSide(request.direction);
+    const fillPrice = this.applySlippage(request.entryPrice, side);
 
     const fill = this.ledger.transaction(() => {
       // Existing position for the symbol.
-      const existing = this.ledger.getPosition(request.symbol);
+      const existing = this.ledger.getPosition(request.symbol, request.exchange);
 
       if (existing) {
         // Close existing position if we trade in the opposite direction.
         if (existing.direction !== request.direction) {
-          const closePnl = this.computeClosePnl(existing, request.entryPrice);
+          const closeSide = directionToSide(request.direction);
+          const exitFill = this.applySlippage(request.entryPrice, closeSide);
+          const grossPnl = this.computeClosePnl(existing, exitFill);
+          // Net of costs: entry leg + exit leg charges.
+          const totalCharges =
+            this.charges(existing.avgPrice * existing.quantity) +
+            this.charges(exitFill * existing.quantity);
+          const closePnl = grossPnl - totalCharges;
           const tradeId = newTradeId();
           const fillOut: TradeFill = {
             tradeId,
@@ -41,7 +70,7 @@ export class PaperTrader {
             exchange: request.exchange,
             direction: request.direction,
             quantity: request.quantity,
-            price: request.entryPrice,
+            price: exitFill,
             ticketSize: request.ticketSize,
             pnl: closePnl,
             status: 'FILLED',
@@ -50,14 +79,14 @@ export class PaperTrader {
           };
           this.ledger.recordTrade(fillOut);
           this.recordOrder(request, side, tradeId, 'CLOSE');
-          this.ledger.closePosition(request.symbol, request.entryPrice, closePnl);
+          this.ledger.closePosition(request.symbol, exitFill, closePnl);
           return fillOut;
         }
-        // Same direction: augment position (weighted average price).
+        // Same direction: augment position (weighted average price, slippage-adjusted).
         const newQty = existing.quantity + request.quantity;
         const newAvg =
           (existing.avgPrice * existing.quantity +
-            request.entryPrice * request.quantity) /
+            fillPrice * request.quantity) /
           newQty;
         this.ledger.upsertPosition({
           ...existing,
@@ -69,12 +98,12 @@ export class PaperTrader {
         return this.fill(request, 0, 'Added to existing position', tradeId);
       }
 
-      // New position.
+      // New position (avg price reflects slippage).
       this.ledger.upsertPosition({
         symbol: request.symbol,
         exchange: request.exchange,
         quantity: request.quantity,
-        avgPrice: request.entryPrice,
+        avgPrice: fillPrice,
         entryTime: request.timestamp,
         direction: request.direction,
       });
@@ -98,7 +127,7 @@ export class PaperTrader {
       exchange: request.exchange,
       direction: request.direction,
       quantity: request.quantity,
-      price: request.entryPrice,
+      price: this.applySlippage(request.entryPrice, directionToSide(request.direction)),
       ticketSize: request.ticketSize,
       pnl,
       status: 'FILLED',

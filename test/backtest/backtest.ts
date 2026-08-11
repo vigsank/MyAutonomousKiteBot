@@ -102,15 +102,15 @@ async function runBacktest(): Promise<void> {
   ledger.runMigrations();
   const sessionId = ledger.startSession('BACKTEST');
 
-  const notify = new NotificationService(ledger.raw(), config);
+  const notify = new NotificationService(ledger, config);
   // Account-free historical provider (Yahoo by default).
   const streamer = createHistoricalProvider(config);
   const risk = new RiskEngine(config, ledger);
   const trader = new PaperTrader(config, ledger);
   const llm = new LlmManager(config.llm);
   const telegram = new TelegramHITL(config, llm, notify);
-  const news = new NewsSentimentEngine(config, llm);
-  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config));
+  const news = new NewsSentimentEngine(config, llm, ledger);
+  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config), ledger, risk);
   // The agent is only used for warmup + onCandle in backtest (never onTicks),
   // so the historical provider satisfies it structurally.
   const agent = new MarketAgent(
@@ -195,6 +195,9 @@ async function runBacktest(): Promise<void> {
       });
     }
   }
+
+  // Drain the async trade-queue before reading results.
+  await agent.flush();
 
   ledger.computeDailySummary(capital);
 

@@ -61,6 +61,8 @@ export class RiskEngine {
         'TRADE_BLOCKED',
         decision.reasons.join('; '),
         trade.symbol,
+        undefined,
+        trade.exchange,
       );
     }
 
@@ -102,5 +104,40 @@ export class RiskEngine {
   /** True when current day's PnL has breached the drawdown limit. */
   drawdownBreached(): boolean {
     return this.ledger.currentDrawdown() > this.config.risk.maxDailyDrawdown;
+  }
+
+  /**
+   * Validate an option trade against hard risk limits (premium cap, exposure
+   * cap, and available capital). Returns the reason it's blocked, or null if
+   * allowed. Options must pass through this gatekeeper like equity trades.
+   */
+  evaluateOption(
+    totalPremium: number,
+    currentExposure: number,
+    symbol: string,
+  ): string | null {
+    const failures: string[] = [];
+    if (totalPremium <= 0) failures.push('Option premium must be positive.');
+    if (totalPremium > this.config.options.maxPremiumPerTrade) {
+      failures.push(
+        `Premium ${totalPremium.toFixed(0)} exceeds per-trade cap ${this.config.options.maxPremiumPerTrade}.`,
+      );
+    }
+    if (currentExposure + totalPremium > this.config.options.maxOptionsExposure) {
+      failures.push(
+        `Options exposure ${(currentExposure + totalPremium).toFixed(0)} exceeds cap ${this.config.options.maxOptionsExposure}.`,
+      );
+    }
+    const used = this.ledger.usedCapital() + this.ledger.optionExposure();
+    if (used + totalPremium > this.config.risk.availableCapital) {
+      failures.push(
+        `Insufficient capital for option premium ${totalPremium.toFixed(0)}.`,
+      );
+    }
+    if (failures.length > 0) {
+      this.ledger.recordRiskEvent('OPTION_BLOCKED', failures.join('; '), symbol);
+      return failures.join('; ');
+    }
+    return null;
   }
 }

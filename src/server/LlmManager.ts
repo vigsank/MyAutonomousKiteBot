@@ -65,6 +65,29 @@ export class LlmManager {
    * without it for robustness (some Ollama models do not support that field).
    */
   async chat(prompt: string): Promise<string> {
+    const res = await this.createCompletion(prompt);
+    return res.text;
+  }
+
+  /**
+   * Send a prompt and return the text plus trace metadata (model, token usage)
+   * so callers can persist an observability trace.
+   */
+  async chatWithMeta(
+    prompt: string,
+  ): Promise<{ text: string; model: string; tokensIn: number | null; tokensOut: number | null }> {
+    const res = await this.createCompletion(prompt);
+    return {
+      text: res.text,
+      model: this.activeModel,
+      tokensIn: res.tokensIn,
+      tokensOut: res.tokensOut,
+    };
+  }
+
+  private async createCompletion(
+    prompt: string,
+  ): Promise<{ text: string; tokensIn: number | null; tokensOut: number | null }> {
     const params: any = {
       model: this.activeModel,
       temperature: 0,
@@ -77,14 +100,24 @@ export class LlmManager {
 
     try {
       const res = await this.client.chat.completions.create(params);
-      return res.choices[0]?.message?.content ?? '';
+      return this.toResult(res);
     } catch (err) {
       if (this.jsonMode) {
         delete params.response_format;
         const res = await this.client.chat.completions.create(params);
-        return res.choices[0]?.message?.content ?? '';
+        return this.toResult(res);
       }
       throw err;
     }
+  }
+
+  private toResult(
+    res: any,
+  ): { text: string; tokensIn: number | null; tokensOut: number | null } {
+    return {
+      text: res.choices[0]?.message?.content ?? '',
+      tokensIn: res.usage?.prompt_tokens ?? null,
+      tokensOut: res.usage?.completion_tokens ?? null,
+    };
   }
 }

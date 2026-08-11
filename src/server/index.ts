@@ -55,7 +55,7 @@ async function main(): Promise<void> {
   logger.info({ sessionId }, 'Session started');
 
   // --- Notification service (DB-first, Telegram optional) ------------------
-  const notify = new NotificationService(ledger.raw(), config);
+  const notify = new NotificationService(ledger, config);
   logger.info(
     { telegram: config.telegram.enabled },
     'Notification service ready',
@@ -72,9 +72,9 @@ async function main(): Promise<void> {
   const risk = new RiskEngine(config, ledger);
   const trader = new PaperTrader(config, ledger);
   const telegram = new TelegramHITL(config, llm, notify);
-  const news = new NewsSentimentEngine(config, llm);
+  const news = new NewsSentimentEngine(config, llm, ledger);
   const options = new OptionsEngine(config);
-  const optionsTrader = new OptionsTrader(config, options);
+  const optionsTrader = new OptionsTrader(config, options, ledger, risk);
 
   // --- Strategy brain ------------------------------------------------------
   const agent = new MarketAgent(
@@ -138,7 +138,11 @@ async function main(): Promise<void> {
 
   if (streamer.isConfigured && activeTokens.length > 0) {
     streamer.startTicker(activeTokens, (ticks: Tick[]) => {
-      agent.onTicks(ticks);
+      try {
+        agent.onTicks(ticks);
+      } catch (err: any) {
+        logger.error({ err: err?.message }, 'Tick processing error');
+      }
     });
     logger.info({ tokens: activeTokens.length }, 'Live ticker started');
   } else {
@@ -189,12 +193,16 @@ async function main(): Promise<void> {
       logger.error({ err: err?.message }, 'Failed to compute daily summary');
     }
 
-    streamer.stopTicker();
-    telegram.stopPolling();
-    await ui.close();
-    ledger.endSession(sessionId, 'COMPLETED');
-    notify.info('Bot shut down', 'Clean shutdown complete.');
-    ledger.close();
+    try {
+      streamer.stopTicker();
+      telegram.stopPolling();
+      await ui.close();
+      ledger.endSession(sessionId, 'COMPLETED');
+      notify.info('Bot shut down', 'Clean shutdown complete.');
+      ledger.close();
+    } catch (err: any) {
+      logger.error({ err: err?.message }, 'Error during shutdown');
+    }
 
     logger.info('Shutdown complete. Goodbye.');
     process.exit(0);

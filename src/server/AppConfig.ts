@@ -51,6 +51,13 @@ export interface AppConfig {
     maxTradeAllocation: number;
     autoTradeTicketThreshold: number;
   };
+  costs: {
+    slippageBps: number;
+    brokerageBps: number;
+    brokerageMax: number;
+    statutoryBps: number;
+    gstPct: number;
+  };
   options: {
     enabled: boolean;
     maxPremiumPerTrade: number;
@@ -81,6 +88,18 @@ export interface AppConfig {
     pullbackSlowSma: number;
     breakoutLookback: number;
     breakoutTrailAtrMult: number;
+    /** Optional LLM analyst pre-trade filter (soft; RiskEngine stays the hard gate). */
+    analystEnabled: boolean;
+    /** Risk score (0-100) above which the analyst verdict blocks the trade. */
+    analystRejectThreshold: number;
+    /** Minimum reward:risk ratio required for an entry (target vs stop). */
+    minRiskReward: number;
+    /** Target distance as a multiple of ATR (target = stopDist * targetAtrMultiplier / atrStopMultiplier). */
+    targetAtrMultiplier: number;
+    /** Gate entries by market regime (mean-reversion only in ranging, momentum in trending). */
+    regimeGatingEnabled: boolean;
+    /** Minimum evidence-based signal confidence (0-1) to propose a trade (0 = disabled). */
+    minSignalConfidence: number;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
@@ -222,6 +241,13 @@ export function loadConfig(): AppConfig {
       maxTradeAllocation: num('MAX_TRADE_ALLOCATION', 20000),
       autoTradeTicketThreshold: num('AUTO_TRADE_TICKET_THRESHOLD', 5000),
     },
+    costs: {
+      slippageBps: num('PAPER_SLIPPAGE_BPS', 2),
+      brokerageBps: num('PAPER_BROKERAGE_BPS', 3),
+      brokerageMax: num('PAPER_BROKERAGE_MAX', 20),
+      statutoryBps: num('PAPER_STATUTORY_BPS', 10),
+      gstPct: num('PAPER_GST_PCT', 18),
+    },
     options: {
       enabled: str('OPTIONS_ENABLED') === 'true',
       maxPremiumPerTrade: num('MAX_OPTION_PREMIUM_PER_TRADE', 5000),
@@ -252,6 +278,12 @@ export function loadConfig(): AppConfig {
       pullbackSlowSma: num('PULLBACK_SLOW_SMA', 50),
       breakoutLookback: num('BREAKOUT_LOOKBACK', 20),
       breakoutTrailAtrMult: num('BREAKOUT_TRAIL_ATR_MULT', 2),
+      analystEnabled: str('ANALYST_ENABLED') === 'true',
+      analystRejectThreshold: num('ANALYST_REJECT_THRESHOLD', 70),
+      minRiskReward: num('MIN_RISK_REWARD', 1.5),
+      targetAtrMultiplier: num('TARGET_ATR_MULTIPLIER', 3),
+      regimeGatingEnabled: str('REGIME_GATING_ENABLED') === 'true',
+      minSignalConfidence: num('MIN_SIGNAL_CONFIDENCE', 0),
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,

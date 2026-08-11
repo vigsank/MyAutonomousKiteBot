@@ -364,7 +364,30 @@ export class UiQueries {
     return rows.reverse();
   }
 
+  /** Recent LLM call traces (observability — inspect why the agent decided X). */
+  llmTraces(limit = 100): Array<{
+    purpose: string;
+    symbol: string | null;
+    model: string;
+    prompt: string;
+    response: string;
+    latencyMs: number;
+    tokensIn: number | null;
+    tokensOut: number | null;
+    createdAt: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT purpose, symbol, model, prompt, response,
+                latency_ms AS latencyMs, tokens_in AS tokensIn,
+                tokens_out AS tokensOut, created_at AS createdAt
+           FROM llm_traces ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
   /** Distinct intervals that exist in the candles table. */
+  
   candleIntervals(): string[] {
     const rows = this.db
       .prepare(

@@ -20,6 +20,7 @@
     "build:ui": "npm --prefix src/client run build",
     "typecheck:ui": "npm --prefix src/client run typecheck",
     "mock:ui": "ts-node test/backtest/mock_ui.ts",
+    "validate:strategy": "ts-node test/backtest/walk_forward.ts",
     "audit:code": "node run_code_audit.mjs",
     "audit:strategy": "node run_strategy_audit.mjs"
   },

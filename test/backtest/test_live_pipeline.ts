@@ -5,6 +5,7 @@
 import { loadConfig } from '../../src/server/AppConfig';
 import { LlmManager } from '../../src/server/LlmManager';
 import { NewsSentimentEngine } from '../../src/server/NewsSentimentEngine';
+import { Ledger } from '../../src/server/Ledger';
 
 async function main() {
   const config = loadConfig();
@@ -15,6 +16,8 @@ async function main() {
   console.log(`Backtest provider: ${process.env.BACKTEST_PROVIDER || 'yahoo'}`);
 
   const llm = new LlmManager(config.llm);
+  const ledger = new Ledger(':memory:');
+  ledger.runMigrations();
 
   // 1. Test Ollama directly.
   console.log('\n=== 1. OLLAMA TEST ===');
@@ -25,7 +28,7 @@ async function main() {
     console.error('Ollama FAILED:', e?.message ?? e);
   }
 
-  const news = new NewsSentimentEngine(config, llm);
+  const news = new NewsSentimentEngine(config, llm, ledger);
 
   // 2. Test Tavily search.
   console.log('\n=== 2. TAVILY SEARCH TEST ===');

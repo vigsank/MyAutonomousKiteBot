@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import { AppConfig } from './AppConfig';
+import { Ledger } from './Ledger';
 import { logger } from './Logger';
 
 export type NotificationSeverity =
@@ -38,14 +39,16 @@ export interface NotificationRecord {
  */
 export class NotificationService {
   private db: Database.Database;
+  private readonly ledger: Ledger;
   private telegramSender: ((text: string) => Promise<void>) | null = null;
   private telegramEnabled: boolean;
 
   constructor(
-    db: Database.Database,
+    ledger: Ledger,
     private readonly config: AppConfig,
   ) {
-    this.db = db;
+    this.ledger = ledger;
+    this.db = ledger.raw();
     this.telegramEnabled = config.telegram.enabled;
   }
 
@@ -95,12 +98,14 @@ export class NotificationService {
     const channel: NotificationChannel = this.isTelegramEnabled ? 'BOTH' : 'DB';
     const metaJson = metadata ? JSON.stringify(metadata) : null;
 
-    this.db
-      .prepare(
-        `INSERT INTO notifications (channel, severity, title, body, metadata)
-         VALUES (?, ?, ?, ?, ?)`,
-      )
-      .run(channel, severity, title, body, metaJson);
+    this.ledger.recordNotification({
+      channel,
+      severity,
+      title,
+      body,
+      metadata: metaJson,
+      telegramSent: this.isTelegramEnabled ? 1 : 0,
+    });
 
     // Forward to Telegram asynchronously (fire-and-forget).
     if (this.isTelegramEnabled && this.telegramSender) {

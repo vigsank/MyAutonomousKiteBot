@@ -308,12 +308,12 @@ async function simulate(): Promise<void> {
     } as any);
   });
 
-  const notify = new NotificationService(ledger.raw(), config);
+  const notify = new NotificationService(ledger, config);
   const risk = new RiskEngine(config, ledger);
   const trader = new PaperTrader(config, ledger);
   const telegram = new TelegramHITL(config, new LlmManager(config.llm), notify);
-  const news = new NewsSentimentEngine(config, new LlmManager(config.llm));
-  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config));
+  const news = new NewsSentimentEngine(config, new LlmManager(config.llm), ledger);
+  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config), ledger, risk);
   const agent = new MarketAgent(
     config,
     mockStreamer as any,
@@ -451,6 +451,9 @@ async function simulate(): Promise<void> {
   }
 
   // --- Compute daily summary ------------------------------------------------
+  // Drain the async trade-queue before reading results.
+  await agent.flush();
+
   ledger.computeDailySummary(config.risk.availableCapital);
 
   // --- Debug: check signals table -------------------------------------------

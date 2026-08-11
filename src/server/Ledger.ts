@@ -6,6 +6,7 @@ import {
   Instrument,
   OrderRecord,
   Position,
+  Segment,
   SignalDirection,
   TradeFill,
   TradeRequest,
@@ -205,8 +206,9 @@ export class Ledger {
     exitPrice: number,
     pnl: number,
     instrument_token?: number,
+    exchange: string = 'NSE',
   ): void {
-    const instId = this.resolveInstrumentId(symbol, 'NSE', instrument_token);
+    const instId = this.resolveInstrumentId(symbol, exchange, instrument_token);
     this.db
       .prepare(
         `UPDATE positions
@@ -217,8 +219,8 @@ export class Ledger {
       .run(exitPrice, pnl, instId);
   }
 
-  getPosition(symbol: string): Position | null {
-    const inst = this.getInstrumentBySymbol(symbol, 'NSE');
+  getPosition(symbol: string, exchange: string = 'NSE'): Position | null {
+    const inst = this.getInstrumentBySymbol(symbol, exchange);
     if (!inst) return null;
     const instId = this.instrumentIdByToken(inst.instrument_token);
     if (instId === null) return null;
@@ -231,7 +233,7 @@ export class Ledger {
     if (!row) return null;
     return {
       symbol,
-      exchange: 'NSE',
+      exchange: exchange as Segment,
       quantity: row.quantity,
       avgPrice: row.avg_price,
       entryTime: new Date(row.entry_time),
@@ -293,15 +295,45 @@ export class Ledger {
   }
 
   currentDrawdown(): number {
-    const today = new Date().toISOString().slice(0, 10);
-    const row = this.db
+    const today = todayIST();
+    const startUTC = new Date(`${today}T00:00:00+05:30`).toISOString();
+    const realized = this.db
       .prepare(
         `SELECT COALESCE(SUM(CASE WHEN pnl < 0 THEN pnl ELSE 0 END), 0) AS loss
            FROM trades
-          WHERE status = 'FILLED' AND created_at LIKE ?`,
+          WHERE status = 'FILLED' AND created_at >= ?`,
       )
-      .get(`${today}%`) as { loss: number };
-    return Math.abs(row.loss);
+      .get(startUTC) as { loss: number };
+
+    // Include unrealized losses on open positions (latest tick vs avg price)
+    // so a large losing open position is counted before it is closed.
+    const open = this.db
+      .prepare(
+        `SELECT p.quantity, p.avg_price, p.direction,
+                (SELECT last_price FROM ticks t
+                  WHERE t.instrument_id = p.instrument_id
+                  ORDER BY t.timestamp DESC LIMIT 1) AS last_price
+           FROM positions p
+          WHERE p.status = 'OPEN'`,
+      )
+      .all() as Array<{
+      quantity: number;
+      avg_price: number;
+      direction: string;
+      last_price: number | null;
+    }>;
+
+    let unrealizedLoss = 0;
+    for (const p of open) {
+      const last = p.last_price ?? p.avg_price;
+      const pnl =
+        p.direction === 'LONG'
+          ? (last - p.avg_price) * p.quantity
+          : (p.avg_price - last) * p.quantity;
+      if (pnl < 0) unrealizedLoss += pnl;
+    }
+
+    return Math.abs(realized.loss) + Math.abs(unrealizedLoss);
   }
 
   usedCapital(): number {
@@ -338,10 +370,11 @@ export class Ledger {
     timestamp: Date;
     sentiment_score?: number;
     instrument_token?: number;
+    exchange?: string;
   }): void {
     const instId = this.resolveInstrumentId(
       s.symbol,
-      'NSE',
+      s.exchange ?? 'NSE',
       s.instrument_token,
     );
     this.db
@@ -370,10 +403,11 @@ export class Ledger {
     details: string,
     symbol?: string,
     instrument_token?: number,
+    exchange: string = 'NSE',
   ): void {
     let instId: number | null = null;
     if (symbol) {
-      instId = this.resolveInstrumentId(symbol, 'NSE', instrument_token);
+      instId = this.resolveInstrumentId(symbol, exchange, instrument_token);
     }
     this.db
       .prepare(
@@ -427,13 +461,14 @@ export class Ledger {
   /* ================================================================ */
 
   computeDailySummary(capital: number): void {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayIST();
+    const startUTC = new Date(`${today}T00:00:00+05:30`).toISOString();
     const trades = this.db
       .prepare(
         `SELECT pnl, status FROM trades
-          WHERE created_at LIKE ? AND status = 'FILLED'`,
+          WHERE created_at >= ? AND status = 'FILLED'`,
       )
-      .all(`${today}%`) as Array<{ pnl: number | null; status: string }>;
+      .all(startUTC) as Array<{ pnl: number | null; status: string }>;
 
     const totalTrades = trades.length;
     const winning = trades.filter((t) => (t.pnl ?? 0) > 0).length;
@@ -484,6 +519,228 @@ export class Ledger {
     this.db.close();
   }
 
+  /* ---- runtime state (key-value) ---- */
+
+  getState(key: string): string | null {
+    const row = this.db
+      .prepare('SELECT value FROM bot_state WHERE key = ?')
+      .get(key) as { value: string } | undefined;
+    return row?.value ?? null;
+  }
+
+  setState(key: string, value: string): void {
+    this.db
+      .prepare(
+        `INSERT INTO bot_state (key, value, updated_at)
+         VALUES (?, ?, datetime('now'))
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')`,
+      )
+      .run(key, value);
+  }
+
+  /* ---- options ---- */
+
+  recordOptionPosition(p: {
+    symbol: string;
+    type: 'CE' | 'PE';
+    strike: number;
+    premium: number;
+    lotSize: number;
+    daysToExpiry: number;
+    expiry: string;
+    quantity: number;
+    entryPremium: number;
+    entryTime: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO option_positions
+           (symbol, type, strike, premium, lot_size, days_to_expiry, expiry, quantity, entry_premium, entry_time)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        p.symbol,
+        p.type,
+        p.strike,
+        p.premium,
+        p.lotSize,
+        p.daysToExpiry,
+        p.expiry,
+        p.quantity,
+        p.entryPremium,
+        p.entryTime,
+      );
+  }
+
+  closeOptionPosition(symbol: string, exitPremium: number, pnl: number): void {
+    this.db
+      .prepare(
+        `UPDATE option_positions
+            SET status = 'CLOSED', exit_time = datetime('now'),
+                exit_premium = ?, realized_pnl = ?
+          WHERE symbol = ? AND status = 'OPEN'`,
+      )
+      .run(exitPremium, pnl, symbol);
+  }
+
+  getOpenOptionPositions(): Array<{
+    symbol: string;
+    type: 'CE' | 'PE';
+    strike: number;
+    premium: number;
+    lotSize: number;
+    daysToExpiry: number;
+    expiry: string;
+    quantity: number;
+    entryPremium: number;
+    entryTime: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT symbol, type, strike, premium, lot_size AS lotSize,
+                days_to_expiry AS daysToExpiry, expiry, quantity,
+                entry_premium AS entryPremium, entry_time AS entryTime
+           FROM option_positions WHERE status = 'OPEN'`,
+      )
+      .all() as any[];
+  }
+
+  recordOptionFill(f: {
+    symbol: string;
+    type: string;
+    strike: number;
+    quantity: number;
+    premium: number;
+    totalPremium: number;
+    pnl: number;
+    reason: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO option_fills
+           (symbol, type, strike, quantity, premium, total_premium, pnl, reason)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        f.symbol,
+        f.type,
+        f.strike,
+        f.quantity,
+        f.premium,
+        f.totalPremium,
+        f.pnl,
+        f.reason,
+      );
+  }
+
+  getOptionFills(): Array<{
+    symbol: string;
+    type: string;
+    strike: number;
+    quantity: number;
+    premium: number;
+    totalPremium: number;
+    pnl: number;
+    reason: string;
+    createdAt: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT symbol, type, strike, quantity, premium,
+                total_premium AS totalPremium, pnl, reason, created_at AS createdAt
+           FROM option_fills ORDER BY created_at DESC`,
+      )
+      .all() as any[];
+  }
+
+  /** Total premium locked in open option positions. */
+  optionExposure(): number {
+    const row = this.db
+      .prepare(
+        `SELECT COALESCE(SUM(entry_premium), 0) AS exp
+           FROM option_positions WHERE status = 'OPEN'`,
+      )
+      .get() as { exp: number };
+    return row.exp;
+  }
+
+  /* ---- notifications ---- */
+
+  recordNotification(rec: {
+    channel: string;
+    severity: string;
+    title: string;
+    body: string;
+    metadata: string | null;
+    telegramSent: number;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO notifications
+           (channel, severity, title, body, metadata, telegram_sent)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        rec.channel,
+        rec.severity,
+        rec.title,
+        rec.body,
+        rec.metadata,
+        rec.telegramSent,
+      );
+  }
+
+  /* ---- llm traces ---- */
+
+  recordLlmTrace(t: {
+    purpose: string;
+    symbol?: string;
+    model: string;
+    prompt: string;
+    response: string;
+    latencyMs: number;
+    tokensIn?: number | null;
+    tokensOut?: number | null;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO llm_traces
+           (purpose, symbol, model, prompt, response, latency_ms, tokens_in, tokens_out)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        t.purpose,
+        t.symbol ?? null,
+        t.model,
+        t.prompt,
+        t.response,
+        t.latencyMs,
+        t.tokensIn ?? null,
+        t.tokensOut ?? null,
+      );
+  }
+
+  getLlmTraces(limit = 100): Array<{
+    purpose: string;
+    symbol: string | null;
+    model: string;
+    prompt: string;
+    response: string;
+    latencyMs: number;
+    tokensIn: number | null;
+    tokensOut: number | null;
+    createdAt: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT purpose, symbol, model, prompt, response,
+                latency_ms AS latencyMs, tokens_in AS tokensIn,
+                tokens_out AS tokensOut, created_at AS createdAt
+           FROM llm_traces ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
   /* ---- private ---- */
 
   /** Look up the auto-increment instrument_id for a token, or null. */
@@ -532,6 +789,13 @@ export class Ledger {
 }
 
 /** Deterministic 32-bit hash of a symbol+exchange, used for stub tokens. */
+/* ---- module-level helpers ---- */
+
+/** IST date string for "now" (the market runs on IST, UTC+5:30). */
+function todayIST(): string {
+  return new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
 function hashToken(symbol: string, exchange: string): number {
   const s = exchange + ':' + symbol;
   let h = 0;

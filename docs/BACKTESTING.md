@@ -155,3 +155,32 @@ very slow) — run it separately.
 - **The strategy is one family** (RSI + ADX + ATR). It is a solid v1, not a
   guaranteed edge.
 - **No real orders** are ever placed by any of these tools.
+
+---
+
+## Walk-forward / out-of-sample validation
+
+A single in-sample backtest proves nothing. `npm run validate:strategy`
+(`test/backtest/walk_forward.ts`) runs the **live signal engine** on rolling
+out-of-sample folds, **net of costs** (the paper cost model), and prints a blunt
+`VALIDATED` / `NOT VALIDATED` verdict.
+
+```bash
+npm run validate:strategy
+# tune it:
+BACKTEST_INTERVAL=5minute BACKTEST_DAYS=90 BACKTEST_WARMUP_BARS=60 BACKTEST_FOLD_BARS=40 npm run validate:strategy
+```
+
+Methodology:
+- A **fresh agent + ledger per fold**, warmed up only on bars *before* the fold
+  (no look-ahead).
+- Each fold is evaluated out-of-sample; realized fill PnL is collected net of
+  slippage + charges.
+- `VALIDATED` requires **≥ 30 OOS trades**, positive net expectancy AND return,
+  and the edge present in **> 50% of folds** (not one lucky window).
+
+> The default intraday strategy may produce few/zero trades on **daily** bars —
+> validate on the interval the strategy actually trades. And a green verdict is
+> **necessary, not sufficient**: the universe is current-listed names only
+> (survivorship bias), and historical bars can't capture gaps, circuit limits, or
+> thin liquidity.

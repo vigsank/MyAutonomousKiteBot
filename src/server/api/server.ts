@@ -96,6 +96,8 @@ export function startUiServer(
   app.get('/api/candle-intervals', (_req, res) =>
     res.json(queries.candleIntervals()),
   );
+  app.get('/api/llm-traces', (_req, res) => res.json(queries.llmTraces()));
+
   app.get('/api/healthz', (_req, res) => res.json({ ok: true }));
 
   /* ------------------- Static client (built) -------------------------- */

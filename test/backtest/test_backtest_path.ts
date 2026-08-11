@@ -42,13 +42,13 @@ async function main() {
 
   const ledger = new Ledger('/tmp/bt-test');
   ledger.runMigrations();
-  const notify = new NotificationService(ledger.raw(), config);
+  const notify = new NotificationService(ledger, config);
   const risk = new RiskEngine(config, ledger);
   const trader = new PaperTrader(config, ledger);
   const llm = new LlmManager(config.llm);
   const telegram = new TelegramHITL(config, llm, notify);
-  const news = new NewsSentimentEngine(config, llm);
-  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config));
+  const news = new NewsSentimentEngine(config, llm, ledger);
+  const optionsTrader = new OptionsTrader(config, new OptionsEngine(config), ledger, risk);
   const agent = new MarketAgent(config, new MockStreamer() as any, ledger, risk, trader, telegram, news, notify, optionsTrader);
 
   // Generate an oscillating candle series.
