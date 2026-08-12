@@ -1,4 +1,3 @@
-import { KiteConnect, KiteTicker } from 'kiteconnect';
 import { AppConfig } from './AppConfig';
 import { logger } from './Logger';
 import { HistoricalDataProvider, LiveDataProvider } from './MarketDataProvider';
@@ -9,6 +8,35 @@ import {
   Segment,
   Tick,
 } from './types';
+
+/**
+ * Resolve the Kite SDK classes.
+ *
+ * When PAPER_TRADING=true, use the local kite-paper-node mock (drop-in
+ * replacement) instead of the real kiteconnect SDK. The mock exposes the
+ * same API surface (MockKiteConnect/MockKiteTicker extend the real classes).
+ *
+ * `kite-paper-node` is used locally (not yet published to npm) via a
+ * relative require to its compiled `dist/`. Build it once with:
+ *   cd kite-paper-node && npm run build
+ */
+function resolveKiteSdk(): {
+  KiteConnect: new (opts: any) => any;
+  KiteTicker: new (opts: any) => any;
+} {
+  if (process.env.PAPER_TRADING === 'true') {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mock = require('../../kite-paper-node/dist');
+    return {
+      KiteConnect: mock.KiteConnect ?? mock.MockKiteConnect,
+      KiteTicker: mock.KiteTicker ?? mock.MockKiteTicker,
+    };
+  }
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('kiteconnect');
+}
+
+const { KiteConnect, KiteTicker } = resolveKiteSdk();
 
 /**
  * Wraps the Zerodha Kite Connect REST SDK and KiteTicker websocket.
@@ -25,8 +53,8 @@ import {
  */
 export class KiteStreamer implements HistoricalDataProvider, LiveDataProvider {
   readonly name = 'kite';
-  private kite: KiteConnect;
-  private ticker: KiteTicker | null = null;
+  private kite: InstanceType<typeof KiteConnect>;
+  private ticker: InstanceType<typeof KiteTicker> | null = null;
   private instruments: Map<number, Instrument> = new Map();
 
   constructor(private readonly config: AppConfig) {
@@ -156,7 +184,7 @@ export class KiteStreamer implements HistoricalDataProvider, LiveDataProvider {
       average_price: q.average_price,
       oi: q.oi,
       ohlc: q.ohlc,
-      change: q.change,
+      change: q.net_change, // real Kite returns `net_change`, not `change`
     };
   }
 
