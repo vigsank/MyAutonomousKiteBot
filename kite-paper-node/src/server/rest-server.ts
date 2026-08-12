@@ -60,6 +60,14 @@ export class RestServer {
     res.json({ status: 'success', data });
   }
 
+  /** Parse a query date param, falling back to a numeric timestamp. */
+  private parseDate(value: any, fallback: number): Date {
+    if (value === undefined || value === null || value === '') return new Date(fallback);
+    const n = Number(value);
+    if (Number.isFinite(n)) return new Date(n);
+    return new Date(String(value));
+  }
+
   private setupRoutes(): void {
     const { deps } = this;
 
@@ -113,15 +121,9 @@ export class RestServer {
 
     // /instruments/*
     this.app.get('/instruments', (_req: any, res: any) => this.ok(res, deps.pool.getInstruments()));
-    this.app.get('/instruments/:exchange', (req: any, res: any) =>
-      this.ok(
-        res,
-        deps.pool.getInstruments().filter((i) => i.exchange === req.params.exchange.toUpperCase())
-      )
-    );
     this.app.get('/instruments/historical/:token/:interval', (req: any, res: any) => {
-      const from = new Date(String(req.query.from ?? Date.now() - 24 * 3600_000));
-      const to = new Date(String(req.query.to ?? Date.now()));
+      const from = this.parseDate(req.query.from, Date.now() - 24 * 3600_000);
+      const to = this.parseDate(req.query.to, Date.now());
       const data = deps.historicalService.getHistoricalData(
         Number(req.params.token),
         req.params.interval,
@@ -130,6 +132,12 @@ export class RestServer {
       );
       this.ok(res, data);
     });
+    this.app.get('/instruments/:exchange', (req: any, res: any) =>
+      this.ok(
+        res,
+        deps.pool.getInstruments().filter((i) => i.exchange === req.params.exchange.toUpperCase())
+      )
+    );
 
     // /quote, /ohlc, /ltp — JIT from generator pool.
     const parseInstruments = (q: any): string[] =>
@@ -169,6 +177,7 @@ export class RestServer {
       if (err instanceof KiteError) {
         res.status(err.httpStatus).json(err.toBody());
       } else {
+        this.log('error', err?.message ?? 'Internal error');
         res.status(500).json({
           status: 'error',
           message: err?.message ?? 'Internal error',

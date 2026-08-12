@@ -468,6 +468,7 @@ function runCombo(
   config.strategy.tradeCooldownMinutes = 0;
   config.strategy.disableTimeFilter = true;
   config.strategy.analystEnabled = false;
+  config.strategy.regimeAdaptive = false;
 
   const ledger = new Ledger(':memory:');
   ledger.runMigrations();

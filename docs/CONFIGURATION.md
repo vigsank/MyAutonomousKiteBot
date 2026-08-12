@@ -782,6 +782,9 @@ Run `npm run dev` and watch the startup log. Then confirm:
 | `TARGET_ATR_MULTIPLIER` | `3` | Target distance = ATR * this multiple |
 | `REGIME_GATING_ENABLED` | `false` | Only trade when regime suits the strategy mode |
 | `MIN_SIGNAL_CONFIDENCE` | `0` | Evidence-based confidence floor (0 = disabled) |
+| `BREAKEVEN_ATR_MULT` | `1` | Move the stop to breakeven once price moves favorably by this many ATRs |
+| `DEEP_OVERSOLD_BUFFER` | `10` | RSI buffer below the entry threshold that overrides the ADX regime filter |
+| `REGIME_ADAPTIVE` | `true` | Auto-select the strategy mode from the detected market regime (replaces single-mode) |
 
 ### LLM analyst verdict
 | Env | Default | Meaning |

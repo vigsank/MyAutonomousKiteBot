@@ -11,7 +11,7 @@ export class OHLCAggregator {
   private unsubscribe: () => void;
 
   constructor(
-    private bus: TickEventBus,
+    bus: TickEventBus,
     private historyBuffer: TickHistoryBuffer
   ) {
     this.unsubscribe = bus.subscribe((tick) => this.onTick(tick));

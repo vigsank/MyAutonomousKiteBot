@@ -9,7 +9,6 @@
 import type { Instrument, Tick } from '../types';
 import { TickEventBus } from './tick-event-bus';
 import { RandomWalkGenerator, type RandomWalkGeneratorOptions } from './random-walk-generator';
-import { createPRNG } from '../utils/random';
 
 // Lazy-load the bundled instrument master.
 let instrumentMaster: Instrument[] | null = null;

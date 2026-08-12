@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { RandomWalkGenerator } from '../../src/market/random-walk-generator';
 
 describe('RandomWalkGenerator', () => {

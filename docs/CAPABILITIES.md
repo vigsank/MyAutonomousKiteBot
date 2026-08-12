@@ -158,6 +158,17 @@ See `docs/CONFIGURATION.md` for full configuration and
   confidence from indicator/sentiment agreement must meet a minimum.
 - **Minimum reward:risk** (`MIN_RISK_REWARD`): every entry must have target /
   stop risk-reward at or above the configured minimum.
+- **Breakeven stop** (`BREAKEVEN_ATR_MULT`): once a position moves favorably by
+  the configured ATR multiple, the stop ratchets to breakeven so a winner can't
+  turn into a loss.
+- **Deep-oversold regime override** (`DEEP_OVERSOLD_BUFFER`): a deeply oversold
+  RSI can enter even when ADX says the market is trending (a deep mean-reversion
+  bounce can work in a mild trend).
+- **Regime-adaptive core** (`REGIME_ADAPTIVE`, default on): instead of a single
+  fixed mode, the bot detects the market regime each cycle and auto-selects the
+  strategy that fits — mean-reversion in ranging markets, pullback-in-uptrend in
+  trending-up markets, and no entries in downtrends/volatile regimes. This
+  replaces the old single-mode selection.
 
 ## 7. Realistic paper fills (net of costs)
 

@@ -1,11 +1,11 @@
-import { MockEngine } from '../../src/mock-engine';
+import { describe, it, expect } from '@jest/globals';
 import { BinaryPacker } from '../../src/server/binary-packer';
-import { PACKET_LTP_SIZE, PACKET_QUOTE_SIZE, PACKET_FULL_SIZE } from '../../src/protocol/constants';
 
 describe('Binary Packer', () => {
   const packer = new BinaryPacker();
 
   const tick = {
+    tradable: true,
     mode: 'full' as const,
     instrument_token: 738561,
     last_price: 2450.5,
@@ -22,29 +22,30 @@ describe('Binary Packer', () => {
     ask: 2451.0,
     bid_quantity: 1500,
     ask_quantity: 1200,
-    depth: [],
+    depth: { buy: [], sell: [] },
   };
 
   it('produces LTP packets of the documented size', () => {
-    const buf = packer.pack(tick, 'ltp');
-    expect(buf.length).toBe(PACKET_LTP_SIZE);
+    const buf = packer.pack([tick], 'ltp');
+    expect(buf.length).toBe(2 + 2 + 8); // framing + size + 8-byte LTP packet
   });
 
   it('produces Quote packets of the documented size', () => {
-    const buf = packer.pack(tick, 'quote');
-    expect(buf.length).toBe(PACKET_QUOTE_SIZE);
+    const buf = packer.pack([tick], 'quote');
+    expect(buf.length).toBe(2 + 2 + 44); // framing + size + 44-byte quote
   });
 
   it('produces Full packets of the documented size', () => {
-    const buf = packer.pack(tick, 'full');
-    expect(buf.length).toBe(PACKET_FULL_SIZE);
+    const buf = packer.pack([tick], 'full');
+    expect(buf.length).toBe(2 + 2 + 184); // framing + size + 184-byte full
   });
 
   it('round-trips token and price through unpack', () => {
-    const buf = packer.pack(tick, 'ltp');
+    const buf = packer.pack([tick], 'ltp');
     const decoded = packer.unpack(buf);
-    expect(decoded.instrument_token).toBe(738561);
-    expect(decoded.last_price).toBeCloseTo(2450.5, 1);
-    expect(decoded.mode).toBe('ltp');
+    expect(decoded.length).toBe(1);
+    expect(decoded[0].instrument_token).toBe(738561);
+    expect(decoded[0].last_price).toBeCloseTo(2450.5, 1);
+    expect(decoded[0].mode).toBe('ltp');
   });
 });

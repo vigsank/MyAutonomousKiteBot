@@ -19,11 +19,8 @@ export interface HistoricalReplayOptions {
 export class HistoricalReplayEngine {
   private running = false;
   private stopped = false;
-  private unsubscribe: () => void;
 
-  constructor(private bus: TickEventBus) {
-    this.unsubscribe = () => {};
-  }
+  constructor(private bus: TickEventBus) {}
 
   /** Parse a CSV string into tick records. */
   static parseCSV(csv: string): TickRecord[] {

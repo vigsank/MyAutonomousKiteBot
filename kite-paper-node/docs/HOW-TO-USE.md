@@ -136,18 +136,20 @@ main();
 
 | Method | Notes |
 |--------|-------|
-| `generateSession(requestToken)` | Returns a mock access token |
+| `generateSession(requestToken, apiSecret)` | Returns full `SessionData` |
 | `setAccessToken(token)` | Accepts any token |
 | `getProfile()` | Static mock profile |
-| `getMargins(segment?)` | Computed from ledger |
+| `getMargins(segment?)` | `{equity?, commodity?}` from ledger |
 | `placeOrder(variety, params)` | All varieties/types/products |
 | `modifyOrder(variety, orderId, params)` | Price/qty/trigger |
 | `cancelOrder(variety, orderId)` | Open + trigger-pending only |
-| `getOrders()` / `getOrderHistory(id)` / `getOrderTrades(id)` | Order queries |
-| `getPositions()` / `getHoldings()` | Portfolio |
+| `getOrders()` / `getOrderHistory(id)` / `getOrderTrades(id)` / `getTrades()` | Order queries |
+| `getPositions()` / `getHoldings()` | Portfolio (`{net, day}`) |
+| `convertPosition(params)` | Change product type |
 | `getInstruments(exchange?)` | From instrument master |
-| `getHistoricalData(token, interval, from, to)` | JIT candles |
-| `getQuote(ids)` / `getOHLC(ids)` / `getLTP(ids)` | JIT market data |
+| `getHistoricalData(token, interval, from, to)` | Returns `HistoricalData[]` objects |
+| `getQuote(ids)` / `getOHLC(ids)` / `getLTP(ids)` | JIT market data (accepts string or array) |
+| `orderMargins(orders)` / `orderBasketMargins(orders)` | Margin computation |
 | `placeGTT` / `getGTTs` / `getGTT` / `modifyGTT` / `deleteGTT` | GTT triggers |
 | `getMFOrders` / `getMFHoldings` / `placeMFOrder` / `getMFInstruments` | Stubs (empty/error) |
 

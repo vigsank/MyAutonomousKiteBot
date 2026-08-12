@@ -332,10 +332,14 @@ export class MarketAgent {
       return;
     }
 
-    // Regime gate: only trade when the detected regime suits the strategy mode.
-    if (this.config.strategy.regimeGatingEnabled) {
-      const { regime } = this.classifyRegime(symbol);
-      const mode = this.config.strategy.mode;
+    // Regime-adaptive mode selection: pick the strategy that fits the regime.
+    const regime = this.classifyRegime(symbol).regime;
+    const mode = this.config.strategy.regimeAdaptive
+      ? this.selectModeForRegime(regime)
+      : this.config.strategy.mode;
+
+    // Optional regime gate for a fixed (non-adaptive) mode.
+    if (!this.config.strategy.regimeAdaptive && this.config.strategy.regimeGatingEnabled) {
       const regimeOk =
         mode === 'mean_reversion'
           ? regime === 'ranging'
@@ -352,6 +356,20 @@ export class MarketAgent {
         });
         return;
       }
+    }
+
+    // No strategy fits this regime (e.g. LONG-only bot in a downtrend).
+    if (!mode) {
+      this.ledger.recordSignal({
+        symbol,
+        direction: 'NEUTRAL',
+        rsi: rsiValue,
+        price,
+        reason: `Skipped: no strategy for ${regime} regime`,
+        timestamp: now,
+        exchange: this.exchangeFor(symbol),
+      });
+      return;
     }
 
     // Evidence-based confidence floor.
@@ -391,9 +409,9 @@ export class MarketAgent {
       }
     }
 
-    if (this.config.strategy.mode === 'breakout') {
+    if (mode === 'breakout') {
       this.checkEntryBreakout(symbol, price, sentiment, now);
-    } else if (this.config.strategy.mode === 'pullback_trend') {
+    } else if (mode === 'pullback_trend') {
       this.checkEntryPullback(symbol, price, rsiValue, sentiment, now);
     } else {
       this.checkEntry(symbol, price, rsiValue, sentiment, now);
@@ -422,6 +440,24 @@ export class MarketAgent {
     if (trending && upTrend) return { regime: 'trending_up', confidence: highlyTrending ? 0.8 : 0.6 };
     if (trending && downTrend) return { regime: 'trending_down', confidence: highlyTrending ? 0.8 : 0.6 };
     return { regime: 'ranging', confidence: 0.5 };
+  }
+
+  /** Map a detected market regime to the strategy mode that fits it. */
+  private selectModeForRegime(
+    regime: 'trending_up' | 'trending_down' | 'ranging' | 'volatile',
+  ): 'mean_reversion' | 'pullback_trend' | 'breakout' | null {
+    switch (regime) {
+      case 'ranging':
+        return 'mean_reversion';
+      case 'trending_up':
+        return 'pullback_trend';
+      case 'trending_down':
+        return null; // LONG-only bot: don't buy into a downtrend
+      case 'volatile':
+        return null; // skip high-volatility regimes
+      default:
+        return 'mean_reversion';
+    }
   }
 
   /** Evidence-based confidence from indicator/sentiment agreement (0-1). */
@@ -499,9 +535,11 @@ export class MarketAgent {
       return;
     }
 
-    // 6. ADX regime filter — skip trending markets.
+    // 6. ADX regime filter — skip trending markets, unless RSI is deeply oversold
+    //    (a deep mean-reversion bounce can work even in a mild trend).
     const adx = this.adxValues.get(symbol);
-    if (adx !== undefined && adx >= cfg.adxTrendThreshold) {
+    const deepOversold = rsiValue < cfg.rsiEntryThreshold - cfg.deepOversoldBuffer;
+    if (adx !== undefined && adx >= cfg.adxTrendThreshold && !deepOversold) {
       reasons.push(`ADX ${adx.toFixed(1)} trending (>${cfg.adxTrendThreshold})`);
       logger.debug({ symbol, adx }, 'Skipping: trending market');
       this.ledger.recordSignal({
@@ -795,6 +833,17 @@ export class MarketAgent {
     const atr = this.atrValues.get(symbol);
     const stop = this.risk.stopLossPrice(position, atr);
 
+    // Breakeven stop: once price moves favorably by breakevenAtrMult*ATR, ratchet
+    // the stop to breakeven so a winner can't turn into a loss.
+    let effectiveStop = stop;
+    if (atr && atr > 0) {
+      const favorable =
+        position.direction === 'LONG' ? price - position.avgPrice : position.avgPrice - price;
+      if (favorable >= atr * cfg.breakevenAtrMult) {
+        effectiveStop = position.avgPrice;
+      }
+    }
+
     let exitReason: string | null = null;
 
     // ATR-based take-profit: lock in gains instead of waiting for RSI to reverse.
@@ -814,10 +863,10 @@ export class MarketAgent {
 
     if (rsiValue >= cfg.rsiExitThreshold) {
       exitReason = `RSI ${rsiValue.toFixed(1)} overbought (>${cfg.rsiExitThreshold})`;
-    } else if (position.direction === 'LONG' && price <= stop) {
-      exitReason = `Stop-loss hit (price ${price.toFixed(2)} <= ${stop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
-    } else if (position.direction === 'SHORT' && price >= stop) {
-      exitReason = `Stop-loss hit (price ${price.toFixed(2)} >= ${stop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
+    } else if (position.direction === 'LONG' && price <= effectiveStop) {
+      exitReason = `Stop-loss hit (price ${price.toFixed(2)} <= ${effectiveStop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
+    } else if (position.direction === 'SHORT' && price >= effectiveStop) {
+      exitReason = `Stop-loss hit (price ${price.toFixed(2)} >= ${effectiveStop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
     } else if (cfg.mode === 'pullback_trend' && position.direction === 'LONG') {
       // Trend break: price fell back below the fast SMA.
       const fast = this.smaFastValues.get(symbol);

@@ -51,10 +51,10 @@ export class BinaryPacker {
     const packets: Buffer[] = ticks.map((t) => this.packPacket(t, mode));
     const total = 2 + packets.reduce((sum, p) => sum + 2 + p.length, 0);
     const msg = Buffer.alloc(total);
-    writeUInt32BE(msg, packets.length, 0);
+    msg.writeUInt16BE(packets.length, 0);
     let o = 2;
     for (const p of packets) {
-      writeUInt32BE(msg, p.length, o);
+      msg.writeUInt16BE(p.length, o);
       o += 2;
       p.copy(msg, o);
       o += p.length;
@@ -121,6 +121,7 @@ export class BinaryPacker {
     writeUInt32BE(buf, Math.floor((tick.exchange_timestamp?.getTime() ?? 0) / 1000), 60);
 
     // Depth: 10 levels × 12 bytes. First 5 = buy, next 5 = sell.
+    // Each level: [qty:4][price×div:4][orders:2][pad:2].
     const buy = tick.depth?.buy ?? [];
     const sell = tick.depth?.sell ?? [];
     let o = 64;
@@ -128,14 +129,14 @@ export class BinaryPacker {
       const level = buy[i] ?? { quantity: 0, price: 0, orders: 0 };
       writeUInt32BE(buf, level.quantity, o);
       writePrice(buf, level.price, divisor, o + 4);
-      writeUInt32BE(buf, level.orders, o + 8);
+      buf.writeUInt16BE(level.orders, o + 8);
       o += 12;
     }
     for (let i = 0; i < 5; i++) {
       const level = sell[i] ?? { quantity: 0, price: 0, orders: 0 };
       writeUInt32BE(buf, level.quantity, o);
       writePrice(buf, level.price, divisor, o + 4);
-      writeUInt32BE(buf, level.orders, o + 8);
+      buf.writeUInt16BE(level.orders, o + 8);
       o += 12;
     }
     return buf;
@@ -146,11 +147,11 @@ export class BinaryPacker {
    * `parseBinary`). Used for tests and round-trip validation.
    */
   unpack(buf: Buffer): Tick[] {
-    const numPackets = buf.readUInt32BE(0);
+    const numPackets = buf.readUInt16BE(0);
     const ticks: Tick[] = [];
     let j = 2;
     for (let i = 0; i < numPackets; i++) {
-      const size = buf.readUInt32BE(j);
+      const size = buf.readUInt16BE(j);
       const packet = buf.subarray(j + 2, j + 2 + size);
       ticks.push(this.unpackPacket(packet));
       j += 2 + size;
@@ -211,7 +212,7 @@ export class BinaryPacker {
           const level = {
             quantity: depth.readUInt32BE(s),
             price: depth.readUInt32BE(s + 4) / divisor,
-            orders: depth.readUInt32BE(s + 8),
+            orders: depth.readUInt16BE(s + 8),
           };
           (i < 5 ? tick.depth.buy : tick.depth.sell).push(level);
         }

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from '@jest/globals';
 import { MockKiteConnect, MockKiteTicker, mockEngine } from '../../src/index';
 
 describe('SDK Mock (In-Process Mode)', () => {
@@ -32,7 +33,7 @@ describe('SDK Mock (In-Process Mode)', () => {
     expect(orders[0].status).toBe('COMPLETE');
 
     const positions = await kite.getPositions();
-    expect(positions[0].quantity).toBe(10);
+    expect(positions.net[0].quantity).toBe(10);
   });
 
   it('streams ticks through the ticker facade', async () => {

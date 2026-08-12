@@ -100,6 +100,12 @@ export interface AppConfig {
     regimeGatingEnabled: boolean;
     /** Minimum evidence-based signal confidence (0-1) to propose a trade (0 = disabled). */
     minSignalConfidence: number;
+    /** Move the stop to breakeven once price moves favorably by this many ATRs. */
+    breakevenAtrMult: number;
+    /** RSI buffer below the entry threshold that overrides the ADX regime filter. */
+    deepOversoldBuffer: number;
+    /** Auto-select the strategy mode from the detected market regime (replaces single-mode). */
+    regimeAdaptive: boolean;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
@@ -284,6 +290,9 @@ export function loadConfig(): AppConfig {
       targetAtrMultiplier: num('TARGET_ATR_MULTIPLIER', 3),
       regimeGatingEnabled: str('REGIME_GATING_ENABLED') === 'true',
       minSignalConfidence: num('MIN_SIGNAL_CONFIDENCE', 0),
+      breakevenAtrMult: num('BREAKEVEN_ATR_MULT', 1),
+      deepOversoldBuffer: num('DEEP_OVERSOLD_BUFFER', 10),
+      regimeAdaptive: str('REGIME_ADAPTIVE') !== 'false',
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,

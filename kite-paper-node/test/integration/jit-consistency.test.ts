@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { MockEngine } from '../../src/mock-engine';
 import { MockKiteTicker } from '../../src/mock-kite-ticker';
 import { MockKiteConnect } from '../../src/mock-kite-connect';
@@ -49,8 +50,10 @@ describe('JIT Data Consistency', () => {
     const to = new Date().toISOString();
     const hist = await kite.getHistoricalData(738561, 'minute', from, to);
 
-    expect(hist.candles.length).toBeGreaterThan(0);
-    expect(hist.candles[0].length).toBe(7); // [ts, o, h, l, c, v, oi]
+    expect(hist.length).toBeGreaterThan(0);
+    expect(hist[0]).toHaveProperty('date');
+    expect(hist[0]).toHaveProperty('close');
+    expect(hist[0]).toHaveProperty('volume');
   });
 
   it('adds a symbol at runtime and immediately serves data', async () => {

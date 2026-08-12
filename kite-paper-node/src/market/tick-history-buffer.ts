@@ -40,7 +40,7 @@ export class TickHistoryBuffer {
     const fromMs = from.getTime();
     const toMs = to.getTime();
     return (this.buffers.get(token) ?? []).filter((t) => {
-      const ts = t.exchange_timestamp.getTime();
+      const ts = t.exchange_timestamp?.getTime() ?? 0;
       return ts >= fromMs && ts <= toMs;
     });
   }
@@ -62,8 +62,8 @@ export class TickHistoryBuffer {
     const buckets = new Map<number, Tick[]>();
 
     for (const tick of ticks) {
-      const bucketStart =
-        Math.floor(tick.exchange_timestamp.getTime() / intervalMs) * intervalMs;
+      const ts = tick.exchange_timestamp?.getTime() ?? 0;
+      const bucketStart = Math.floor(ts / intervalMs) * intervalMs;
       if (!buckets.has(bucketStart)) buckets.set(bucketStart, []);
       buckets.get(bucketStart)!.push(tick);
     }
@@ -82,7 +82,7 @@ export class TickHistoryBuffer {
         high = Math.max(high, t.ohlc.high);
         low = Math.min(low, t.ohlc.low);
         volume += t.volume_traded;
-        oi = t.open_interest ?? oi;
+        oi = t.oi ?? oi;
       }
       candles.push([
         new Date(start).toISOString(),
