@@ -803,3 +803,4 @@ Run `npm run dev` and watch the startup log. Then confirm:
 | `BACKTEST_DAYS` | `400` | Lookback window |
 | `BACKTEST_WARMUP_BARS` | `60` | Leading warm-up bars (excluded from eval) |
 | `BACKTEST_FOLD_BARS` | `50` | OOS fold size |
+| `BACKTEST_MAX_ALLOCATION` | `20000` | Per-trade notional cap (concentration guard) |

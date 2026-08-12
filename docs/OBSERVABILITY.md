@@ -56,6 +56,21 @@ The LLM audit reports surfaced correctness/safety fixes that have been applied:
 - **Realistic paper fills** (slippage + NSE charges) so backtests are net of cost.
 - **LLM JSON validation + prompt-injection sanitization** in the sentiment path.
 - **Circuit-breaker state persists** across restarts.
+- **Live last price persisted** (migration `V005` adds `instruments.last_price`),
+  so the RiskEngine's drawdown sees unrealized PnL on open positions instead of
+  treating open risk as zero.
+- **Breakout high fixed:** the prior N-bar high now uses the full lookback window
+  (previously it excluded the most recent closed bar, mis-setting the threshold).
+- **Stop distance unified:** position sizing and R:R now use the same stop as the
+  `RiskEngine` (min of ATR stop and the full fixed % stop), so positions are sized
+  to the actual enforced risk.
+- **ATR-based take-profit:** exits now lock in gains at `avgPrice ± ATR ×
+  targetAtrMultiplier` instead of always waiting for RSI to reverse.
+- **Per-symbol concentration cap:** the RiskEngine now blocks an `ADD` that would
+  push a position's total notional past `maxTradeAllocation`, so repeated
+  mean-reversion entries can't build a single oversized position.
+
+
 
 These are reflected in `docs/CAPABILITIES.md` and the config knobs in
 `docs/CONFIGURATION.md`.

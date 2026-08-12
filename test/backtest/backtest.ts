@@ -76,7 +76,7 @@ async function runBacktest(): Promise<void> {
   const volumeMult = numEnv('BACKTEST_VOLUME_MULT', 1.0);
 
   config.risk.availableCapital = capital;
-  config.risk.maxTradeAllocation = Number.MAX_SAFE_INTEGER;
+  config.risk.maxTradeAllocation = numEnv('BACKTEST_MAX_ALLOCATION', 20000);
   config.risk.autoTradeTicketThreshold = Number.MAX_SAFE_INTEGER; // auto-execute all
   config.strategy.volumeConfirmMultiplier = volumeMult;
   // Time-of-day filter uses historical candle times; disable for backtest clarity.
@@ -178,6 +178,9 @@ async function runBacktest(): Promise<void> {
     for (let i = warmupBars; i < candles.length; i++) {
       agent.onCandle(sym.tradingsymbol, candles[i], candles[i].date);
     }
+
+    // Drain the async trade-queue BEFORE force-closing so queued opens exist.
+    await agent.flush();
 
     // Force-close any open position at the last close.
     const pos = ledger.getPosition(sym.tradingsymbol);

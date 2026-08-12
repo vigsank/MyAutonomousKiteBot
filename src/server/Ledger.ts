@@ -294,6 +294,14 @@ export class Ledger {
       });
   }
 
+  /** Persist the latest trade price for an instrument (used by drawdown). */
+  updateLastPrice(token: number, price: number): void {
+    if (!Number.isFinite(price) || price <= 0) return;
+    this.db
+      .prepare(`UPDATE instruments SET last_price = ? WHERE token = ?`)
+      .run(price, token);
+  }
+
   currentDrawdown(): number {
     const today = todayIST();
     const startUTC = new Date(`${today}T00:00:00+05:30`).toISOString();
@@ -309,11 +317,9 @@ export class Ledger {
     // so a large losing open position is counted before it is closed.
     const open = this.db
       .prepare(
-        `SELECT p.quantity, p.avg_price, p.direction,
-                (SELECT last_price FROM ticks t
-                  WHERE t.instrument_id = p.instrument_id
-                  ORDER BY t.timestamp DESC LIMIT 1) AS last_price
+        `SELECT p.quantity, p.avg_price, p.direction, i.last_price AS last_price
            FROM positions p
+           JOIN instruments i ON i.instrument_id = p.instrument_id
           WHERE p.status = 'OPEN'`,
       )
       .all() as Array<{
@@ -325,7 +331,7 @@ export class Ledger {
 
     let unrealizedLoss = 0;
     for (const p of open) {
-      const last = p.last_price ?? p.avg_price;
+      const last = p.last_price && p.last_price > 0 ? p.last_price : p.avg_price;
       const pnl =
         p.direction === 'LONG'
           ? (last - p.avg_price) * p.quantity

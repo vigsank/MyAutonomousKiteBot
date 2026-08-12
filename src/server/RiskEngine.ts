@@ -34,6 +34,21 @@ export class RiskEngine {
       );
     }
 
+    // Per-symbol concentration cap: an add must not push the position's total
+    // notional past the per-trade allocation limit (repeated adds can otherwise
+    // build a single oversized position).
+    const existing = this.ledger.getPosition(trade.symbol, trade.exchange);
+    if (existing && existing.direction === trade.direction) {
+      const newNotional =
+        existing.quantity * existing.avgPrice + trade.quantity * trade.entryPrice;
+      if (newNotional > this.config.risk.maxTradeAllocation) {
+        failures.push(
+          `Position ${trade.symbol} would exceed max allocation ` +
+            `${this.config.risk.maxTradeAllocation} (${newNotional.toFixed(0)}).`,
+        );
+      }
+    }
+
     // Daily drawdown cap using realised + unrealised PnL.
     const drawdown = this.ledger.currentDrawdown();
     if (drawdown > this.config.risk.maxDailyDrawdown) {

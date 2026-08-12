@@ -161,6 +161,9 @@ export class MarketAgent {
 
       const price = tick.last_price;
       this.lastPrices.set(symbol, price);
+      // Persist the latest price so the RiskEngine's drawdown (which includes
+      // unrealized PnL on open positions) actually sees live prices.
+      this.ledger.updateLastPrice(token, price);
 
       // Accumulate OHLC bar. Indicators (RSI/SMA/ADX/ATR) are updated on bar
       // close in finalizeBar — never on raw ticks — to avoid signal noise.
@@ -374,7 +377,7 @@ export class MarketAgent {
       const atr = this.atrValues.get(symbol) ?? 0;
       const targetDist = atr * this.config.strategy.targetAtrMultiplier;
       const rr = stopDist > 0 ? targetDist / stopDist : 0;
-      if (rr < this.config.strategy.minRiskReward) {
+      if (rr + 1e-9 < this.config.strategy.minRiskReward) {
         this.ledger.recordSignal({
           symbol,
           direction: 'NEUTRAL',
@@ -453,7 +456,10 @@ export class MarketAgent {
   private stopDistance(symbol: string, price: number): number {
     const cfg = this.config.strategy;
     const atr = this.atrValues.get(symbol) ?? 0;
-    return Math.max(atr * cfg.atrStopMultiplier, price * (cfg.stopLossPercent / 100) * 0.5);
+    // Mirror RiskEngine.stopLossPrice so sizing/R:R use the actual enforced stop.
+    const atrDist = atr * cfg.atrStopMultiplier;
+    const maxDist = price * (cfg.stopLossPercent / 100);
+    return Math.min(atrDist, maxDist);
   }
 
   /**
@@ -709,7 +715,7 @@ export class MarketAgent {
     // 5. Breakout: price must exceed the prior N-bar high (excluding current).
     const highs = this.breakoutHighs.get(symbol) ?? [];
     if (highs.length < cfg.breakoutLookback) return; // not enough history
-    const priorHigh = Math.max(...highs.slice(0, -1));
+    const priorHigh = Math.max(...highs);
     if (price <= priorHigh) {
       reasons.push(`No breakout (price ${price.toFixed(0)} <= prior high ${priorHigh.toFixed(0)})`);
       return;
@@ -791,6 +797,21 @@ export class MarketAgent {
 
     let exitReason: string | null = null;
 
+    // ATR-based take-profit: lock in gains instead of waiting for RSI to reverse.
+    if (atr && atr > 0) {
+      const targetDist = atr * cfg.targetAtrMultiplier;
+      const target =
+        position.direction === 'LONG'
+          ? position.avgPrice + targetDist
+          : position.avgPrice - targetDist;
+      if (
+        (position.direction === 'LONG' && price >= target) ||
+        (position.direction === 'SHORT' && price <= target)
+      ) {
+        exitReason = `Target hit (price ${price.toFixed(2)} ${position.direction === 'LONG' ? '>=' : '<='} ${target.toFixed(2)})`;
+      }
+    }
+
     if (rsiValue >= cfg.rsiExitThreshold) {
       exitReason = `RSI ${rsiValue.toFixed(1)} overbought (>${cfg.rsiExitThreshold})`;
     } else if (position.direction === 'LONG' && price <= stop) {
@@ -855,19 +876,22 @@ export class MarketAgent {
     return current >= avg * this.config.strategy.volumeConfirmMultiplier;
   }
 
-  /** Volatility-based position sizing: keep risk per trade within budget. */
+  /** Risk-parity position sizing, capped at the per-trade allocation limit. */
   private sizedQuantity(symbol: string, watchQuantity: number, price: number): number {
     const cfg = this.config.strategy;
     const budget = (this.config.risk.availableCapital * cfg.riskPerTradePercent) / 100;
-    const atr = this.atrValues.get(symbol) ?? 0;
-    const stopDist = Math.max(atr * cfg.atrStopMultiplier, price * (cfg.stopLossPercent / 100) * 0.5);
+    const stopDist = this.stopDistance(symbol, price); // unified with RiskEngine
     const riskPerShare = stopDist;
     if (riskPerShare <= 0) return watchQuantity;
 
     const riskSized = Math.floor(budget / riskPerShare);
     if (riskSized <= 0) return 0;
-    // Risk-parity size; RiskEngine enforces max allocation separately.
-    return Math.max(1, riskSized);
+    // Concentration guard: never exceed the per-trade allocation cap (by notional).
+    const allocCap =
+      this.config.risk.maxTradeAllocation > 0
+        ? Math.floor(this.config.risk.maxTradeAllocation / price)
+        : Number.MAX_SAFE_INTEGER;
+    return Math.max(1, Math.min(riskSized, allocCap));
   }
 
   /** Limit how many positions can be opened at the same time (correlation). */

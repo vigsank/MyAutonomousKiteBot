@@ -100,7 +100,7 @@ async function main(): Promise<void> {
   const capital = numEnv('BACKTEST_CAPITAL', DEFAULT_CAPITAL);
 
   config.risk.availableCapital = capital;
-  config.risk.maxTradeAllocation = Number.MAX_SAFE_INTEGER;
+  config.risk.maxTradeAllocation = numEnv('BACKTEST_MAX_ALLOCATION', 20000);
   config.risk.autoTradeTicketThreshold = Number.MAX_SAFE_INTEGER;
   config.strategy.skipFirstMinutes = 0;
   config.strategy.skipLastMinutes = 0;
