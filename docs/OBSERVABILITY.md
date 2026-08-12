@@ -16,6 +16,7 @@ codebase and write Markdown reports to `src/server/audit-report/`:
 | ------- | ---- | -------------- |
 | `npm run audit:code` | `run_code_audit.mjs` | **Architecture** (glm) + **guardrails** (gemma), in parallel |
 | `npm run audit:strategy` | `run_strategy_audit.mjs` | **Strategy / market-logic** audit (rate, grade, profitability plan) |
+| `npm run audit:profit` | `run_strategy_profit_audit.mjs` | **Profitability** audit of the whole project as an expert trader — feasibility of a ₹5k/₹10k → ₹1L/month goal, "no monthly loss" guardrails, growth plan |
 
 Each prompt asks for a strict, evidence-based report with per-finding severity,
 file:line, evidence, impact, and a prioritized action list. Models are
@@ -69,6 +70,12 @@ The LLM audit reports surfaced correctness/safety fixes that have been applied:
 - **Per-symbol concentration cap:** the RiskEngine now blocks an `ADD` that would
   push a position's total notional past `maxTradeAllocation`, so repeated
   mean-reversion entries can't build a single oversized position.
+- **Backtest correctness:** auto-trades now execute synchronously (only HITL /
+  analyst-gated trades are queued), so positions are visible during the
+  synchronous backtest loop — previously the async queue made backtests see
+  almost no trades. The LLM analyst is also disabled in backtest/walk-forward so
+  they measure the code strategy edge, not live LLM judgment.
+
 
 
 

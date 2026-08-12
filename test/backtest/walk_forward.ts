@@ -105,6 +105,8 @@ async function main(): Promise<void> {
   config.strategy.skipFirstMinutes = 0;
   config.strategy.skipLastMinutes = 0;
   config.strategy.disableTimeFilter = true;
+  // Backtests measure the code strategy edge — never call the live LLM analyst.
+  config.strategy.analystEnabled = false;
   // Validation should measure the raw signal edge, so disable the optional gates.
   config.strategy.regimeGatingEnabled = false;
   config.strategy.minSignalConfidence = 0;

@@ -22,7 +22,8 @@
     "mock:ui": "ts-node test/backtest/mock_ui.ts",
     "validate:strategy": "ts-node test/backtest/walk_forward.ts",
     "audit:code": "node run_code_audit.mjs",
-    "audit:strategy": "node run_strategy_audit.mjs"
+    "audit:strategy": "node run_strategy_audit.mjs",
+    "audit:profit": "node run_strategy_profit_audit.mjs"
   },
   "keywords": [
     "zerodha",

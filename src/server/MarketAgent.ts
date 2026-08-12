@@ -999,12 +999,25 @@ export class MarketAgent {
    * execute in paper mode.
    */
   private proposeTrade(trade: TradeRequest): void {
-    // Enqueue so risk-check + execution are serialized (no race past the gate).
-    this.tradeQueue = this.tradeQueue
-      .then(() => this.executeProposedTrade(trade))
-      .catch((err: any) => {
+    const needsApproval = trade.ticketSize > this.config.risk.autoTradeTicketThreshold;
+    const hasAsyncGate = needsApproval || this.config.strategy.analystEnabled;
+    if (hasAsyncGate) {
+      // Serialize HITL/analyst-gated trades so concurrent proposals can't both
+      // pass the risk gate before either executes.
+      this.tradeQueue = this.tradeQueue
+        .then(() => this.executeProposedTrade(trade))
+        .catch((err: any) => {
+          logger.error({ err: err?.message, symbol: trade.symbol }, 'Trade execution error');
+        });
+    } else {
+      // Auto-trades execute synchronously so positions are visible to subsequent
+      // evaluations (critical for the synchronous backtest path).
+      try {
+        this.executeProposedTrade(trade);
+      } catch (err: any) {
         logger.error({ err: err?.message, symbol: trade.symbol }, 'Trade execution error');
-      });
+      }
+    }
   }
 
   /** Await any pending trade executions (used by backtest/walk-forward harnesses). */

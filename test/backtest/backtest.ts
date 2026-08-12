@@ -83,6 +83,8 @@ async function runBacktest(): Promise<void> {
   config.strategy.skipFirstMinutes = 0;
   config.strategy.skipLastMinutes = 0;
   config.strategy.disableTimeFilter = true;
+  // Backtests measure the code strategy edge — never call the live LLM analyst.
+  config.strategy.analystEnabled = false;
 
   const symbols = config.watchlist.filter((s) => s.enabled);
   if (symbols.length === 0) {
