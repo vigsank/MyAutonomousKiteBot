@@ -7,6 +7,7 @@
  */
 
 import type {
+  EmitTickInput,
   Instrument,
   MockEngineConfig,
   OrderFilter,
@@ -209,7 +210,19 @@ export class MockEngine {
   // Tick control
   // -------------------------------------------------------------------------
 
-  emitTick(tick: Partial<Tick> & { instrument_token: number }): void {
+  /**
+   * Input for emitTick. Accepts optional `bid`/`ask` (testing convenience)
+   * which are folded into the depth book; the emitted Tick itself matches the
+   * real Kite FullTick shape exactly (no top-level bid/ask).
+   */
+  emitTick(tick: EmitTickInput): void {
+    const depth = tick.depth ?? { buy: [], sell: [] };
+    if (tick.bid !== undefined && depth.buy.length === 0) {
+      depth.buy = [{ price: tick.bid, quantity: tick.bid_quantity ?? 0, orders: 1 }];
+    }
+    if (tick.ask !== undefined && depth.sell.length === 0) {
+      depth.sell = [{ price: tick.ask, quantity: tick.ask_quantity ?? 0, orders: 1 }];
+    }
     const full: Tick = {
       tradable: tick.tradable ?? true,
       mode: 'full',
@@ -232,17 +245,13 @@ export class MockEngine {
       oi: tick.oi,
       oi_day_high: tick.oi_day_high,
       oi_day_low: tick.oi_day_low,
-      depth: tick.depth ?? { buy: [], sell: [] },
-      bid: tick.bid ?? tick.last_price ?? 0,
-      ask: tick.ask ?? tick.last_price ?? 0,
-      bid_quantity: tick.bid_quantity ?? 0,
-      ask_quantity: tick.ask_quantity ?? 0,
+      depth,
     };
     this.pool.setLatestTick(full);
     this.bus.publish(full);
   }
 
-  emitTicks(ticks: Array<Partial<Tick> & { instrument_token: number }>): void {
+  emitTicks(ticks: EmitTickInput[]): void {
     for (const t of ticks) this.emitTick(t);
   }
 

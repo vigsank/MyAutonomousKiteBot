@@ -76,11 +76,10 @@ export class HistoricalReplayEngine {
       change: rec.last_price - rec.open,
       last_trade_time: ts,
       exchange_timestamp: ts,
-      bid: rec.bid,
-      ask: rec.ask,
-      bid_quantity: rec.buy_quantity,
-      ask_quantity: rec.sell_quantity,
-      depth: { buy: [], sell: [] },
+      depth: {
+        buy: [{ price: rec.bid, quantity: rec.buy_quantity, orders: 1 }],
+        sell: [{ price: rec.ask, quantity: rec.sell_quantity, orders: 1 }],
+      },
     };
   }
 

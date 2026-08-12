@@ -25,6 +25,7 @@ export interface MockKiteConnectParams {
   access_token?: string;
   root?: string;
   debug?: boolean;
+  timeout?: number;
   engine?: MockEngine;
 }
 
@@ -267,7 +268,7 @@ export class MockKiteConnect extends KiteConnectBaseClass {
 
   async placeGTT(params: any): Promise<{ trigger_id: number }> {
     const trigger = this.engine.gttService.createTrigger(params);
-    return { trigger_id: Number(trigger.trigger_id) };
+    return { trigger_id: trigger.id };
   }
 
   async getGTTs(): Promise<any[]> {

@@ -16,7 +16,8 @@
     "docs/"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:data",
+    "build:data": "node -e \"const fs=require('fs');fs.mkdirSync('dist/data',{recursive:true});fs.copyFileSync('src/data/instruments.json','dist/data/instruments.json');\"",
     "dev": "ts-node src/bin/cli.ts",
     "start": "node dist/bin/cli.js",
     "typecheck": "tsc --noEmit",

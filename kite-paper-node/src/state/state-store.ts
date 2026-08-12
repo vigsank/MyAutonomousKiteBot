@@ -224,11 +224,11 @@ export class StateStore {
   // -------------------------------------------------------------------------
 
   addGTT(trigger: GTTTrigger): void {
-    this.gtt.set(trigger.trigger_id, trigger);
+    this.gtt.set(String(trigger.id), trigger);
   }
 
   getGTT(triggerId: string): GTTTrigger | undefined {
-    return this.gtt.get(triggerId);
+    return this.gtt.get(String(triggerId));
   }
 
   getGTTs(): GTTTrigger[] {
@@ -236,7 +236,7 @@ export class StateStore {
   }
 
   deleteGTT(triggerId: string): boolean {
-    return this.gtt.delete(triggerId);
+    return this.gtt.delete(String(triggerId));
   }
 
   // -------------------------------------------------------------------------
@@ -261,7 +261,7 @@ export class StateStore {
     this.positions = new Map(snapshot.positions.map((p) => [p.instrument_token, p]));
     this.holdings = new Map(snapshot.holdings.map((h) => [h.instrument_token, h]));
     this.margins = JSON.parse(JSON.stringify(snapshot.margins));
-    this.gtt = new Map(snapshot.gtt_triggers.map((g) => [g.trigger_id, g]));
+    this.gtt = new Map(snapshot.gtt_triggers.map((g) => [String(g.id), g]));
     this.ledger = { ...snapshot.ledger };
     this.rebuildIndexes();
   }

@@ -25,6 +25,8 @@ export class QuoteService {
     if (!inst) {
       throw errors.input(`Instrument not found: ${id}`);
     }
+    // Ensure a generator is running so JIT data is available on demand.
+    this.pool.ensureGenerator(inst.instrument_token);
     const tick = this.pool.getLatestTick(inst.instrument_token);
     if (!tick) {
       // No tick generated yet — synthesize one on demand (JIT).

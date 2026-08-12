@@ -27,6 +27,9 @@ export class HistoricalService {
     from: Date,
     to: Date
   ): HistoricalData[] {
+    // Ensure a generator exists so synthetic (Tier 2) candles can be made.
+    this.pool.ensureGenerator(token);
+
     // Tier 1: try the tick history buffer.
     const buffered = this.historyBuffer.getCandles(token, interval, from, to);
     if (buffered.length > 0) {

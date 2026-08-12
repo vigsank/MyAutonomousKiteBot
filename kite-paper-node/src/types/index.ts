@@ -153,7 +153,15 @@ export interface Tick {
   oi_day_high?: number;
   oi_day_low?: number;
   depth?: { buy: Depth[]; sell: Depth[] };
-  // Internal (not part of the real contract) — used for MARKET fill pricing.
+}
+
+/**
+ * Input for `mockEngine.emitTick`. Extends the real Tick with optional
+ * `bid`/`ask` (a testing convenience) that are folded into the depth book;
+ * the emitted Tick itself matches the real Kite FullTick shape exactly.
+ */
+export interface EmitTickInput extends Partial<Tick> {
+  instrument_token: number;
   bid?: number;
   ask?: number;
   bid_quantity?: number;
@@ -242,20 +250,28 @@ export interface PositionsResponse {
 }
 
 export interface HoldingRecord {
-  instrument_token: number;
   tradingsymbol: string;
   exchange: string;
+  instrument_token: number;
   isin: string;
+  product: string;
+  price: number;
   quantity: number;
-  average_price: number;
-  last_price: number;
-  pnl: number;
-  close_price: number;
-  product: Product;
+  used_quantity: number;
   t1_quantity: number;
   realised_quantity: number;
+  authorised_quantity: number;
+  authorised_date: string;
+  opening_quantity: number;
   collateral_quantity: number;
-  collateral_type: string | null;
+  collateral_type: string;
+  discrepancy: boolean;
+  average_price: number;
+  last_price: number;
+  close_price: number;
+  pnl: number;
+  day_change: number;
+  day_change_percentage: number;
 }
 
 export interface UserMargin {
@@ -313,29 +329,55 @@ export type GTTStatus =
   | 'rejected'
   | 'deleted';
 
+export interface GTTOrderResult {
+  account_id: string;
+  exchange: string;
+  tradingsymbol: string;
+  validity: string;
+  product: string;
+  order_type: string;
+  transaction_type: string;
+  quantity: number;
+  price: number;
+  meta: string;
+  timestamp: string;
+  triggered_at: number;
+  order_result: {
+    status: string;
+    order_id: string;
+    rejection_reason: string;
+  };
+}
+
+export interface GTTOrder {
+  exchange: string;
+  tradingsymbol: string;
+  product: string;
+  order_type: string;
+  transaction_type: string;
+  quantity: number;
+  price: number;
+  result: null | GTTOrderResult;
+}
+
 export interface GTTTrigger {
-  trigger_id: string;
-  type: 'single' | 'two-leg';
-  status: GTTStatus;
+  id: number;
+  user_id: string;
+  parent_trigger: any;
+  type: string;
   created_at: string;
   updated_at: string;
   expires_at: string;
+  status: GTTStatus;
   condition: {
-    instrument_token: number;
     exchange: string;
+    last_price: number;
     tradingsymbol: string;
     trigger_values: number[];
-    last_price: number;
+    instrument_token: number;
   };
-  orders: Array<{
-    exchange: string;
-    tradingsymbol: string;
-    transaction_type: TransactionType;
-    quantity: number;
-    order_type: OrderType;
-    product: Product;
-    price: number;
-  }>;
+  orders: GTTOrder[];
+  meta: any;
 }
 
 export interface GTTParams {
@@ -344,7 +386,15 @@ export interface GTTParams {
   exchange: string;
   tradingsymbol: string;
   trigger_values: number[];
-  orders: GTTTrigger['orders'];
+  orders: Array<{
+    exchange: string;
+    tradingsymbol: string;
+    product: string;
+    order_type: string;
+    transaction_type: string;
+    quantity: number;
+    price: number;
+  }>;
   expires_at?: string;
 }
 

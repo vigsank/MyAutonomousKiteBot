@@ -155,7 +155,7 @@ export class RestServer {
     // /gtt/*
     this.app.post('/gtt/triggers', (req: any, res: any) => {
       const trigger = deps.gttService.createTrigger(req.body);
-      this.ok(res, { trigger_id: trigger.trigger_id });
+      this.ok(res, { trigger_id: trigger.id });
     });
     this.app.get('/gtt/triggers', (_req: any, res: any) => this.ok(res, deps.gttService.getGTTs()));
     this.app.get('/gtt/triggers/:trigger_id', (req: any, res: any) =>

@@ -174,10 +174,6 @@ export class RandomWalkGenerator {
       change: rounded - this.basePrice,
       last_trade_time: now,
       exchange_timestamp: now,
-      bid,
-      ask,
-      bid_quantity: Math.round(buyQty * 0.3),
-      ask_quantity: Math.round(sellQty * 0.3),
       depth: this.generateDepth(rounded, bid, ask),
     };
   }

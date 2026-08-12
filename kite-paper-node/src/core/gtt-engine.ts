@@ -6,10 +6,10 @@
 import type { GTTParams, GTTTrigger, Tick } from '../types';
 import { StateStore } from '../state/state-store';
 import { TickEventBus } from '../market/tick-event-bus';
-import { generateGTTId } from '../utils/id-generator';
 
 export class GTTEngine {
   private unsubscribe: () => void;
+  private idCounter = 0;
 
   constructor(
     private store: StateStore,
@@ -18,24 +18,32 @@ export class GTTEngine {
     this.unsubscribe = bus.subscribe((tick) => this.onTick(tick));
   }
 
+  private nextId(): number {
+    this.idCounter += 1;
+    return this.idCounter;
+  }
+
   /** Create a new GTT trigger. */
   createTrigger(input: GTTParams): GTTTrigger {
     const now = new Date();
     const trigger: GTTTrigger = {
-      trigger_id: generateGTTId(),
+      id: this.nextId(),
+      user_id: 'AB1234',
+      parent_trigger: null,
       type: input.type ?? (input.orders.length > 1 ? 'two-leg' : 'single'),
-      status: 'active',
       created_at: now.toISOString(),
       updated_at: now.toISOString(),
       expires_at: input.expires_at ?? new Date(now.getTime() + 30 * 24 * 3600_000).toISOString(),
+      status: 'active',
       condition: {
-        instrument_token: input.instrument_token,
         exchange: input.exchange,
+        last_price: 0,
         tradingsymbol: input.tradingsymbol,
         trigger_values: input.trigger_values,
-        last_price: 0,
+        instrument_token: input.instrument_token,
       },
-      orders: input.orders,
+      orders: input.orders.map((o) => ({ ...o, result: null })),
+      meta: {},
     };
     this.store.addGTT(trigger);
     return trigger;
@@ -46,7 +54,7 @@ export class GTTEngine {
     const trigger = this.store.getGTT(triggerId);
     if (!trigger) throw new Error(`GTT trigger not found: ${triggerId}`);
     if (params.trigger_values) trigger.condition.trigger_values = params.trigger_values;
-    if (params.orders) trigger.orders = params.orders;
+    if (params.orders) trigger.orders = params.orders.map((o) => ({ ...o, result: null }));
     if (params.expires_at) trigger.expires_at = params.expires_at;
     trigger.updated_at = new Date().toISOString();
     this.store.addGTT(trigger);

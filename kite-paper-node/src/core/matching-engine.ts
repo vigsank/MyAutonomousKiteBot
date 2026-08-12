@@ -105,10 +105,14 @@ export class MatchingEngine {
   }
 
   private fillMarketOrder(order: OrderRecord, tick: Tick): void {
+    // Best ask for BUY, best bid for SELL (from the depth book), falling
+    // back to last_price when depth is unavailable.
+    const bestAsk = tick.depth?.sell?.[0]?.price;
+    const bestBid = tick.depth?.buy?.[0]?.price;
     const fillPrice =
       order.transaction_type === 'BUY'
-        ? tick.ask ?? tick.last_price
-        : tick.bid ?? tick.last_price;
+        ? bestAsk ?? tick.last_price
+        : bestBid ?? tick.last_price;
     this.fillOrder(order, fillPrice, tick.exchange_timestamp ?? new Date());
   }
 

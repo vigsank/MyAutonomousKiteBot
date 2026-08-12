@@ -134,6 +134,21 @@ export class GeneratorPool {
     return this.generators.get(token);
   }
 
+  /**
+   * Ensure a generator exists for a token, registering one from the
+   * instrument master on demand (JIT) if it does not. Returns the generator.
+   */
+  ensureGenerator(token: number): RandomWalkGenerator | undefined {
+    const existing = this.generators.get(token);
+    if (existing) return existing;
+    const inst = this.resolveToken(token);
+    if (inst) {
+      this.addInstrument(inst);
+      return this.generators.get(token);
+    }
+    return undefined;
+  }
+
   /** List all registered tokens. */
   listTokens(): number[] {
     return Array.from(this.generators.keys());

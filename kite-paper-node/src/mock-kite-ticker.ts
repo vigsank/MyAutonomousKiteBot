@@ -29,6 +29,11 @@ export class MockKiteTicker extends KiteTickerBaseClass {
   public readonly modeFull = 'full';
   public readonly modeLTP = 'ltp';
   public readonly modeQuote = 'quote';
+  // Uppercase aliases used by some consumers (e.g. older SDK docs / the
+  // MyAutonomousKiteVault KiteStreamer, which reads `this.ticker.MODE_FULL`).
+  public readonly MODE_FULL = 'full';
+  public readonly MODE_LTP = 'ltp';
+  public readonly MODE_QUOTE = 'quote';
 
   private engine: MockEngine;
   private unsubscribeTicks: () => void;
@@ -111,8 +116,17 @@ export class MockKiteTicker extends KiteTickerBaseClass {
 
   /** Subscribe to instrument tokens. Returns the tokens. */
   subscribe(tokens: number[]): number[] {
-    for (const t of tokens) this.subscribedTokens.add(t);
+    for (const t of tokens) {
+      this.subscribedTokens.add(t);
+      // Ensure the mock engine generates ticks for this token (JIT).
+      this.ensureGenerator(t);
+    }
     return tokens;
+  }
+
+  /** Auto-register a generator for a token if the engine doesn't have one. */
+  private ensureGenerator(token: number): void {
+    this.engine.pool.ensureGenerator(token);
   }
 
   /** Unsubscribe from instrument tokens. Returns the tokens. */
