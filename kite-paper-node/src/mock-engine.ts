@@ -26,6 +26,7 @@ import type {
 import { StateStore } from './state/state-store';
 import { TickEventBus } from './market/tick-event-bus';
 import { GeneratorPool } from './market/generator-pool';
+import { CsvDataProvider } from './market/csv-data-provider';
 import { TickHistoryBuffer } from './market/tick-history-buffer';
 import { OHLCAggregator } from './market/ohlc-aggregator';
 import { HistoricalReplayEngine, type HistoricalReplayOptions } from './market/historical-replay';
@@ -45,6 +46,7 @@ import { UserService } from './services/user-service';
 import { GTTService } from './services/gtt-service';
 import { resolveConfig } from './utils/config';
 import { isWithinMarketHours } from './utils/date-utils';
+import * as path from 'path';
 
 export class MockEngine {
   // Infrastructure.
@@ -75,15 +77,28 @@ export class MockEngine {
   private config = resolveConfig();
   private aggregator: OHLCAggregator;
   private recordedEvents: Array<{ timestamp: string; event: any }> = [];
+  public readonly csvDataProvider: CsvDataProvider;
 
   constructor(config?: MockEngineConfig) {
     this.config = resolveConfig(config);
 
     this.store = new StateStore(this.config.startingCapital);
     this.bus = new TickEventBus();
+    this.csvDataProvider = new CsvDataProvider(
+      config?.dataDir ?? path.join(__dirname, '..', 'data')
+    );
+    this.csvDataProvider.load();
     this.pool = new GeneratorPool(this.bus, {
       tickIntervalMs: this.config.ticker.randomWalk?.tickIntervalMs,
       seed: this.config.ticker.randomWalk?.seed,
+      volatilityScale: this.config.ticker.randomWalk?.volatilityScale,
+      regimeSwitchBars: this.config.ticker.randomWalk?.regimeSwitchBars,
+      regimeProbabilities: this.config.ticker.randomWalk?.regimeProbabilities,
+      regimePersistence: this.config.ticker.randomWalk?.regimePersistence,
+      enableSeasonality: this.config.ticker.randomWalk?.enableSeasonality,
+      shockProbability: this.config.ticker.randomWalk?.shockProbability,
+      shockSize: this.config.ticker.randomWalk?.shockSize,
+      csvDataProvider: this.csvDataProvider,
     });
     this.historyBuffer = new TickHistoryBuffer();
     this.aggregator = new OHLCAggregator(this.bus, this.historyBuffer);
@@ -120,8 +135,8 @@ export class MockEngine {
     this.positionService = new PositionService(this.positionEngine);
     this.holdingService = new HoldingService(this.store);
     this.marginService = new MarginService(this.marginEngine);
-    this.quoteService = new QuoteService(this.pool);
-    this.historicalService = new HistoricalService(this.historyBuffer, this.pool);
+    this.quoteService = new QuoteService(this.pool, this.csvDataProvider);
+    this.historicalService = new HistoricalService(this.historyBuffer, this.pool, this.csvDataProvider);
     this.userService = new UserService(this.marginService);
     this.gttService = new GTTService(this.gttEngine);
 

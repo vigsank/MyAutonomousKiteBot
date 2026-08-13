@@ -9,6 +9,16 @@
 import type { Instrument, Tick } from '../types';
 import { TickEventBus } from './tick-event-bus';
 import { RandomWalkGenerator, type RandomWalkGeneratorOptions } from './random-walk-generator';
+import { CsvDataProvider, CsvTickGenerator } from './csv-data-provider';
+
+// Common surface shared by RandomWalkGenerator and CsvTickGenerator.
+export interface TickGenerator {
+  generateTick(): Tick;
+  getCurrentPrice(): number;
+  setCurrentPrice(price: number): void;
+  saveState(): any;
+  restoreState(state: any): void;
+}
 
 // Lazy-load the bundled instrument master.
 let instrumentMaster: Instrument[] | null = null;
@@ -26,19 +36,50 @@ export interface AddSymbolOptions {
   tickIntervalMs?: number;
 }
 
+export interface GeneratorPoolOptions {
+  tickIntervalMs?: number;
+  seed?: number;
+  /** Per-instrument volatility scale (token → multiplier). */
+  volatilityScale?: Record<number, number>;
+  regimeSwitchBars?: number;
+  regimeProbabilities?: RandomWalkGeneratorOptions['regimeProbabilities'];
+  regimePersistence?: number;
+  enableSeasonality?: boolean;
+  shockProbability?: number;
+  shockSize?: number;
+  /** Optional CSV data provider — symbols with CSVs use real data. */
+  csvDataProvider?: CsvDataProvider;
+}
+
 export class GeneratorPool {
-  private generators = new Map<number, RandomWalkGenerator>();
+  private generators = new Map<number, TickGenerator>();
   private timers = new Map<number, NodeJS.Timeout>();
   private latestTicks = new Map<number, Tick>();
   private defaultTickIntervalMs: number;
   private seed?: number;
+  private volatilityScale: Record<number, number>;
+  private regimeSwitchBars?: number;
+  private regimeProbabilities?: RandomWalkGeneratorOptions['regimeProbabilities'];
+  private regimePersistence?: number;
+  private enableSeasonality?: boolean;
+  private shockProbability?: number;
+  private shockSize?: number;
+  private csvDataProvider?: CsvDataProvider;
 
   constructor(
     private bus: TickEventBus,
-    options?: { tickIntervalMs?: number; seed?: number }
+    options?: GeneratorPoolOptions
   ) {
     this.defaultTickIntervalMs = options?.tickIntervalMs ?? 1000;
     this.seed = options?.seed;
+    this.volatilityScale = options?.volatilityScale ?? {};
+    this.regimeSwitchBars = options?.regimeSwitchBars;
+    this.regimeProbabilities = options?.regimeProbabilities;
+    this.regimePersistence = options?.regimePersistence;
+    this.enableSeasonality = options?.enableSeasonality;
+    this.shockProbability = options?.shockProbability;
+    this.shockSize = options?.shockSize;
+    this.csvDataProvider = options?.csvDataProvider;
   }
 
   /** Resolve a symbol name to an instrument from the master. */
@@ -79,15 +120,30 @@ export class GeneratorPool {
       return; // already registered
     }
     const basePrice = options?.basePrice ?? Number(instrument.last_price);
+    const scale = this.volatilityScale[instrument.instrument_token] ?? 1;
     const genOptions: RandomWalkGeneratorOptions = {
       instrumentToken: instrument.instrument_token,
       basePrice,
       tickSize: Number(instrument.tick_size),
-      volatility: options?.volatility,
+      volatility: options?.volatility !== undefined ? options.volatility * scale : undefined,
       seed: this.seed,
       tradable: instrument.instrument_type !== 'INDEX',
+      regimeSwitchBars: this.regimeSwitchBars,
+      regimeProbabilities: this.regimeProbabilities,
+      regimePersistence: this.regimePersistence,
+      enableSeasonality: this.enableSeasonality,
+      shockProbability: this.shockProbability,
+      shockSize: this.shockSize,
     };
-    const generator = new RandomWalkGenerator(genOptions);
+
+    // Prefer real CSV data when present; fall back to the random walk.
+    let generator: TickGenerator;
+    const csvRows = this.csvDataProvider?.getLatestDayRows(instrument.instrument_token);
+    if (csvRows && csvRows.length > 0) {
+      generator = new CsvTickGenerator(csvRows);
+    } else {
+      generator = new RandomWalkGenerator(genOptions);
+    }
     this.generators.set(instrument.instrument_token, generator);
 
     const interval = options?.tickIntervalMs ?? this.defaultTickIntervalMs;
@@ -130,7 +186,7 @@ export class GeneratorPool {
   }
 
   /** Get the generator for a token. */
-  getGenerator(token: number): RandomWalkGenerator | undefined {
+  getGenerator(token: number): TickGenerator | undefined {
     return this.generators.get(token);
   }
 
@@ -138,7 +194,7 @@ export class GeneratorPool {
    * Ensure a generator exists for a token, registering one from the
    * instrument master on demand (JIT) if it does not. Returns the generator.
    */
-  ensureGenerator(token: number): RandomWalkGenerator | undefined {
+  ensureGenerator(token: number): TickGenerator | undefined {
     const existing = this.generators.get(token);
     if (existing) return existing;
     const inst = this.resolveToken(token);

@@ -9,10 +9,14 @@
 
 import type { Tick } from '../types';
 import { GeneratorPool } from '../market/generator-pool';
+import { CsvDataProvider } from '../market/csv-data-provider';
 import { errors } from '../protocol/errors';
 
 export class QuoteService {
-  constructor(private pool: GeneratorPool) {}
+  constructor(
+    private pool: GeneratorPool,
+    private csvDataProvider?: CsvDataProvider
+  ) {}
 
   /** Normalize a single instrument id or array into an array. */
   private normalize(instruments: string | string[]): string[] {
@@ -25,6 +29,9 @@ export class QuoteService {
     if (!inst) {
       throw errors.input(`Instrument not found: ${id}`);
     }
+    // Prefer real CSV data (latest day) when present.
+    const csvTick = this.csvDataProvider?.getLatestTick(inst.instrument_token);
+    if (csvTick) return csvTick;
     // Ensure a generator is running so JIT data is available on demand.
     this.pool.ensureGenerator(inst.instrument_token);
     const tick = this.pool.getLatestTick(inst.instrument_token);

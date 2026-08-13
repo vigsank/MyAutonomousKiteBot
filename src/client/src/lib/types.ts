@@ -132,3 +132,33 @@ export interface LlmTrace {
   tokensOut: number | null;
   createdAt: string;
 }
+
+export interface ProbeRun {
+  runId: string;
+  runType: string;
+  symbol: string;
+  runAt: string;
+  dayBias: string | null;
+  verdict: string | null;
+  summary: string | null;
+}
+
+export interface NewsArticle {
+  symbol: string;
+  source: string;
+  title: string;
+  link: string | null;
+  summary: string | null;
+  contentSource: string | null;
+  publishedAt: string | null;
+  fetchedAt: string;
+}
+
+export interface AgentSignal {
+  symbol: string;
+  direction: string;
+  rsi: number | null;
+  price: number;
+  reason: string;
+  createdAt: string;
+}

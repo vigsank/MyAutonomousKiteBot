@@ -426,10 +426,30 @@ export interface RandomWalkConfig {
   seed?: number;
   seedSymbols?: string[];
   basePrices?: Record<number, number>;
+  /** Per-tick base volatility (e.g. 0.0004 = 0.04%). */
   volatility?: number;
+  /** Per-instrument volatility scale (multiplier on the base). */
+  volatilityScale?: Record<number, number>;
   tickIntervalMs?: number;
   bidAskSpread?: number;
   enableRealismFeatures?: boolean;
+  /** Ticks between regime switches. */
+  regimeSwitchBars?: number;
+  /** Probability of each regime on a switch. */
+  regimeProbabilities?: {
+    trending_up?: number;
+    trending_down?: number;
+    ranging?: number;
+    volatile?: number;
+  };
+  /** Probability of staying in the current regime on a switch. */
+  regimePersistence?: number;
+  /** Enable U-shaped intraday volatility. */
+  enableSeasonality?: boolean;
+  /** Per-tick probability of an event shock. */
+  shockProbability?: number;
+  /** Magnitude of an event shock (fraction of price). */
+  shockSize?: number;
 }
 
 export interface HistoricalReplayConfig {
@@ -492,6 +512,8 @@ export interface MockEngineConfig {
   partialFills?: boolean;
   /** Margin rate as a fraction of trade value (default 0.2). */
   marginRate?: number;
+  /** Directory containing `<SYMBOL>_<interval>.csv` replay files. */
+  dataDir?: string;
 }
 
 export interface StateSnapshot {

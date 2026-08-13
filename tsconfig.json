@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "lib": ["ES2022"],
     "outDir": "dist",
-    "rootDir": "src/server",
+    "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -18,7 +18,7 @@
     "noUnusedParameters": false,
     "useUnknownInCatchVariables": false
   },
-  "include": ["src/server/**/*.ts"],
+  "include": ["src/server/**/*.ts", "src/agents/**/*.ts"],
   "exclude": ["node_modules", "dist", "data", "src/client"],
   "ts-node": {
     "files": true

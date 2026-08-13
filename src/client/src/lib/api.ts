@@ -1,12 +1,15 @@
 import type {
+  AgentSignal,
   Candle,
   DailySummary,
   Health,
   LlmTrace,
+  NewsArticle,
   Notification,
   Order,
   Overview,
   Position,
+  ProbeRun,
   RiskEvent,
   Signal,
   Trade,
@@ -42,4 +45,7 @@ export const api = {
     get<Candle[]>('/candles', { symbol, interval, limit }),
   candleIntervals: () => get<string[]>('/candle-intervals'),
   llmTraces: () => get<LlmTrace[]>('/llm-traces'),
+  fleetProbes: () => get<{ probes: ProbeRun[] }>('/fleet/probes'),
+  fleetNews: () => get<{ articles: NewsArticle[] }>('/fleet/news'),
+  fleetSignals: () => get<{ signals: AgentSignal[] }>('/fleet/signals'),
 };

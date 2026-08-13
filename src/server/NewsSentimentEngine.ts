@@ -25,9 +25,63 @@ export interface AnalystVerdict {
   rationale: string;
 }
 
+/** Result shape of a TinyFish search.query item. */
+interface TinyFishArticle {
+  position: number;
+  site_name: string;
+  snippet: string;
+  title: string;
+  url: string;
+  date?: string;
+  publisher?: string;
+}
+
 export class NewsSentimentEngine {
   private parser = new Parser();
   private tavilyClient: ReturnType<typeof tavily> | null = null;
+
+  /** TinyFish REST endpoints (called directly via fetch — CJS-safe, no ESM SDK). */
+  private readonly tinyfishSearchUrl = 'https://api.search.tinyfish.ai';
+  private readonly tinyfishFetchUrl = 'https://api.fetch.tinyfish.ai';
+
+  /** GET a TinyFish REST endpoint with the API key header. Returns null on any failure. */
+  private async tinyfishGet(url: string): Promise<any | null> {
+    if (!this.config.tinyfish.enabled || !this.config.tinyfish.apiKey) return null;
+    try {
+      const res = await withTimeout(
+        fetch(url, { headers: { 'X-API-Key': this.config.tinyfish.apiKey } }),
+        this.config.tinyfish.timeoutMs,
+      );
+      if (!res.ok) throw new Error(`TinyFish HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      logger.warn({ url, err }, 'TinyFish GET failed');
+      return null;
+    }
+  }
+
+  /** POST to a TinyFish REST endpoint with the API key header. Returns null on any failure. */
+  private async tinyfishPost(url: string, body: unknown): Promise<any | null> {
+    if (!this.config.tinyfish.enabled || !this.config.tinyfish.apiKey) return null;
+    try {
+      const res = await withTimeout(
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-API-Key': this.config.tinyfish.apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        }),
+        150_000,
+      );
+      if (!res.ok) throw new Error(`TinyFish HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      logger.warn({ url, err }, 'TinyFish POST failed');
+      return null;
+    }
+  }
 
   constructor(
     private readonly config: AppConfig,
@@ -99,9 +153,23 @@ export class NewsSentimentEngine {
       }
     }
 
-    // Add Tavily live web-search results (if configured).
-    const tavilyArticles = await this.fetchTavilyArticles(symbol);
-    results.push(...tavilyArticles);
+    // Track whether the site RSS feeds yielded any articles so we can log a
+    // degraded-source warning and lean on fallbacks when they came up empty.
+    if (results.length === 0) {
+      logger.warn({ symbol }, 'News source degraded: site RSS empty, using fallbacks');
+    }
+
+    // Always run the free, keyless Google News RSS fallback and merge it in.
+    results.push(...(await this.fetchGoogleNewsArticles(symbol)));
+
+    // Apply the live web-search provider switch.
+    const prov = this.config.newsSearchProvider;
+    if (prov === 'tavily' || prov === 'both') {
+      results.push(...(await this.fetchTavilyArticles(symbol)));
+    }
+    if (prov === 'tinyfish' || prov === 'both') {
+      results.push(...(await this.fetchTinyFishArticles(symbol)));
+    }
 
     // De-duplicate by title.
     const seen = new Set<string>();
@@ -136,6 +204,77 @@ export class NewsSentimentEngine {
       logger.warn({ symbol, err }, 'Tavily search failed');
       return [];
     }
+  }
+
+  /** Search the live web via TinyFish (free tier) for recent news on a symbol. */
+  async fetchTinyFishArticles(symbol: string): Promise<NewsArticle[]> {
+    const q = encodeURIComponent(`${symbol} stock news India`);
+    const url = `${this.tinyfishSearchUrl}?query=${q}&domain_type=news&recency_minutes=720`;
+    const data = await this.tinyfishGet(url);
+    if (!data) return [];
+    return (data.results ?? [])
+      .map((r: TinyFishArticle) => ({
+        title: r.title,
+        link: r.url,
+        summary: r.snippet,
+        pubDate: r.date ?? r.publisher,
+        source: 'TinyFish',
+      }))
+      .slice(0, this.config.tinyfish.maxResults);
+  }
+
+  /**
+   * Date-scoped TinyFish search — best-effort backfill for a specific date
+   * (YYYY-MM-DD). Uses a window [date, date+1) because equal after/before
+   * bounds return an empty range. The live index may not retain every article
+   * from that date, so this fills the gap with what is still findable.
+   */
+  async fetchArticlesForDate(symbol: string, date: string): Promise<NewsArticle[]> {
+    const q = encodeURIComponent(`${symbol} stock news India`);
+    const next = new Date(`${date}T00:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    const before = next.toISOString().slice(0, 10);
+    const url = `${this.tinyfishSearchUrl}?query=${q}&domain_type=news&after_date=${date}&before_date=${before}`;
+    const data = await this.tinyfishGet(url);
+    if (!data) return [];
+    return (data.results ?? [])
+      .map((r: TinyFishArticle) => ({
+        title: r.title,
+        link: r.url,
+        summary: r.snippet,
+        pubDate: r.date ?? r.publisher,
+        source: 'TinyFish',
+      }))
+      .slice(0, this.config.tinyfish.maxResults);
+  }
+
+  /** Free, keyless Google News RSS fallback for a symbol. */
+  async fetchGoogleNewsArticles(symbol: string): Promise<NewsArticle[]> {
+    const url = `https://news.google.com/rss/search?q=${encodeURIComponent(symbol + ' stock')}&hl=en-IN&gl=IN&ceid=IN:en`;
+    try {
+      const parsed = await withTimeout(this.parser.parseURL(url), 10_000);
+      const items = parsed.items ?? [];
+      return items.slice(0, 30).map((item) => ({
+        title: item.title ?? '',
+        link: item.link ?? '',
+        summary: item.contentSnippet,
+        pubDate: item.isoDate ?? item.pubDate,
+        source: 'GoogleNews',
+      }));
+    } catch (err) {
+      logger.warn({ symbol, err }, 'Google News RSS fetch failed');
+      return [];
+    }
+  }
+
+  /** Fetch a page's markdown content via TinyFish (best-effort, never throws). */
+  async fetchPage(url: string): Promise<string | null> {
+    const data = await this.tinyfishPost(this.tinyfishFetchUrl, {
+      urls: [url],
+      format: 'markdown',
+      ttl: 0,
+    });
+    return data?.results?.[0]?.text ?? null;
   }
 
   /** Fetch deeper Tavily details (AI answer + more results) for a symbol. */

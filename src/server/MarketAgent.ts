@@ -62,13 +62,17 @@ export class MarketAgent {
   private lastPrices = new Map<string, number>();
   /** Per-symbol sentiment score cached from the news loop. */
   private sentiment = new Map<string, number>();
+  /** Last "no entry" reason recorded per symbol (throttle to avoid flooding). */
+  private lastSkipReason = new Map<string, string>();
   /** When the news loop last ran per symbol. */
   private lastNewsRun = new Map<string, number>();
 
   /** Current accumulating OHLC bar per symbol (for ADX/ATR). */
-  private bars = new Map<string, { high: number; low: number; close: number; volume: number; start: number }>();
+  private bars = new Map<string, { open: number; high: number; low: number; close: number; volume: number; start: number }>();
   /** Rolling volume samples per symbol (for confirmation). */
   private volumeSamples = new Map<string, number[]>();
+  /** Rolling closes per symbol (for Bollinger bands). */
+  private bollingerCloses = new Map<string, number[]>();
 
   /** Timestamps of recent filled trades (circuit breaker). */
   private tradeTimes: number[] = [];
@@ -258,6 +262,9 @@ export class MarketAgent {
     if (samples.length > 30) samples.shift();
     this.volumeSamples.set(symbol, samples);
 
+    // Feed Bollinger bands (rolling close window).
+    this.feedBollinger(symbol, candle.close);
+
     this.evaluateSymbol(symbol, now);
   }
 
@@ -269,6 +276,30 @@ export class MarketAgent {
     if (s !== undefined) this.smaSlowValues.set(symbol, s);
   }
 
+  /** Feed a close into the rolling Bollinger window. */
+  private feedBollinger(symbol: string, price: number): void {
+    const cfg = this.config.strategy;
+    const closes = this.bollingerCloses.get(symbol) ?? [];
+    closes.push(price);
+    if (closes.length > cfg.bollingerPeriod) closes.shift();
+    this.bollingerCloses.set(symbol, closes);
+  }
+
+  /** Current Bollinger bands for a symbol, or null until the window is full. */
+  private bollingerFor(symbol: string): { lower: number; middle: number; upper: number } | null {
+    const cfg = this.config.strategy;
+    const closes = this.bollingerCloses.get(symbol) ?? [];
+    if (closes.length < cfg.bollingerPeriod) return null;
+    const mean = closes.reduce((s, v) => s + v, 0) / closes.length;
+    const variance = closes.reduce((s, v) => s + (v - mean) ** 2, 0) / closes.length;
+    const sd = Math.sqrt(variance);
+    return {
+      lower: mean - cfg.bollingerStdDev * sd,
+      middle: mean,
+      upper: mean + cfg.bollingerStdDev * sd,
+    };
+  }
+
   /** Accumulate the current OHLC bar and finalize it after the bar interval. */
   private accumulateBar(symbol: string, price: number, volume: number, now: Date): void {
     const intervalMs = this.config.strategy.barIntervalSeconds * 1000;
@@ -277,7 +308,7 @@ export class MarketAgent {
     if (!bar || now.getTime() - bar.start >= intervalMs) {
       // Finalize the previous bar into ADX/ATR before starting a new one.
       if (bar) this.finalizeBar(symbol, bar);
-      bar = { high: price, low: price, close: price, volume, start: now.getTime() };
+      bar = { open: price, high: price, low: price, close: price, volume, start: now.getTime() };
       this.bars.set(symbol, bar);
     } else {
       bar.high = Math.max(bar.high, price);
@@ -287,7 +318,7 @@ export class MarketAgent {
     }
   }
 
-  private finalizeBar(symbol: string, bar: { high: number; low: number; close: number; volume: number }): void {
+  private finalizeBar(symbol: string, bar: { open: number; high: number; low: number; close: number; volume: number; start: number }): void {
     // Update indicators on the CLOSED bar only (not on raw ticks).
     const r = this.rsiFor(symbol).nextValue(bar.close);
     if (r !== undefined) this.rsiValues.set(symbol, r);
@@ -311,6 +342,29 @@ export class MarketAgent {
     samples.push(bar.close > 0 ? bar.volume || 1 : 1);
     if (samples.length > 30) samples.shift();
     this.volumeSamples.set(symbol, samples);
+
+    // Persist the closed bar so the UI Market chart shows live prices.
+    try {
+      this.ledger.recordCandle(symbol, this.exchangeFor(symbol), this.barIntervalLabel(), {
+        timestamp: new Date(bar.start).toISOString(),
+        open: bar.open,
+        high: bar.high,
+        low: bar.low,
+        close: bar.close,
+        volume: bar.volume,
+      });
+    } catch {
+      /* non-fatal: candle persistence must never disrupt trading */
+    }
+  }
+
+  /** Human-readable bar interval label for the candles table / UI. */
+  private barIntervalLabel(): string {
+    const s = this.config.strategy.barIntervalSeconds;
+    if (s === 60) return '1minute';
+    if (s === 300) return '5minute';
+    if (s === 900) return '15minute';
+    return `${s}s`;
   }
 
   /* ================================================================ */
@@ -360,15 +414,7 @@ export class MarketAgent {
 
     // No strategy fits this regime (e.g. LONG-only bot in a downtrend).
     if (!mode) {
-      this.ledger.recordSignal({
-        symbol,
-        direction: 'NEUTRAL',
-        rsi: rsiValue,
-        price,
-        reason: `Skipped: no strategy for ${regime} regime`,
-        timestamp: now,
-        exchange: this.exchangeFor(symbol),
-      });
+      this.recordNoEntry(symbol, rsiValue, price, now, `no strategy for ${regime} regime`);
       return;
     }
 
@@ -389,8 +435,8 @@ export class MarketAgent {
       }
     }
 
-    // Minimum reward:risk gate.
-    if (this.config.strategy.minRiskReward > 0) {
+    // Minimum reward:risk gate (skipped for Bollinger entry — the band IS the edge).
+    if (!this.config.strategy.bollingerEntry && this.config.strategy.minRiskReward > 0) {
       const stopDist = this.stopDistance(symbol, price);
       const atr = this.atrValues.get(symbol) ?? 0;
       const targetDist = atr * this.config.strategy.targetAtrMultiplier;
@@ -416,6 +462,9 @@ export class MarketAgent {
     } else {
       this.checkEntry(symbol, price, rsiValue, sentiment, now);
     }
+
+    // Record why no entry was taken (throttled per symbol per reason).
+    this.recordNoEntry(symbol, rsiValue, price, now, this.computeNoEntryReason(symbol, mode, rsiValue, price));
   }
 
   /** Rule-based market regime classifier with a rough confidence estimate. */
@@ -452,9 +501,9 @@ export class MarketAgent {
       case 'trending_up':
         return 'pullback_trend';
       case 'trending_down':
-        return null; // LONG-only bot: don't buy into a downtrend
+        return 'mean_reversion'; // oversold bounce even in a downtrend
       case 'volatile':
-        return null; // skip high-volatility regimes
+        return 'mean_reversion'; // oversold bounce even in high volatility
       default:
         return 'mean_reversion';
     }
@@ -488,6 +537,50 @@ export class MarketAgent {
     return total > 0 ? agree / total : 0;
   }
 
+  /** Concise reason the current mode didn't take an entry (primary gate). */
+  private computeNoEntryReason(
+    symbol: string,
+    mode: 'mean_reversion' | 'pullback_trend' | 'breakout',
+    rsiValue: number,
+    price: number,
+  ): string {
+    const cfg = this.config.strategy;
+    switch (mode) {
+      case 'mean_reversion':
+        return rsiValue >= cfg.rsiEntryThreshold
+          ? `RSI ${rsiValue.toFixed(1)} not oversold (<${cfg.rsiEntryThreshold})`
+          : `conditions not met (RSI ${rsiValue.toFixed(1)})`;
+      case 'pullback_trend': {
+        const fast = this.smaFastValues.get(symbol);
+        const slow = this.smaSlowValues.get(symbol);
+        if (fast === undefined || slow === undefined || fast <= slow) return 'no uptrend structure';
+        return price <= slow ? `price ${price.toFixed(0)} below slow SMA ${slow.toFixed(0)}` : 'conditions not met';
+      }
+      case 'breakout': {
+        const highs = this.breakoutHighs.get(symbol) ?? [];
+        const prior = highs.length ? Math.max(...highs) : 0;
+        return price <= prior ? `price ${price.toFixed(0)} not above prior high ${prior.toFixed(0)}` : 'conditions not met';
+      }
+      default:
+        return 'conditions not met';
+    }
+  }
+
+  /** Record a throttled "why not entered" NEUTRAL signal per symbol. */
+  private recordNoEntry(symbol: string, rsiValue: number, price: number, now: Date, reason: string): void {
+    if (reason === this.lastSkipReason.get(symbol)) return;
+    this.lastSkipReason.set(symbol, reason);
+    this.ledger.recordSignal({
+      symbol,
+      direction: 'NEUTRAL',
+      rsi: rsiValue,
+      price,
+      reason: `No entry: ${reason}`,
+      timestamp: now,
+      exchange: this.exchangeFor(symbol),
+    });
+  }
+
   /** Volatility-adaptive stop distance for a symbol at a price. */
   private stopDistance(symbol: string, price: number): number {
     const cfg = this.config.strategy;
@@ -511,8 +604,15 @@ export class MarketAgent {
     const cfg = this.config.strategy;
     const reasons: string[] = [];
 
-    // 1. RSI must be oversold.
-    if (rsiValue >= cfg.rsiEntryThreshold) return;
+    // 1. RSI must be oversold (stricter threshold for Bollinger entry).
+    const entryRsi = cfg.bollingerEntry ? cfg.bollingerRsiEntry : cfg.rsiEntryThreshold;
+    if (rsiValue >= entryRsi) return;
+
+    // 1b. Bollinger mean-reversion: price must touch the lower band.
+    if (cfg.bollingerEntry) {
+      const bb = this.bollingerFor(symbol);
+      if (!bb || price >= bb.lower) return;
+    }
 
     // 2. Sentiment must not be strongly bearish.
     if (sentiment < -0.4) return;
@@ -539,7 +639,7 @@ export class MarketAgent {
     //    (a deep mean-reversion bounce can work even in a mild trend).
     const adx = this.adxValues.get(symbol);
     const deepOversold = rsiValue < cfg.rsiEntryThreshold - cfg.deepOversoldBuffer;
-    if (adx !== undefined && adx >= cfg.adxTrendThreshold && !deepOversold) {
+    if (!cfg.bollingerEntry && adx !== undefined && adx >= cfg.adxTrendThreshold && !deepOversold) {
       reasons.push(`ADX ${adx.toFixed(1)} trending (>${cfg.adxTrendThreshold})`);
       logger.debug({ symbol, adx }, 'Skipping: trending market');
       this.ledger.recordSignal({
@@ -555,8 +655,8 @@ export class MarketAgent {
       return;
     }
 
-    // 7. Volume confirmation — require volume above average.
-    if (!this.hasVolumeConfirmation(symbol)) {
+    // 7. Volume confirmation — require volume above average (skipped for Bollinger entry).
+    if (!cfg.bollingerEntry && !this.hasVolumeConfirmation(symbol)) {
       reasons.push('Insufficient volume confirmation');
       logger.debug({ symbol }, 'Skipping: low volume');
       return;
@@ -863,6 +963,12 @@ export class MarketAgent {
 
     if (rsiValue >= cfg.rsiExitThreshold) {
       exitReason = `RSI ${rsiValue.toFixed(1)} overbought (>${cfg.rsiExitThreshold})`;
+    } else if (cfg.bollingerEntry && position.direction === 'LONG') {
+      // Bollinger mean-reversion target: exit when price reverts to the middle band.
+      const bb = this.bollingerFor(symbol);
+      if (bb && price >= bb.middle) {
+        exitReason = `Bollinger target hit (price ${price.toFixed(2)} >= middle band ${bb.middle.toFixed(2)})`;
+      }
     } else if (position.direction === 'LONG' && price <= effectiveStop) {
       exitReason = `Stop-loss hit (price ${price.toFixed(2)} <= ${effectiveStop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
     } else if (position.direction === 'SHORT' && price >= effectiveStop) {

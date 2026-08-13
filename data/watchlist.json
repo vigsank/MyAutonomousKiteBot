@@ -1,42 +1,688 @@
 {
-  "comment": "Robust sector-diversified NSE watchlist (researched via Tavily). Equities are actively traded by the equity strategy. Options symbols (CE/PE) are for the v2 OptionsEngine and are disabled by default so they don't affect the equity strategy. NSE options format: SYMBOLYYYYMMDD<CE/PE><STRIKE>.",
   "symbols": [
-    { "tradingsymbol": "HDFCBANK", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "ICICIBANK", "exchange": "NSE", "quantity": 30, "enabled": true },
-    { "tradingsymbol": "SBIN", "exchange": "NSE", "quantity": 40, "enabled": true },
-    { "tradingsymbol": "KOTAKBANK", "exchange": "NSE", "quantity": 15, "enabled": true },
-    { "tradingsymbol": "AXISBANK", "exchange": "NSE", "quantity": 25, "enabled": true },
-    { "tradingsymbol": "TCS", "exchange": "NSE", "quantity": 8, "enabled": true },
-    { "tradingsymbol": "INFY", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "HCLTECH", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "WIPRO", "exchange": "NSE", "quantity": 50, "enabled": true },
-    { "tradingsymbol": "RELIANCE", "exchange": "NSE", "quantity": 10, "enabled": true },
-    { "tradingsymbol": "ONGC", "exchange": "NSE", "quantity": 40, "enabled": true },
-    { "tradingsymbol": "NTPC", "exchange": "NSE", "quantity": 50, "enabled": true },
-    { "tradingsymbol": "TATAMOTORS", "exchange": "NSE", "quantity": 30, "enabled": true },
-    { "tradingsymbol": "MARUTI", "exchange": "NSE", "quantity": 5, "enabled": true },
-    { "tradingsymbol": "M&M", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "ITC", "exchange": "NSE", "quantity": 50, "enabled": true },
-    { "tradingsymbol": "HINDUNILVR", "exchange": "NSE", "quantity": 10, "enabled": true },
-    { "tradingsymbol": "NESTLEIND", "exchange": "NSE", "quantity": 3, "enabled": true },
-    { "tradingsymbol": "BHARTIARTL", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "LT", "exchange": "NSE", "quantity": 10, "enabled": true },
-    { "tradingsymbol": "ULTRACEMCO", "exchange": "NSE", "quantity": 3, "enabled": true },
-    { "tradingsymbol": "TATASTEEL", "exchange": "NSE", "quantity": 50, "enabled": true },
-    { "tradingsymbol": "JSWSTEEL", "exchange": "NSE", "quantity": 20, "enabled": true },
-    { "tradingsymbol": "SUNPHARMA", "exchange": "NSE", "quantity": 15, "enabled": true },
-    { "tradingsymbol": "DRREDDY", "exchange": "NSE", "quantity": 8, "enabled": true },
-    { "tradingsymbol": "TITAN", "exchange": "NSE", "quantity": 8, "enabled": true },
-    { "tradingsymbol": "ASIANPAINT", "exchange": "NSE", "quantity": 8, "enabled": true },
-    { "tradingsymbol": "ADANIPORTS", "exchange": "NSE", "quantity": 15, "enabled": true },
-
-    { "tradingsymbol": "RELIANCE26NOV3000CE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "RELIANCE26NOV3000PE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "HDFCBANK26NOV1800CE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "HDFCBANK26NOV1800PE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "TCS26NOV4200CE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "TCS26NOV4200PE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "INFY26NOV1900CE", "exchange": "NFO", "quantity": 1, "enabled": false },
-    { "tradingsymbol": "INFY26NOV1900PE", "exchange": "NFO", "quantity": 1, "enabled": false }
+    {
+      "tradingsymbol": "RELIANCE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TATASTEEL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "INFY",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HDFCBANK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TCS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SBIN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ITC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HINDUNILVR",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ICICIBANK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "KOTAKBANK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "AXISBANK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HCLTECH",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "WIPRO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ONGC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "NTPC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TATAMOTORS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "MARUTI",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "M&M",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "NESTLEIND",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BHARTIARTL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "LT",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ULTRACEMCO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "JSWSTEEL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SUNPHARMA",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "DRREDDY",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TITAN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ASIANPAINT",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ADANIPORTS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ABB",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ADANIENT",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ADANIGREEN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ADANIPOWER",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ATGL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ADANIENSOL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "AMBUJACEM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "APOLLOHOSP",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BAJAJ-AUTO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BAJAJFINSV",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BAJFINANCE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BAJAJHLDNG",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BALKRISIND",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BANKBARODA",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BEL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BHARATFORG",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BHEL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BPCL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BOSCHLTD",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "BRITANNIA",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CANBK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CGPOWER",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CHOLAFIN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CIPLA",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "COALINDIA",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "COFORGE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "COLPAL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CONCOR",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "CUMMINSIND",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "DABUR",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "DIVISLAB",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "DLF",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "EICHERMOT",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "GAIL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "GODREJCP",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "GODREJPROP",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "GRASIM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HAVELLS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HDFCAMC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HDFCLIFE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HEROMOTOCO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HINDALCO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HAL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "HINDPETRO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ICICIGI",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ICICIPRULI",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "IDFCFIRSTB",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "INDHOTEL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "IOC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "IRCTC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "IRFC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "INDUSINDBK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "NAUKRI",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "INFOSYS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "INDIGO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "JSWELECTRIC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "JIOFIN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "LTIM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "LICI",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "MARICO",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "MAXHEALTH",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "MUTHOOTFIN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "NHPC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "PIDILITIND",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "PFC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "POWERGRID",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "PNB",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "REC",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SBICARD",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SBILIFE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "MOTHERSON",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SHREEBACEM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SHRIRAMFIN",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SIEMENS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "SOLARINDS",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TATACONSUM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TATAPOWER",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TECHM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TORNTPHARM",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TRENT",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "TVSMOTOR",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "UNIONBANK",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "UNITDSPR",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "VBL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "VEDL",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    },
+    {
+      "tradingsymbol": "ZYDUSLIFE",
+      "exchange": "NSE",
+      "quantity": 10,
+      "enabled": true
+    }
   ]
 }

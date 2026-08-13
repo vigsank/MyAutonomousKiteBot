@@ -4,7 +4,13 @@ import * as path from 'path';
 import { Segment, WatchSymbol } from './types';
 import { logger } from './Logger';
 
-dotenv.config();
+// Load the env file selected by ENV_FILE (default .env). Test scripts set
+// ENV_FILE=.env.test so real runs (.env) and test runs (.env.test) stay
+// isolated while keeping the same keys. NODE_ENV=test also selects .env.test.
+const envFile =
+  process.env.ENV_FILE ||
+  (process.env.NODE_ENV === 'test' ? '.env.test' : '.env');
+dotenv.config({ path: envFile });
 
 /**
  * Central configuration loader. Reads from environment variables and the
@@ -39,6 +45,34 @@ export interface AppConfig {
     enabled: boolean;
     maxResults: number;
     searchDepth: 'basic' | 'advanced';
+  };
+  /** Optional free live web-search via TinyFish (Search/Fetch free; Agent/Browser cost credits). */
+  tinyfish: {
+    apiKey: string;
+    enabled: boolean;
+    maxResults: number;
+    timeoutMs: number;
+  };
+  /** Which live web-search provider feeds the news/sentiment agents. */
+  newsSearchProvider: 'tavily' | 'tinyfish' | 'both' | 'none';
+  /** Optional read-only Zerodha Kite MCP server (hosted or self-hosted). */
+  mcp: {
+    enabled: boolean;
+    url: string;
+    timeoutMs: number;
+  };
+  /** Agent runtime — probe schedule + cadence (OFF by default). */
+  agents: {
+    enabled: boolean;
+    intervalMs: number;
+    probePreOpen: string;
+    probeMidSession: string;
+    probePreClose: string;
+    /** Dev: run the probe immediately on every start, regardless of IST time. */
+    probeAlways: boolean;
+    /** Dev: force the strategist to propose a trade for a symbol (test hook). */
+    forceSignal: boolean;
+    forceSignalSymbol: string;
   };
   telegram: {
     botToken: string;
@@ -106,6 +140,11 @@ export interface AppConfig {
     deepOversoldBuffer: number;
     /** Auto-select the strategy mode from the detected market regime (replaces single-mode). */
     regimeAdaptive: boolean;
+    /** Bollinger mean-reversion entry: buy close < lower band + RSI oversold, exit at middle band. */
+    bollingerEntry: boolean;
+    bollingerPeriod: number;
+    bollingerStdDev: number;
+    bollingerRsiEntry: number;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
@@ -128,6 +167,12 @@ function csv(value: string): string[] {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+/** Resolve the news search provider from env (tavily | tinyfish | both | none). */
+function resolveNewsProvider(): 'tavily' | 'tinyfish' | 'both' | 'none' {
+  const v = str('NEWS_SEARCH_PROVIDER', 'tavily').toLowerCase();
+  return v === 'tinyfish' || v === 'both' || v === 'none' ? v : 'tavily';
 }
 
 function loadWatchlist(dataDir: string): WatchSymbol[] {
@@ -236,6 +281,28 @@ export function loadConfig(): AppConfig {
       maxResults: num('TAVILY_MAX_RESULTS', 5),
       searchDepth: str('TAVILY_SEARCH_DEPTH', 'basic') === 'advanced' ? 'advanced' : 'basic',
     },
+    tinyfish: {
+      apiKey: str('TINYFISH_API_KEY'),
+      enabled: str('TINYFISH_API_KEY').length > 0,
+      maxResults: num('TINYFISH_MAX_RESULTS', 5),
+      timeoutMs: num('TINYFISH_TIMEOUT_MS', 15000),
+    },
+    newsSearchProvider: resolveNewsProvider(),
+    mcp: {
+      enabled: str('KITE_MCP_ENABLED') === 'true',
+      url: str('KITE_MCP_URL', 'https://mcp.kite.trade/mcp'),
+      timeoutMs: num('KITE_MCP_TIMEOUT_MS', 5000),
+    },
+    agents: {
+      enabled: str('AGENTS_ENABLED') === 'true',
+      intervalMs: num('AGENTS_INTERVAL_MS', 10 * 60 * 1000),
+      probePreOpen: str('AGENTS_PROBE_PRE_OPEN', '09:00'),
+      probeMidSession: str('AGENTS_PROBE_MID_SESSION', '12:00'),
+      probePreClose: str('AGENTS_PROBE_PRE_CLOSE', '15:00'),
+      probeAlways: str('AGENTS_PROBE_ALWAYS') === 'true',
+      forceSignal: str('AGENTS_FORCE_SIGNAL') === 'true',
+      forceSignalSymbol: str('AGENTS_FORCE_SIGNAL_SYMBOL', 'ITC'),
+    },
     telegram: {
       botToken: str('TELEGRAM_BOT_TOKEN'),
       chatId: str('TELEGRAM_CHAT_ID'),
@@ -293,6 +360,10 @@ export function loadConfig(): AppConfig {
       breakevenAtrMult: num('BREAKEVEN_ATR_MULT', 1),
       deepOversoldBuffer: num('DEEP_OVERSOLD_BUFFER', 10),
       regimeAdaptive: str('REGIME_ADAPTIVE') !== 'false',
+      bollingerEntry: str('BOLLINGER_ENTRY') !== 'false',
+      bollingerPeriod: num('BOLLINGER_PERIOD', 20),
+      bollingerStdDev: num('BOLLINGER_STD_DEV', 2),
+      bollingerRsiEntry: num('BOLLINGER_RSI_ENTRY', 30),
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,

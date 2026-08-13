@@ -13,12 +13,14 @@
 import type { Candle, CandleInterval, HistoricalData } from '../types';
 import { TickHistoryBuffer } from '../market/tick-history-buffer';
 import { GeneratorPool } from '../market/generator-pool';
+import { CsvDataProvider } from '../market/csv-data-provider';
 import { intervalToMs } from '../utils/date-utils';
 
 export class HistoricalService {
   constructor(
     private historyBuffer: TickHistoryBuffer,
-    private pool: GeneratorPool
+    private pool: GeneratorPool,
+    private csvDataProvider?: CsvDataProvider
   ) {}
 
   getHistoricalData(
@@ -27,6 +29,12 @@ export class HistoricalService {
     from: Date,
     to: Date
   ): HistoricalData[] {
+    // Prefer real CSV data (days before the live day) when present.
+    const csvCandles = this.csvDataProvider?.getHistoricalData(token, interval, from, to);
+    if (csvCandles && csvCandles.length > 0) {
+      return csvCandles.map((c) => this.toHistoricalData(c));
+    }
+
     // Ensure a generator exists so synthetic (Tier 2) candles can be made.
     this.pool.ensureGenerator(token);
 

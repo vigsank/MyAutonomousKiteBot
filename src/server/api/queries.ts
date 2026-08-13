@@ -109,6 +109,36 @@ export interface CandleRow {
   volume: number;
 }
 
+export interface ProbeRunRow {
+  runId: string;
+  runType: string;
+  symbol: string;
+  runAt: string;
+  dayBias: string | null;
+  verdict: string | null;
+  summary: string | null;
+}
+
+export interface NewsArticleRow {
+  symbol: string;
+  source: string;
+  title: string;
+  link: string | null;
+  summary: string | null;
+  contentSource: string | null;
+  publishedAt: string | null;
+  fetchedAt: string;
+}
+
+export interface AgentSignalRow {
+  symbol: string;
+  direction: string;
+  rsi: number | null;
+  price: number;
+  reason: string;
+  createdAt: string;
+}
+
 export interface Overview {
   capital: { total: number; available: number; used: number };
   daily: DailySummaryRow | null;
@@ -384,6 +414,51 @@ export class UiQueries {
            FROM llm_traces ORDER BY created_at DESC LIMIT ?`,
       )
       .all(limit) as any[];
+  }
+
+  /** Recent probe runs (fleet observability — what the agents concluded). */
+  probeRuns(symbol?: string, limit = 100): ProbeRunRow[] {
+    const base = `SELECT run_id AS runId, run_type AS runType,
+                         symbol AS symbol, run_at AS runAt,
+                         day_bias AS dayBias, verdict AS verdict,
+                         summary AS summary
+                  FROM ${this.t('probe_runs')}`;
+    const rows = symbol
+      ? this.db
+          .prepare(`${base} WHERE symbol = ? ORDER BY run_at DESC LIMIT ?`)
+          .all(symbol, limit)
+      : this.db.prepare(`${base} ORDER BY run_at DESC LIMIT ?`).all(limit);
+    return rows as ProbeRunRow[];
+  }
+
+  /** Recent news articles (fleet observability — what the agents read). */
+  newsArticles(symbol?: string, limit = 100): NewsArticleRow[] {
+    const base = `SELECT symbol AS symbol, source AS source,
+                         title AS title, link AS link, summary AS summary,
+                         content_source AS contentSource,
+                         published_at AS publishedAt, fetched_at AS fetchedAt
+                  FROM ${this.t('news_articles')}`;
+    const rows = symbol
+      ? this.db
+          .prepare(`${base} WHERE symbol = ? ORDER BY fetched_at DESC LIMIT ?`)
+          .all(symbol, limit)
+      : this.db.prepare(`${base} ORDER BY fetched_at DESC LIMIT ?`).all(limit);
+    return rows as NewsArticleRow[];
+  }
+
+  /** Recent agent signals (fleet observability — what the agents decided). */
+  agentSignals(symbol?: string, limit = 100): AgentSignalRow[] {
+    const base = `SELECT i.tradingsymbol AS symbol, s.direction AS direction,
+                         s.rsi_value AS rsi, s.price AS price,
+                         s.reason AS reason, s.created_at AS createdAt
+                  FROM ${this.t('signals')} s
+                  JOIN ${this.t('instruments')} i ON i.instrument_id = s.instrument_id`;
+    const rows = symbol
+      ? this.db
+          .prepare(`${base} WHERE i.tradingsymbol = ? ORDER BY s.created_at DESC LIMIT ?`)
+          .all(symbol, limit)
+      : this.db.prepare(`${base} ORDER BY s.created_at DESC LIMIT ?`).all(limit);
+    return rows as AgentSignalRow[];
   }
 
   /** Distinct intervals that exist in the candles table. */

@@ -40,10 +40,15 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   ticker: {
     mode: 'random-walk',
     randomWalk: {
-      volatility: 0.002,
+      volatility: 0.0001,
       tickIntervalMs: 1000,
       bidAskSpread: 0.05,
       enableRealismFeatures: true,
+      regimeSwitchBars: 1200,
+      regimePersistence: 0.5,
+      enableSeasonality: true,
+      shockProbability: 0.01,
+      shockSize: 0.01,
     },
   },
   server: {

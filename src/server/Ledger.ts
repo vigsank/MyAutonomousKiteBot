@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { MigrationRunner } from './MigrationRunner';
@@ -104,7 +105,7 @@ export class Ledger {
       exchange_token: String(row.token),
       tradingsymbol: row.tradingsymbol,
       name: row.name,
-      last_price: 0,
+      last_price: row.last_price ?? 0,
       expiry: undefined,
       strike: undefined,
       tick_size: row.tick_size,
@@ -292,6 +293,23 @@ export class Ledger {
         reason: trade.reason,
         ts: trade.timestamp.toISOString(),
       });
+  }
+
+  /** Persist an OHLC candle so the UI's Market chart shows live/historical bars. */
+  recordCandle(
+    symbol: string,
+    exchange: string,
+    interval: string,
+    c: { timestamp: string; open: number; high: number; low: number; close: number; volume: number },
+  ): void {
+    const instId = this.resolveInstrumentId(symbol, exchange);
+    this.db
+      .prepare(
+        `INSERT OR IGNORE INTO candles
+           (instrument_id, interval, open, high, low, close, volume, timestamp)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(instId, interval, c.open, c.high, c.low, c.close, c.volume, c.timestamp);
   }
 
   /** Persist the latest trade price for an instrument (used by drawdown). */
@@ -745,6 +763,169 @@ export class Ledger {
            FROM llm_traces ORDER BY created_at DESC LIMIT ?`,
       )
       .all(limit) as any[];
+  }
+
+  /* ---- probe runs & news articles (agent persistence) ---- */
+
+  /** Persist a probe-run verdict (one row per pre-open / mid-session / pre-close run). */
+  recordProbeRun(p: {
+    runId: string;
+    runType: 'pre_open' | 'mid_session' | 'pre_close' | 'manual';
+    symbol: string;
+    runAt: string;
+    dayBias?: string;
+    verdict?: string;
+    summary?: string;
+    meta?: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT OR REPLACE INTO probe_runs
+           (run_id, run_type, symbol, run_at, day_bias, verdict, summary, meta)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        p.runId,
+        p.runType,
+        p.symbol,
+        p.runAt,
+        p.dayBias ?? null,
+        p.verdict ?? null,
+        p.summary ?? null,
+        p.meta ?? null,
+      );
+  }
+
+  /**
+   * Persist a fetched news article, deduped by normalized-title hash.
+   * Returns true when a NEW row was inserted, false when it was a duplicate.
+   */
+  recordNewsArticle(a: {
+    runId?: string;
+    symbol: string;
+    source: string;
+    title: string;
+    link?: string;
+    summary?: string;
+    fullContent?: string;
+    contentSource?: string;
+    publishedAt?: string;
+  }): boolean {
+    const dedupKey = this.dedupKey(a.title);
+    const res = this.db
+      .prepare(
+        `INSERT OR IGNORE INTO news_articles
+           (article_id, run_id, symbol, source, title, link, summary,
+            full_content, content_source, content_len, published_at, fetched_at, dedup_key)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        dedupKey,
+        a.runId ?? null,
+        a.symbol,
+        a.source,
+        a.title,
+        a.link ?? null,
+        a.summary ?? null,
+        a.fullContent ?? null,
+        a.contentSource ?? null,
+        (a.fullContent ?? '').length,
+        a.publishedAt ?? null,
+        new Date().toISOString(),
+        dedupKey,
+      );
+    return res.changes > 0;
+  }
+
+  /** Read persisted news for a symbol (for pattern / summary runs). */
+  getNewsArticles(
+    symbol: string,
+    fromIso?: string,
+    limit = 100,
+  ): Array<{
+    articleId: string;
+    symbol: string;
+    source: string;
+    title: string;
+    link: string | null;
+    summary: string | null;
+    fullContent: string | null;
+    contentSource: string | null;
+    publishedAt: string | null;
+    fetchedAt: string;
+  }> {
+    if (fromIso) {
+      return this.db
+        .prepare(
+          `SELECT article_id AS articleId, symbol, source, title, link, summary,
+                  full_content AS fullContent, content_source AS contentSource,
+                  published_at AS publishedAt, fetched_at AS fetchedAt
+             FROM news_articles WHERE symbol = ? AND fetched_at >= ?
+             ORDER BY fetched_at DESC LIMIT ?`,
+        )
+        .all(symbol, fromIso, limit) as any[];
+    }
+    return this.db
+      .prepare(
+        `SELECT article_id AS articleId, symbol, source, title, link, summary,
+                full_content AS fullContent, content_source AS contentSource,
+                published_at AS publishedAt, fetched_at AS fetchedAt
+           FROM news_articles WHERE symbol = ?
+           ORDER BY fetched_at DESC LIMIT ?`,
+      )
+      .all(symbol, limit) as any[];
+  }
+
+  /** Read the latest probe runs for a symbol. */
+  getProbeRuns(
+    symbol: string,
+    limit = 20,
+  ): Array<{
+    runId: string;
+    runType: string;
+    runAt: string;
+    dayBias: string | null;
+    verdict: string | null;
+    summary: string | null;
+    meta: string | null;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT run_id AS runId, run_type AS runType, run_at AS runAt,
+                day_bias AS dayBias, verdict, summary, meta
+           FROM probe_runs WHERE symbol = ? ORDER BY run_at DESC LIMIT ?`,
+      )
+      .all(symbol, limit) as any[];
+  }
+
+  /** Record that a (symbol, date) news gap was backfilled. */
+  recordBackfill(symbol: string, date: string, source: string, articleCount: number): void {
+    this.db
+      .prepare(
+        `INSERT OR REPLACE INTO news_backfill
+           (symbol, backfill_date, backfilled_at, source, article_count)
+         VALUES (?, ?, ?, ?, ?)`,
+      )
+      .run(symbol, date, new Date().toISOString(), source, articleCount);
+  }
+
+  /** True when a (symbol, date) news gap has already been backfilled. */
+  isBackfilled(symbol: string, date: string): boolean {
+    const row = this.db
+      .prepare(
+        `SELECT 1 FROM news_backfill WHERE symbol = ? AND backfill_date = ?`,
+      )
+      .get(symbol, date) as { 1: number } | undefined;
+    return row !== undefined;
+  }
+
+  /** Normalized-title hash used as a dedup key across sources/runs. */
+  private dedupKey(title: string): string {
+    const norm = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+    return crypto.createHash('sha1').update(norm).digest('hex');
   }
 
   /* ---- private ---- */

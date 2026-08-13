@@ -98,6 +98,23 @@ export function startUiServer(
   );
   app.get('/api/llm-traces', (_req, res) => res.json(queries.llmTraces()));
 
+  /* ------------------- Fleet observability ----------------------------- */
+  app.get('/api/fleet/probes', (req, res) => {
+    const symbol = String(req.query.symbol ?? '');
+    const limit = Number(req.query.limit ?? 100);
+    res.json({ probes: queries.probeRuns(symbol || undefined, limit) });
+  });
+  app.get('/api/fleet/news', (req, res) => {
+    const symbol = String(req.query.symbol ?? '');
+    const limit = Number(req.query.limit ?? 100);
+    res.json({ articles: queries.newsArticles(symbol || undefined, limit) });
+  });
+  app.get('/api/fleet/signals', (req, res) => {
+    const symbol = String(req.query.symbol ?? '');
+    const limit = Number(req.query.limit ?? 100);
+    res.json({ signals: queries.agentSignals(symbol || undefined, limit) });
+  });
+
   app.get('/api/healthz', (_req, res) => res.json({ ok: true }));
 
   /* ------------------- Static client (built) -------------------------- */

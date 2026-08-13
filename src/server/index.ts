@@ -13,6 +13,7 @@ import { createLiveProvider } from './providers/factory';
 import { startUiServer } from './api/server';
 import { logger } from './Logger';
 import { Tick } from './types';
+import { AgentsRuntime } from './AgentsRuntime';
 
 const NEWS_LOOP_MS = 10 * 60 * 1000;
 
@@ -113,6 +114,17 @@ async function main(): Promise<void> {
           from,
           to,
         );
+        // Persist the warmup candles so the UI Market chart shows history.
+        for (const c of candles) {
+          ledger.recordCandle(sym.tradingsymbol, 'NSE', '5minute', {
+            timestamp: c.date.toISOString(),
+            open: c.open,
+            high: c.high,
+            low: c.low,
+            close: c.close,
+            volume: c.volume ?? 0,
+          });
+        }
         const ind = await agent.warmup(sym.tradingsymbol, candles);
         logger.info(
           { symbol: sym.tradingsymbol, rsi: ind.rsi?.toFixed(2) ?? 'n/a', adx: ind.adx?.toFixed(2) ?? 'n/a', atr: ind.atr?.toFixed(2) ?? 'n/a' },
@@ -210,6 +222,17 @@ async function main(): Promise<void> {
 
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
+
+  // --- Agent runtime (probe schedule + cadence) ----------------------------
+  const agentsRuntime = new AgentsRuntime({
+    config, ledger, news, risk, trader,
+    symbols: config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol),
+  });
+  try {
+    agentsRuntime.start();
+  } catch (err: any) {
+    logger.error({ err: err?.message }, 'Failed to start agent runtime (non-fatal)');
+  }
 
   notify.info('Bot started', `Session ${sessionId} — paper trading mode.`);
   logger.info({ sessionId }, 'Bot running. Press Ctrl+C to stop.');

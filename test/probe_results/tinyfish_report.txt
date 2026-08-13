@@ -1,0 +1,46 @@
+TinyFish probe report — symbol: RELIANCE
+NEWS_SEARCH_PROVIDER=tinyfish
+TINYFISH enabled=true (key len=44)
+======================================================================
+
+### SEARCH RESULTS — 5 article(s) in 3039ms
+
+[1] RIL Share Price Tumbles 2% As MSCI Rejig Triggers $523 Million Outflow
+    link: https://www.ndtvprofit.com/markets/ril-share-price-tumbles-2-percent-as-msci-rejig-triggers-523-million-dollar-outflow-11903118
+    summary: The weakness in RIL came after MSCI reduced the company's weightage in its India index. The rejig is estimated to trigger an outflow of around $523 million...
+    pubDate: 47 minutes ago
+    --- page content (TinyFish Fetch) ---
+    fetched in 3024ms, 3633 chars
+    excerpt: # RIL Share Price Tumbles 2% As MSCI Rejig Triggers $523 Million Outflow ## The weakness in RIL came after MSCI reduced the company's weightage in its India index. The rejig is estimated to trigger an outflow of around $523 million from RIL. Read Time: 3 mins RIL Shares Fall Source: AI Generated STOCKS IN THIS STORY Reliance Industries Ltd. -- Reliance Industries (RIL) shares came under pressure in early trade on Thursday after MSCI announced changes to its India index as part of its August 2026 review. The stock fell as much as 1.50% to hit an intraday low of Rs 1,329 per share. At 9:41 am, R
+
+[2] Protalix (PLX) Stock Profit Swing Sharpens Focus On Elfabrio Reliance
+    link: https://simplywall.st/stocks/us/pharmaceuticals-biotech/nysemkt-plx/protalix-biotherapeutics/news/protalix-plx-stock-profit-swing-sharpens-focus-on-elfabrio-r/amp
+    summary: Protalix BioTherapeutics shares jumped 7.8% to US$2.62 into the close, and that move captures only part of the story. The stock came into this print already...
+    pubDate: 4 hours ago
+    --- page content (TinyFish Fetch) ---
+    fetched in 1948ms, 6133 chars
+    excerpt: Protalix BioTherapeutics shares jumped 7.8% to US$2.62 into the close, and that move captures only part of the story. The stock came into this print already on a strong run over the past three months. Today’s reaction, however, appears to lean more on emotion than on new information. The focus is on margin and profitability. Q2 net income reached US$3.8m with earnings per share of US$0.05, supported by US$19.9m in revenue and a cash balance of about US$40.7m with no debt. The market appears to be responding to the overall profit profile and balance sheet strength rather than to any single line
+
+[3] Bank of America to invest Rs 18,268 cr for 49.9% stake in Jio Financial arm
+    link: https://indianexpress.com/article/business/bank-of-america-to-invest-rs-18268-cr-for-49-9-stake-in-jio-financial-arm-10830908/
+    summary: The investment will be made through a preferential allotment of equity shares and warrants.
+    pubDate: 25 minutes ago
+    --- page content (TinyFish Fetch) ---
+    fetched in 1239ms, 4893 chars
+    excerpt: # Bank of America to invest Rs 18,268 cr for 49.9% stake in Jio Financial arm ## The investment will be made through a preferential allotment of equity shares and warrants Written by: George Mathew 3 min readAug 13, 2026 10:15 AM IST Reliance JIO, Ltd Chairman Mukesh Ambani at the exhibition during the launch of 5G services at Pragati Maidan, New Delhi in 2022. (Express Archive photo by Praveen Khanna) Make us preferred source on Google Whatsapp twitter Facebook Reddit Jio Financial Services Ltd (JFSL) of the Reliance Industries group and Bank of America Corporation (BofA) have signed a defini
+
+[4] ‘Difficult but necessary’: Ford to shift Lincoln production from China to US as trade tensions deepen
+    link: https://www.firstpost.com/business/ford-lincoln-production-china-us-trade-tensions-14037820.html
+    summary: Ford Motor is moving to reduce its reliance on China for vehicles sold in the US, with plans to shift production of some Lincoln models from China to the US...
+    pubDate: 4 hours ago
+    --- page content (TinyFish Fetch) ---
+    fetched in 943ms, 6072 chars
+    excerpt: Advertisement Co Presented By Co Presented By # ‘Difficult but necessary’: Ford to shift Lincoln production from China to US as trade tensions deepen Ford will shift production of some Lincoln models from China to the US from 2030, as steep tariffs and widening US-China trade tensions push the automaker to reduce its reliance on Chinese manufacturing Advertisement The Lincoln Nautilus SUV is displayed at the Los Angeles Auto Show in Los Angeles, California US. File/Reuters FP Business Desk|Aug 13, 2026, 06:37:59 IST Ford Motor is moving to reduce its reliance on China for vehicles sold in the 
+
+[5] Sensex down 200 pts, Nifty below 24,350: FII selling among key factors behind market decline
+    link: https://www.moneycontrol.com/mc/
+    summary: Business News Today: Read the latest business news on the Indian economy, global market, upcoming IPOs and more. Get Live Stock Price, Stock and Share...
+    pubDate: 2 hours ago
+    --- page content (TinyFish Fetch) ---
+    fetched in 12508ms, 144753 chars
+    excerpt: <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <meta http-equiv="refresh" content="600"/> <meta http-equiv="x-ua-compatible" content="ie=edge"/> <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/> <title>Sign up</title> <link rel="preconnect" href="https://fonts.googleapis.com"/> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/> <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap"/> <link rel="stylesheet" href="https://accounts.moneycontrol.com/ass

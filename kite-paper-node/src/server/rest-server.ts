@@ -231,6 +231,11 @@ export class RestServer {
     });
   }
 
+  /** Mount an extra route/handler on the underlying express app. */
+  use(path: string, handler: (req: any, res: any) => void): void {
+    this.app.use(path, handler);
+  }
+
   /** Get the underlying HTTP server (for attaching WebSocket). */
   getHttpServer(): any {
     return this.server;

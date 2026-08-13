@@ -89,7 +89,12 @@ export class RiskEngine {
     const last = this.ledger.lastTradeTime();
     if (!last) return true;
     const windowMs = this.config.strategy.tradeCooldownMinutes * 60 * 1000;
-    return now.getTime() - last.getTime() >= windowMs;
+    const elapsed = now.getTime() - last.getTime();
+    // A trade dated in the FUTURE relative to `now` (e.g. a backtest replaying
+    // a later bar's fill while processing an earlier bar) must never impose a
+    // cooldown backwards in time. Cooldown only applies forward from a fill.
+    if (elapsed < 0) return true;
+    return elapsed >= windowMs;
   }
 
   /**

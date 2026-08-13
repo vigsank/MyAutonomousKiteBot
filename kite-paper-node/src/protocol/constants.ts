@@ -37,4 +37,4 @@ export const INSTRUMENT_MASTER_PATH = '../data/instruments.json';
 export const DEFAULT_TICK_BUFFER_SIZE = 10_000;
 
 // Circuit limit clamp (fraction of base price).
-export const DEFAULT_CIRCUIT_LIMIT = 0.05;
+export const DEFAULT_CIRCUIT_LIMIT = 0.1;

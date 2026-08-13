@@ -204,13 +204,19 @@ export class KiteStreamer implements HistoricalDataProvider, LiveDataProvider {
       access_token: this.config.kite.accessToken,
     });
 
-    this.ticker.connect();
-
+    // IMPORTANT: register the 'connect' handler BEFORE calling connect().
+    // The real KiteTicker connects asynchronously (websocket), so either
+    // order works there — but the mock (kite-paper-node) connects
+    // synchronously and emits 'connect' immediately. If we subscribe after
+    // connect() returns, the handler is registered too late and no tokens
+    // are ever subscribed, so no ticks flow.
     this.ticker.on('connect', () => {
       logger.info({ tokens: tokens.length }, 'Ticker connected, subscribing');
       this.ticker?.subscribe(tokens);
       this.ticker?.setMode(this.ticker.MODE_FULL, tokens);
     });
+
+    this.ticker.connect();
 
     this.ticker.on('ticks', (ticks: any[]) => {
       const mapped: Tick[] = ticks.map((t) => ({
