@@ -145,6 +145,10 @@ export interface AppConfig {
     bollingerPeriod: number;
     bollingerStdDev: number;
     bollingerRsiEntry: number;
+    /** Holdings review: book partial profit above this unrealized gain %. */
+    holdingsProfitTargetPct: number;
+    /** Holdings review: trim a position above this % of capital (rebalance). */
+    holdingsTargetWeightPct: number;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
@@ -364,6 +368,8 @@ export function loadConfig(): AppConfig {
       bollingerPeriod: num('BOLLINGER_PERIOD', 20),
       bollingerStdDev: num('BOLLINGER_STD_DEV', 2),
       bollingerRsiEntry: num('BOLLINGER_RSI_ENTRY', 30),
+      holdingsProfitTargetPct: num('HOLDINGS_PROFIT_TARGET_PCT', 8),
+      holdingsTargetWeightPct: num('HOLDINGS_TARGET_WEIGHT_PCT', 10),
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,

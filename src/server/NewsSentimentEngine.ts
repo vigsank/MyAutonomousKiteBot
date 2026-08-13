@@ -372,6 +372,49 @@ Return JSON:
     }
   }
 
+  /**
+   * AI-backed verdict on an EXISTING position: HOLD / TRIM / EXIT.
+   * Combines unrealized P&L, news sentiment, trend, and position weight.
+   * Returns null on LLM failure — the caller falls back to rule-based logic.
+   */
+  async holdingsVerdict(ctx: {
+    symbol: string;
+    direction: string;
+    quantity: number;
+    avgPrice: number;
+    currentPrice: number;
+    unrealizedPnlPct: number;
+    sentiment: number;
+    trend: 'up' | 'down' | 'flat';
+    weightPct: number;
+  }): Promise<{ action: 'HOLD' | 'TRIM' | 'EXIT'; riskScore: number; rationale: string } | null> {
+    if (!this.aiConfigured) return null;
+
+    const prompt = `You are a disciplined retail portfolio manager. Review this EXISTING position in the Indian stock ${ctx.symbol} and return STRICT JSON only, no markdown.
+
+Position: ${ctx.direction} ${ctx.quantity} @ avg ${ctx.avgPrice.toFixed(2)}, now ${ctx.currentPrice.toFixed(2)}
+Unrealized P&L: ${ctx.unrealizedPnlPct.toFixed(2)}%
+News sentiment: ${ctx.sentiment.toFixed(2)} (-1 bearish .. +1 bullish)
+Trend: ${ctx.trend}
+Position weight: ${ctx.weightPct.toFixed(1)}% of capital
+
+Decide: HOLD (keep), TRIM (sell part to book profit / reduce risk), or EXIT (sell all).
+Be disciplined — book profits when good, cut losers, don't be greedy.
+
+Return JSON:
+{"action": "HOLD"|"TRIM"|"EXIT", "riskScore": integer 0-100, "rationale": "one sentence"}`;
+
+    try {
+      const start = Date.now();
+      const meta = await this.llm.chatWithMeta(prompt);
+      this.recordTrace('holdings', ctx.symbol, prompt, meta.text, start, meta);
+      return validateHoldingsJson(extractJson(meta.text));
+    } catch (err) {
+      logger.warn({ symbol: ctx.symbol, err }, 'Holdings verdict failed — falling back to rules');
+      return null;
+    }
+  }
+
 
   /** Use the configured LLM to score the news. */
   private async aiSentiment(
@@ -538,6 +581,22 @@ function validateAnalystJson(value: unknown): AnalystVerdict | null {
   const rationale = typeof v.rationale === 'string' ? v.rationale : '';
   return {
     verdict,
+    riskScore: Math.max(0, Math.min(100, Math.round(riskScore))),
+    rationale,
+  };
+}
+
+/** Validate the LLM's holdings verdict (HOLD/TRIM/EXIT) before it can act. */
+function validateHoldingsJson(value: unknown): { action: 'HOLD' | 'TRIM' | 'EXIT'; riskScore: number; rationale: string } | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const v = value as Record<string, unknown>;
+  const action = v.action;
+  if (action !== 'HOLD' && action !== 'TRIM' && action !== 'EXIT') return null;
+  const riskScore = Number(v.riskScore);
+  if (!Number.isFinite(riskScore)) return null;
+  const rationale = typeof v.rationale === 'string' ? v.rationale : '';
+  return {
+    action,
     riskScore: Math.max(0, Math.min(100, Math.round(riskScore))),
     rationale,
   };

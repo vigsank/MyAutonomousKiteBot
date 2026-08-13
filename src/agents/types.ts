@@ -38,6 +38,7 @@ export type AgentId =
   | "margins_capital"
   | "correlation"
   | "drawdown_monitor"
+  | "holdings_review"
   // F — decision (golden path)
   | "regime"
   | "screener"

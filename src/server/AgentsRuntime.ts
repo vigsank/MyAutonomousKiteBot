@@ -7,6 +7,7 @@ import { PaperTrader } from "./PaperTrader";
 import { logger } from "./Logger";
 import { scheduleLoop, ScheduleLoopHandle } from "../agents/orchestrator";
 import { runProbe, ProbeRunType } from "../agents/probe";
+import { runHoldingsReview } from "../agents/holdingsReview";
 import { AgentContext } from "../agents/types";
 import { istMinutes } from "../agents/scheduler";
 import { KiteMcpClient } from "./KiteMcpClient";
@@ -175,6 +176,19 @@ export class AgentsRuntime {
           logger.error({ runType, symbol, err: err?.message }, "probe failed");
         });
     }
+
+    // Holdings review runs once per window (reviews all open positions).
+    const hctx = this.makeContext(new Date(), crypto.randomUUID());
+    runHoldingsReview(hctx, runType)
+      .then((result) => {
+        logger.info(
+          { runType, status: result.status, summary: result.summary },
+          "holdings review complete",
+        );
+      })
+      .catch((err: any) => {
+        logger.error({ runType, err: err?.message }, "holdings review failed");
+      });
   }
 
   /** Dev helper: fire all three probe types once, regardless of IST time. */

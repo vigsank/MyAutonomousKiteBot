@@ -91,12 +91,6 @@
       "enabled": true
     },
     {
-      "tradingsymbol": "TATAMOTORS",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
       "tradingsymbol": "MARUTI",
       "exchange": "NSE",
       "quantity": 10,
@@ -487,31 +481,13 @@
       "enabled": true
     },
     {
-      "tradingsymbol": "INFOSYS",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
       "tradingsymbol": "INDIGO",
       "exchange": "NSE",
       "quantity": 10,
       "enabled": true
     },
     {
-      "tradingsymbol": "JSWELECTRIC",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
       "tradingsymbol": "JIOFIN",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
-      "tradingsymbol": "LTIM",
       "exchange": "NSE",
       "quantity": 10,
       "enabled": true
@@ -571,12 +547,6 @@
       "enabled": true
     },
     {
-      "tradingsymbol": "REC",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
       "tradingsymbol": "SBICARD",
       "exchange": "NSE",
       "quantity": 10,
@@ -590,12 +560,6 @@
     },
     {
       "tradingsymbol": "MOTHERSON",
-      "exchange": "NSE",
-      "quantity": 10,
-      "enabled": true
-    },
-    {
-      "tradingsymbol": "SHREEBACEM",
       "exchange": "NSE",
       "quantity": 10,
       "enabled": true

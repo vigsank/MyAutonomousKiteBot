@@ -7,6 +7,7 @@ import { buildDomainAgents as buildE } from "./domainE";
 import { buildDomainAgents as buildF } from "./domainF";
 import { buildDomainAgents as buildG } from "./domainG";
 import { buildDomainAgents as buildH } from "./domainH";
+import { buildHoldingsReviewAgent } from "./holdingsReview";
 
 /**
  * Agent registry — the full fleet (domains A–H) from the plan.
@@ -26,6 +27,7 @@ function buildRegistry(): Map<AgentId, AgentDef> {
     ...buildF(),
     ...buildG(),
     ...buildH(),
+    buildHoldingsReviewAgent(),
   ];
   for (const agent of all) {
     if (registry.has(agent.id)) {
