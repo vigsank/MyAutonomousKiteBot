@@ -1,0 +1,83 @@
+{
+  "name": "case1",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 20000,
+  "totalCapital": 20000,
+  "pickSymbols": 20,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 7,
+  "symbols": [
+    "BAJAJFINSV",
+    "CUMMINSIND",
+    "INDIGO",
+    "HDFCLIFE",
+    "IOC",
+    "MARICO",
+    "TVSMOTOR",
+    "HINDALCO",
+    "VEDL",
+    "DABUR",
+    "AXISBANK",
+    "SBILIFE",
+    "IRCTC",
+    "SBICARD",
+    "ICICIPRULI",
+    "MARUTI",
+    "BAJAJHLDNG",
+    "M&M",
+    "BHARTIARTL",
+    "TCS"
+  ],
+  "roundTrips": 1,
+  "winRate": 100,
+  "profitFactor": null,
+  "netPnl": 1599.6430895280014,
+  "returnPct": 7.998215447640007,
+  "maxDrawdown": 0,
+  "maxDrawdownPct": 0,
+  "finalEquity": 21599.643089528003,
+  "equityCurve": [
+    20000,
+    20000,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992,
+    1406.2819999999992
+  ],
+  "perSymbol": [
+    {
+      "symbol": "BAJAJFINSV",
+      "pnl": 1599.6430895280014
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "BAJAJFINSV",
+      "direction": "SHORT",
+      "quantity": 10,
+      "price": 2024.595,
+      "pnl": 1599.6430895280014,
+      "reason": "Closed LONG position. Backtest end — force close"
+    }
+  ]
+}

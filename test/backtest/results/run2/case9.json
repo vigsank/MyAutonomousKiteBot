@@ -1,0 +1,165 @@
+{
+  "name": "case9",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 60000,
+  "totalCapital": 120000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 5,
+  "seed": 15,
+  "symbols": [
+    "IRFC",
+    "INDUSINDBK",
+    "TATACONSUM",
+    "DABUR",
+    "JIOFIN",
+    "HAL",
+    "CUMMINSIND",
+    "HAVELLS",
+    "VBL",
+    "EICHERMOT"
+  ],
+  "roundTrips": 11,
+  "winRate": 63.63636363636363,
+  "profitFactor": 5.127553854854767,
+  "netPnl": 663.7191419451008,
+  "returnPct": 0.5530992849542506,
+  "maxDrawdown": 89.08744717061927,
+  "maxDrawdownPct": 0.07423953930884938,
+  "finalEquity": 120663.7191419451,
+  "equityCurve": [
+    120000,
+    62249.04196934968,
+    120000,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479,
+    813.1620278320479
+  ],
+  "perSymbol": [
+    {
+      "symbol": "TATACONSUM",
+      "pnl": 410.3558093190873
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "pnl": 99.7275569174366
+    },
+    {
+      "symbol": "EICHERMOT",
+      "pnl": 96.20440622520022
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": 73.78792064280036
+    },
+    {
+      "symbol": "JIOFIN",
+      "pnl": 42.8257092623644
+    },
+    {
+      "symbol": "IRFC",
+      "pnl": 39.06414640996414
+    },
+    {
+      "symbol": "HAL",
+      "pnl": 15.05827661808534
+    },
+    {
+      "symbol": "HAVELLS",
+      "pnl": -1.4620036777815208
+    },
+    {
+      "symbol": "DABUR",
+      "pnl": -41.59007562984168
+    },
+    {
+      "symbol": "VBL",
+      "pnl": -70.25260414221434
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "TATACONSUM",
+      "direction": "SHORT",
+      "quantity": 110,
+      "price": 1090.2819,
+      "pnl": 457.85318085986955,
+      "reason": "Closed LONG position. Backtest end — force close"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1016.3466777954102,
+      "pnl": 99.7275569174366,
+      "reason": "Closed LONG position. RSI 81.5 overbought (>70)"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 7392.5212,
+      "pnl": 96.20440622520022,
+      "reason": "Closed LONG position. RSI 73.2 overbought (>70)"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 5582.3833,
+      "pnl": 73.78792064280036,
+      "reason": "Closed LONG position. RSI 73.0 overbought (>70)"
+    },
+    {
+      "symbol": "VBL",
+      "direction": "SHORT",
+      "quantity": 12,
+      "price": 465.65685,
+      "pnl": -70.25260414221434,
+      "reason": "Closed LONG position. Bollinger target hit (price 465.75 >= middle band 465.68)"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 1090.4818111816405,
+      "pnl": -47.497371540782225,
+      "reason": "Closed LONG position. Bollinger target hit (price 1090.70 >= middle band 1089.69)"
+    },
+    {
+      "symbol": "JIOFIN",
+      "direction": "SHORT",
+      "quantity": 25,
+      "price": 238.30233610229493,
+      "pnl": 42.8257092623644,
+      "reason": "Closed LONG position. RSI 90.7 overbought (>70)"
+    },
+    {
+      "symbol": "DABUR",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 433.11337220458984,
+      "pnl": -41.59007562984168,
+      "reason": "Closed LONG position. Bollinger target hit (price 433.20 >= middle band 433.12)"
+    }
+  ]
+}

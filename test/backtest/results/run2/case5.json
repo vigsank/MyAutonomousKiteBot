@@ -1,0 +1,80 @@
+{
+  "name": "case5",
+  "holdingsCount": 1,
+  "holdingsValue": 30000,
+  "newCapital": 20000,
+  "totalCapital": 50000,
+  "pickSymbols": 5,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 11,
+  "symbols": [
+    "VBL",
+    "COLPAL",
+    "HDFCAMC",
+    "MAXHEALTH",
+    "AXISBANK"
+  ],
+  "roundTrips": 2,
+  "winRate": 0,
+  "profitFactor": 0,
+  "netPnl": -343.6808699243285,
+  "returnPct": -0.687361739848657,
+  "maxDrawdown": 343.68086992432654,
+  "maxDrawdownPct": 0.687361739848653,
+  "finalEquity": 49656.31913007567,
+  "equityCurve": [
+    50000,
+    50000,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039,
+    1942.3904000000039
+  ],
+  "perSymbol": [
+    {
+      "symbol": "VBL",
+      "pnl": -38.590067679526584
+    },
+    {
+      "symbol": "COLPAL",
+      "pnl": -305.0908022448019
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "COLPAL",
+      "direction": "SHORT",
+      "quantity": 24,
+      "price": 1995.1009,
+      "pnl": -305.0908022448019,
+      "reason": "Closed LONG position. Backtest end — force close"
+    },
+    {
+      "symbol": "VBL",
+      "direction": "SHORT",
+      "quantity": 31,
+      "price": 470.9058,
+      "pnl": -38.590067679526584,
+      "reason": "Closed LONG position. rebalance TRIM"
+    }
+  ]
+}

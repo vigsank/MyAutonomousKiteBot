@@ -1,0 +1,83 @@
+{
+  "name": "case8",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 50000,
+  "totalCapital": 50000,
+  "pickSymbols": 20,
+  "days": 60,
+  "rebalanceDays": 1,
+  "seed": 14,
+  "symbols": [
+    "HDFCAMC",
+    "NAUKRI",
+    "CONCOR",
+    "IDFCFIRSTB",
+    "SBICARD",
+    "HAL",
+    "HAVELLS",
+    "JIOFIN",
+    "TRENT",
+    "COFORGE",
+    "CUMMINSIND",
+    "BHARTIARTL",
+    "ABB",
+    "VBL",
+    "BHEL",
+    "LICI",
+    "SIEMENS",
+    "COALINDIA",
+    "HDFCBANK",
+    "CIPLA"
+  ],
+  "roundTrips": 1,
+  "winRate": 0,
+  "profitFactor": 0,
+  "netPnl": -3.056425782989237,
+  "returnPct": -0.006112851565978474,
+  "maxDrawdown": 3.056425782990118,
+  "maxDrawdownPct": 0.0061128515659802365,
+  "finalEquity": 49996.94357421701,
+  "equityCurve": [
+    50000,
+    50000,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638,
+    144.1317723388638
+  ],
+  "perSymbol": [
+    {
+      "symbol": "SBICARD",
+      "pnl": -3.056425782989237
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "SBICARD",
+      "direction": "SHORT",
+      "quantity": 78,
+      "price": 640.8718,
+      "pnl": -3.056425782989237,
+      "reason": "Closed LONG position. Backtest end — force close"
+    }
+  ]
+}

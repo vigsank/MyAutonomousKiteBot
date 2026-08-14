@@ -1,10 +1,10 @@
 /**
- * Mock-data backtest — runs the real strategy (MarketAgent.onCandle) over the
- * mock's real historical CSVs (5-min bars, 30 days) on a given capital, and
- * prints a consolidated P&L report. No real orders — paper only.
+ * Mock-data backtest ENGINE — runs the real strategy (MarketAgent.onCandle)
+ * over the mock's real historical CSVs, with optional seeded holdings and
+ * periodic rebalancing, on a given capital. AI analyst (news sentiment + LLM
+ * verdict) gates entries. Returns a CaseResult for reporting.
  *
- * Usage:
- *   ENV_FILE=.env.test BACKTEST_CAPITAL=50000 npx ts-node test/backtest/mock_backtest.ts
+ * Used by run_all_cases.ts to run the 10 scenarios and generate reports.
  */
 import { loadConfig } from '../../src/server/AppConfig';
 import { Ledger } from '../../src/server/Ledger';
@@ -17,21 +17,49 @@ import { LlmManager } from '../../src/server/LlmManager';
 import { TelegramHITL } from '../../src/server/TelegramHITL';
 import { OptionsEngine } from '../../src/server/OptionsEngine';
 import { OptionsTrader } from '../../src/server/OptionsTrader';
-import { Candle } from '../../src/server/types';
+import { Candle, TradeRequest } from '../../src/server/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const DATA_DIR = path.join(process.cwd(), 'kite-paper-node', 'data');
 
-function numEnv(key: string, fallback: number): number {
-  const raw = process.env[key];
-  if (raw === undefined || raw.trim() === '') return fallback;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : fallback;
+export interface CaseConfig {
+  name: string;
+  holdingsCount: number;
+  holdingsValue: number;
+  newCapital: number;
+  pickSymbols: number;
+  days: number;
+  rebalanceDays: number;
+  seed: number;
+}
+
+export interface CaseResult {
+  name: string;
+  holdingsCount: number;
+  holdingsValue: number;
+  newCapital: number;
+  totalCapital: number;
+  pickSymbols: number;
+  days: number;
+  rebalanceDays: number;
+  seed: number;
+  symbols: string[];
+  roundTrips: number;
+  winRate: number;
+  profitFactor: number;
+  netPnl: number;
+  returnPct: number;
+  maxDrawdown: number;
+  maxDrawdownPct: number;
+  finalEquity: number;
+  equityCurve: number[];
+  perSymbol: Array<{ symbol: string; pnl: number }>;
+  topTrades: Array<{ symbol: string; direction: string; quantity: number; price: number; pnl: number; reason: string }>;
 }
 
 /** Parse a mock CSV into Candle[] (chronological). */
-function readCandles(symbol: string, interval: string): Candle[] {
+export function readCandles(symbol: string, interval: string): Candle[] {
   const file = path.join(DATA_DIR, `${symbol}_${interval}.csv`);
   if (!fs.existsSync(file)) return [];
   const lines = fs.readFileSync(file, 'utf-8').trim().split(/\r?\n/);
@@ -53,13 +81,21 @@ function readCandles(symbol: string, interval: string): Candle[] {
   return out.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
+/** Deterministic PRNG. */
+export function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 /** Minimal streamer stub — MarketAgent.onCandle only needs instrument lookup. */
 function makeStreamer(symbols: string[]) {
   const bySymbol = new Map(symbols.map((s, i) => [s, {
-    instrument_token: 1000 + i,
-    tradingsymbol: s,
-    exchange: 'NSE',
-    last_price: 0,
+    instrument_token: 1000 + i, tradingsymbol: s, exchange: 'NSE', last_price: 0,
   }]));
   return {
     findInstrument: (symbol: string) => bySymbol.get(symbol) ?? null,
@@ -67,40 +103,27 @@ function makeStreamer(symbols: string[]) {
   };
 }
 
-async function main(): Promise<void> {
+/** Run one case. Returns a CaseResult. */
+export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 60): Promise<CaseResult> {
   const config = loadConfig();
-  const capital = numEnv('BACKTEST_CAPITAL', 50000);
-  const interval = process.env.BACKTEST_INTERVAL || '5min';
-  const warmupBars = numEnv('BACKTEST_WARMUP_BARS', 60);
-
-  config.risk.availableCapital = capital;
-  config.risk.maxTradeAllocation = capital;
+  const totalCapital = cfg.holdingsValue + cfg.newCapital;
+  config.risk.availableCapital = totalCapital;
+  config.risk.maxTradeAllocation = totalCapital;
   config.risk.autoTradeTicketThreshold = Number.MAX_SAFE_INTEGER;
-  config.risk.maxDailyDrawdown = Math.max(config.risk.maxDailyDrawdown, capital * 0.1);
-  config.strategy.analystEnabled = true; // AI-backed verdicts before buy/sell
-  config.strategy.analystRejectThreshold = numEnv('ANALYST_REJECT_THRESHOLD', 70);
+  config.risk.maxDailyDrawdown = Math.max(config.risk.maxDailyDrawdown, totalCapital * 0.1);
+  config.strategy.analystEnabled = true;
   config.strategy.disableTimeFilter = true;
 
-  const symbols = config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol);
-  // Randomly pick ~20 symbols the user wishes to invest on (deterministic seed).
-  const pickN = numEnv('PICK_SYMBOLS', 20);
-  const seed = numEnv('PICK_SEED', 12345);
-  const rng = mulberry32(seed);
-  const shuffled = [...symbols].sort(() => rng() - 0.5);
-  const selected = shuffled.slice(0, Math.min(pickN, symbols.length));
+  const allSymbols = config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol);
+  const rng = mulberry32(cfg.seed);
+  const shuffled = [...allSymbols].sort(() => rng() - 0.5);
+  const selected = shuffled.slice(0, Math.min(cfg.pickSymbols, allSymbols.length));
 
   const candlesMap = new Map<string, Candle[]>();
   for (const sym of selected) {
     const c = readCandles(sym, interval);
     if (c.length > warmupBars) candlesMap.set(sym, c);
   }
-
-  console.log('==============================================================');
-  console.log('  MOCK-DATA BACKTEST (real historical CSVs + AI analyst)');
-  console.log(`  Interval: ${interval} | Capital: ₹${capital.toLocaleString('en-IN')}`);
-  console.log(`  Selected symbols (${candlesMap.size}): ${[...candlesMap.keys()].join(', ')}`);
-  console.log('  AI analyst: ENABLED (news sentiment + LLM verdict before trades)');
-  console.log('==============================================================');
 
   const ledger = new Ledger(':memory:');
   ledger.runMigrations();
@@ -115,28 +138,71 @@ async function main(): Promise<void> {
   const optionsTrader = new OptionsTrader(config, new OptionsEngine(config), ledger, risk);
   const agent = new MarketAgent(config, streamer, ledger, risk, trader, telegram, news, notify, optionsTrader);
 
-  // Pre-compute real news sentiment per selected symbol (the "new sentiments").
-  console.log('  Computing news sentiment for selected symbols...');
+  // Pre-compute real news sentiment for selected symbols.
   for (const sym of candlesMap.keys()) {
     try {
       const s = await news.sentimentFor(sym);
       if (s && typeof s.score === 'number') (agent as any).sentiment.set(sym, s.score);
-    } catch {
-      /* keep 0 on failure */
+    } catch { /* keep 0 */ }
+  }
+
+  // Seed existing holdings (equal weight across holdingsCount symbols).
+  const seedSymbols = shuffled.slice(0, Math.min(cfg.holdingsCount, candlesMap.size));
+  if (cfg.holdingsCount > 0 && seedSymbols.length > 0) {
+    const perHolding = cfg.holdingsValue / seedSymbols.length;
+    for (const sym of seedSymbols) {
+      const candles = candlesMap.get(sym);
+      if (!candles || candles.length === 0) continue;
+      const price = candles[0].close;
+      const qty = Math.max(1, Math.floor(perHolding / price));
+      trader.execute({
+        symbol: sym, exchange: 'NSE', quantity: qty, direction: 'LONG',
+        entryPrice: price, reason: 'seeded holding', ticketSize: qty * price, timestamp: candles[0].date,
+      });
     }
   }
-  console.log('  Sentiment computed.');
 
-  for (const sym of candlesMap.keys()) {
-    const candles = candlesMap.get(sym)!;
-    await agent.warmup(sym, candles.slice(0, warmupBars));
-    for (let i = warmupBars; i < candles.length; i++) {
-      agent.onCandle(sym, candles[i], candles[i].date);
-      // Flush so async AI-analyst-gated trades execute before the next bar.
-      await agent.flush();
+  // Run over candles, rebalancing every rebalanceDays.
+  const equityCurve: number[] = [totalCapital];
+  const byDay = new Map<string, string[]>();
+  for (const [sym, candles] of candlesMap) {
+    for (const c of candles) {
+      const d = c.date.toISOString().slice(0, 10);
+      if (!byDay.has(d)) byDay.set(d, []);
+      byDay.get(d)!.push(sym);
     }
+  }
+  const days = [...byDay.keys()].sort().slice(0, cfg.days);
+
+  for (let di = 0; di < days.length; di++) {
+    const day = days[di];
+    for (const sym of candlesMap.keys()) {
+      const candles = candlesMap.get(sym)!;
+      const dayCandles = candles.filter((c) => c.date.toISOString().slice(0, 10) === day);
+      for (const c of dayCandles) {
+        agent.onCandle(sym, c, c.date);
+        await agent.flush();
+      }
+    }
+    // Rebalance at the end of each rebalance period.
+    if ((di + 1) % cfg.rebalanceDays === 0) {
+      rebalance(ledger, trader, risk, config, candlesMap, days[di]);
+    }
+    // Mark-to-market equity.
+    let eq = totalCapital;
+    for (const pos of ledger.getOpenPositions()) {
+      const inst = ledger.getInstrumentBySymbol(pos.symbol, 'NSE');
+      const price = inst?.last_price ?? pos.avgPrice;
+      eq += pos.direction === 'LONG' ? (price - pos.avgPrice) * pos.quantity : (pos.avgPrice - price) * pos.quantity;
+    }
+    equityCurve.push(eq);
+  }
+
+  // Force-close any open positions at the end.
+  for (const sym of candlesMap.keys()) {
     const pos = ledger.getPosition(sym, 'NSE');
     if (pos) {
+      const candles = candlesMap.get(sym)!;
       const last = candles[candles.length - 1];
       trader.execute({
         symbol: sym, exchange: 'NSE', quantity: pos.quantity,
@@ -149,11 +215,10 @@ async function main(): Promise<void> {
   await agent.flush();
 
   const rows = ledger.raw().prepare(
-    `SELECT i.tradingsymbol AS symbol, t.direction, t.quantity, t.price, t.pnl, t.reason, t.created_at
+    `SELECT i.tradingsymbol AS symbol, t.direction, t.quantity, t.price, t.pnl, t.reason
        FROM trades t JOIN instruments i ON i.instrument_id = t.instrument_id
       WHERE t.status = 'FILLED' ORDER BY t.created_at`,
   ).all() as any[];
-
   const realized = rows.filter((r) => r.pnl !== 0);
   const totalPnl = realized.reduce((s, r) => s + (r.pnl ?? 0), 0);
   const wins = realized.filter((r) => (r.pnl ?? 0) > 0);
@@ -163,54 +228,58 @@ async function main(): Promise<void> {
   const winRate = realized.length ? (wins.length / realized.length) * 100 : 0;
   const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0;
 
-  let peak = capital, running = capital, maxDd = 0;
+  let peak = totalCapital, running = totalCapital, maxDd = 0;
   for (const r of realized) {
     running += r.pnl ?? 0;
     peak = Math.max(peak, running);
     maxDd = Math.max(maxDd, peak - running);
   }
 
-  console.log('\n══════════════════════════════════════════════');
-  console.log('  CONSOLIDATED P&L REPORT (30-day simulation)');
-  console.log('══════════════════════════════════════════════');
-  console.log(`  Starting capital:   ₹${capital.toLocaleString('en-IN')}`);
-  console.log(`  Round trips:        ${realized.length}`);
-  console.log(`  Win rate:           ${winRate.toFixed(1)}% (${wins.length}W / ${losses.length}L)`);
-  console.log(`  Gross profit:       ₹${grossProfit.toFixed(2)}`);
-  console.log(`  Gross loss:         ₹${grossLoss.toFixed(2)}`);
-  console.log(`  Profit factor:      ${profitFactor === Infinity ? 'inf' : profitFactor.toFixed(2)}`);
-  console.log(`  Net P&L:            ₹${totalPnl.toFixed(2)}`);
-  console.log(`  Return:             ${((totalPnl / capital) * 100).toFixed(2)}%`);
-  console.log(`  Max drawdown:       ₹${maxDd.toFixed(2)} (${((maxDd / capital) * 100).toFixed(2)}%)`);
-  console.log(`  Final equity:       ₹${(capital + totalPnl).toLocaleString('en-IN')}`);
-  console.log('══════════════════════════════════════════════');
+  const perSymbol = new Map<string, number>();
+  for (const r of realized) perSymbol.set(r.symbol, (perSymbol.get(r.symbol) ?? 0) + (r.pnl ?? 0));
+  const topTrades = [...realized].sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 8)
+    .map((t) => ({ symbol: t.symbol, direction: t.direction, quantity: t.quantity, price: t.price, pnl: t.pnl ?? 0, reason: t.reason }));
 
-  console.log('\n  Top trades:');
-  const top = [...realized].sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 8);
-  for (const t of top) {
-    console.log(`    ${t.symbol} ${t.direction} ${t.quantity} @ ${t.price.toFixed(2)}  PnL ₹${(t.pnl ?? 0).toFixed(2)}  ${t.reason}`);
-  }
-  console.log('\n  Per-symbol P&L:');
-  const bySym = new Map<string, number>();
-  for (const r of realized) bySym.set(r.symbol, (bySym.get(r.symbol) ?? 0) + (r.pnl ?? 0));
-  const sorted = [...bySym.entries()].sort((a, b) => b[1] - a[1]);
-  for (const [s, p] of sorted) console.log(`    ${s.padEnd(14)} ₹${p.toFixed(2)}`);
-  console.log('══════════════════════════════════════════════');
-  process.exit(0);
+  ledger.close();
+  return {
+    name: cfg.name, holdingsCount: cfg.holdingsCount, holdingsValue: cfg.holdingsValue,
+    newCapital: cfg.newCapital, totalCapital, pickSymbols: cfg.pickSymbols, days: cfg.days,
+    rebalanceDays: cfg.rebalanceDays, seed: cfg.seed, symbols: [...candlesMap.keys()],
+    roundTrips: realized.length, winRate, profitFactor, netPnl: totalPnl,
+    returnPct: (totalPnl / totalCapital) * 100, maxDrawdown: maxDd,
+    maxDrawdownPct: (maxDd / totalCapital) * 100, finalEquity: totalCapital + totalPnl,
+    equityCurve, perSymbol: [...perSymbol.entries()].map(([symbol, pnl]) => ({ symbol, pnl })).sort((a, b) => b.pnl - a.pnl),
+    topTrades,
+  };
 }
 
-main().catch((err) => {
-  console.error('Mock backtest failed:', err);
-  process.exit(1);
-});
+/** Rebalance: trim overweight / book profit / exit losers, freeing capital. */
+function rebalance(ledger: Ledger, trader: PaperTrader, risk: RiskEngine, config: any, candlesMap: Map<string, Candle[]>, day: string): void {
+  const cfg = config.strategy;
+  for (const pos of ledger.getOpenPositions()) {
+    const candles = candlesMap.get(pos.symbol);
+    if (!candles) continue;
+    const dayCandles = candles.filter((c) => c.date.toISOString().slice(0, 10) === day);
+    if (dayCandles.length === 0) continue;
+    const price = dayCandles[dayCandles.length - 1].close;
+    const unrealizedPnlPct = pos.direction === 'LONG'
+      ? ((price - pos.avgPrice) / pos.avgPrice) * 100
+      : ((pos.avgPrice - price) / pos.avgPrice) * 100;
+    const weightPct = (pos.quantity * price / config.risk.availableCapital) * 100;
 
-/** Deterministic PRNG for reproducible random symbol picks. */
-function mulberry32(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0; a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+    let action: 'HOLD' | 'TRIM' | 'EXIT' = 'HOLD';
+    if (unrealizedPnlPct <= -cfg.stopLossPercent) action = 'EXIT';
+    else if (unrealizedPnlPct >= cfg.holdingsProfitTargetPct) action = 'TRIM';
+    else if (weightPct > cfg.holdingsTargetWeightPct) action = 'TRIM';
+
+    if (action === 'HOLD') continue;
+    const qty = action === 'EXIT' ? pos.quantity : Math.max(1, Math.floor(pos.quantity / 2));
+    const trade: TradeRequest = {
+      symbol: pos.symbol, exchange: 'NSE', quantity: qty,
+      direction: pos.direction === 'LONG' ? 'SHORT' : 'LONG',
+      entryPrice: price, reason: `rebalance ${action}`, ticketSize: qty * price, timestamp: new Date(day),
+    };
+    const decision = risk.evaluate(trade);
+    if (decision.allowed) trader.execute(trade);
+  }
 }

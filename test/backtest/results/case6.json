@@ -1,0 +1,138 @@
+{
+  "name": "case6",
+  "holdingsCount": 5,
+  "holdingsValue": 50000,
+  "newCapital": 50000,
+  "totalCapital": 100000,
+  "pickSymbols": 15,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 12,
+  "symbols": [
+    "GODREJPROP",
+    "TVSMOTOR",
+    "HCLTECH",
+    "COFORGE",
+    "TECHM",
+    "ULTRACEMCO",
+    "CGPOWER",
+    "ICICIGI",
+    "IRCTC",
+    "BHARATFORG",
+    "BALKRISIND",
+    "BAJAJHLDNG",
+    "BOSCHLTD",
+    "BHARTIARTL",
+    "SBICARD"
+  ],
+  "roundTrips": 6,
+  "winRate": 50,
+  "profitFactor": 0.077430262826308,
+  "netPnl": -1426.3320255067322,
+  "returnPct": -1.4263320255067322,
+  "maxDrawdown": 1523.1628385166987,
+  "maxDrawdownPct": 1.5231628385166986,
+  "finalEquity": 98573.66797449326,
+  "equityCurve": [
+    100000,
+    56923.78662651366,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798,
+    640.9275692382798
+  ],
+  "perSymbol": [
+    {
+      "symbol": "COFORGE",
+      "pnl": 67.83141009693769
+    },
+    {
+      "symbol": "HCLTECH",
+      "pnl": 26.919081371831652
+    },
+    {
+      "symbol": "GODREJPROP",
+      "pnl": 24.95998586696593
+    },
+    {
+      "symbol": "TECHM",
+      "pnl": -22.879664325767514
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "pnl": -35.78776252420102
+    },
+    {
+      "symbol": "BHARATFORG",
+      "pnl": -1487.375075992499
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "BHARATFORG",
+      "direction": "SHORT",
+      "quantity": 47,
+      "price": 2087.5824,
+      "pnl": -1487.375075992499,
+      "reason": "Closed LONG position. Backtest end — force close"
+    },
+    {
+      "symbol": "COFORGE",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1550.4898888183593,
+      "pnl": 67.83141009693769,
+      "reason": "Closed LONG position. Bollinger target hit (price 1550.80 >= middle band 1546.14)"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 3597.5803888183596,
+      "pnl": -35.78776252420102,
+      "reason": "Closed LONG position. Bollinger target hit (price 3598.30 >= middle band 3594.99)"
+    },
+    {
+      "symbol": "HCLTECH",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 1172.8653555908204,
+      "pnl": 26.919081371831652,
+      "reason": "Closed LONG position. Bollinger target hit (price 1173.10 >= middle band 1172.77)"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 2116.6766776367185,
+      "pnl": 24.95998586696593,
+      "reason": "Closed LONG position. Bollinger target hit (price 2117.10 >= middle band 2115.47)"
+    },
+    {
+      "symbol": "TECHM",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1484.4030111816405,
+      "pnl": -22.879664325767514,
+      "reason": "Closed LONG position. Bollinger target hit (price 1484.70 >= middle band 1478.53)"
+    }
+  ]
+}

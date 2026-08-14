@@ -1,0 +1,73 @@
+{
+  "name": "case4",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 10000,
+  "totalCapital": 10000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 10,
+  "symbols": [
+    "MARICO",
+    "PIDILITIND",
+    "NAUKRI",
+    "CONCOR",
+    "DLF",
+    "IOC",
+    "LICI",
+    "CUMMINSIND",
+    "SBICARD",
+    "HEROMOTOCO"
+  ],
+  "roundTrips": 1,
+  "winRate": 100,
+  "profitFactor": null,
+  "netPnl": 736.3625023685585,
+  "returnPct": 7.363625023685584,
+  "maxDrawdown": 0,
+  "maxDrawdownPct": 0,
+  "finalEquity": 10736.362502368558,
+  "equityCurve": [
+    10000,
+    10000,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561,
+    588.3177469726561
+  ],
+  "perSymbol": [
+    {
+      "symbol": "PIDILITIND",
+      "pnl": 736.3625023685585
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "PIDILITIND",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1695.7607555908203,
+      "pnl": 736.3625023685585,
+      "reason": "Closed LONG position. Backtest end — force close"
+    }
+  ]
+}

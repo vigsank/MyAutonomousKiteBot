@@ -1,0 +1,215 @@
+{
+  "name": "case7",
+  "holdingsCount": 20,
+  "holdingsValue": 200000,
+  "newCapital": 100000,
+  "totalCapital": 300000,
+  "pickSymbols": 20,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 13,
+  "symbols": [
+    "COALINDIA",
+    "IDFCFIRSTB",
+    "HAL",
+    "PFC",
+    "UNIONBANK",
+    "ABB",
+    "TECHM",
+    "ICICIGI",
+    "AMBUJACEM",
+    "MARUTI",
+    "HCLTECH",
+    "NESTLEIND",
+    "IRCTC",
+    "DABUR",
+    "JIOFIN",
+    "TRENT",
+    "EICHERMOT",
+    "ONGC",
+    "BRITANNIA",
+    "TATACONSUM"
+  ],
+  "roundTrips": 21,
+  "winRate": 66.66666666666666,
+  "profitFactor": 6.129940384152646,
+  "netPnl": 1703.8267158201297,
+  "returnPct": 0.5679422386067099,
+  "maxDrawdown": 261.7498106419225,
+  "maxDrawdownPct": 0.08724993688064084,
+  "finalEquity": 301703.8267158201,
+  "equityCurve": [
+    300000,
+    113673.67223972172,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061,
+    977.0208392578061
+  ],
+  "perSymbol": [
+    {
+      "symbol": "TATACONSUM",
+      "pnl": 1162.1891869236422
+    },
+    {
+      "symbol": "ICICIGI",
+      "pnl": 120.5145874525034
+    },
+    {
+      "symbol": "ABB",
+      "pnl": 105.43362239160007
+    },
+    {
+      "symbol": "EICHERMOT",
+      "pnl": 96.20440622520022
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "pnl": 87.28400816689613
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "pnl": 77.2084998715786
+    },
+    {
+      "symbol": "UNIONBANK",
+      "pnl": 66.54323671689397
+    },
+    {
+      "symbol": "JIOFIN",
+      "pnl": 64.81772209866473
+    },
+    {
+      "symbol": "NESTLEIND",
+      "pnl": 64.02133048494733
+    },
+    {
+      "symbol": "BRITANNIA",
+      "pnl": 39.5105211647993
+    },
+    {
+      "symbol": "PFC",
+      "pnl": 31.806253899423695
+    },
+    {
+      "symbol": "HCLTECH",
+      "pnl": 26.919081371831652
+    },
+    {
+      "symbol": "TRENT",
+      "pnl": 8.004990737395634
+    },
+    {
+      "symbol": "MARUTI",
+      "pnl": 0.007823373600558625
+    },
+    {
+      "symbol": "IRCTC",
+      "pnl": -6.0100632299997585
+    },
+    {
+      "symbol": "DABUR",
+      "pnl": -24.255523475931845
+    },
+    {
+      "symbol": "TECHM",
+      "pnl": -35.45994108106933
+    },
+    {
+      "symbol": "ONGC",
+      "pnl": -47.7295042210509
+    },
+    {
+      "symbol": "HAL",
+      "pnl": -49.55926416463172
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -83.62425888616424
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "TATACONSUM",
+      "direction": "SHORT",
+      "quantity": 276,
+      "price": 1090.2819,
+      "pnl": 1247.6844556970502,
+      "reason": "Closed LONG position. Backtest end — force close"
+    },
+    {
+      "symbol": "ICICIGI",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 1815.3368111816405,
+      "pnl": 120.5145874525034,
+      "reason": "Closed LONG position. Target hit (price 1815.70 >= 1812.23)"
+    },
+    {
+      "symbol": "ABB",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 7001.0995,
+      "pnl": 105.43362239160007,
+      "reason": "Closed LONG position. RSI 73.1 overbought (>70)"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 7392.5212,
+      "pnl": 96.20440622520022,
+      "reason": "Closed LONG position. RSI 73.2 overbought (>70)"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "direction": "SHORT",
+      "quantity": 126,
+      "price": 80.01399277954101,
+      "pnl": 87.28400816689613,
+      "reason": "Closed LONG position. RSI 92.7 overbought (>70)"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "direction": "SHORT",
+      "quantity": 9,
+      "price": 1090.4818111816405,
+      "pnl": -85.495268773408,
+      "reason": "Closed LONG position. Bollinger target hit (price 1090.70 >= middle band 1089.69)"
+    },
+    {
+      "symbol": "COALINDIA",
+      "direction": "SHORT",
+      "quantity": 23,
+      "price": 428.5642638977051,
+      "pnl": -83.62425888616424,
+      "reason": "Closed LONG position. Bollinger target hit (price 428.65 >= middle band 428.57)"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "direction": "SHORT",
+      "quantity": 23,
+      "price": 434.4131,
+      "pnl": 77.2084998715786,
+      "reason": "Closed LONG position. RSI 72.9 overbought (>70)"
+    }
+  ]
+}

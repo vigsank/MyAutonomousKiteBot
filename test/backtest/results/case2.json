@@ -1,0 +1,101 @@
+{
+  "name": "case2",
+  "holdingsCount": 2,
+  "holdingsValue": 15000,
+  "newCapital": 20000,
+  "totalCapital": 35000,
+  "pickSymbols": 18,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 8,
+  "symbols": [
+    "NHPC",
+    "COFORGE",
+    "TATASTEEL",
+    "AXISBANK",
+    "ICICIBANK",
+    "INFY",
+    "HAL",
+    "TECHM",
+    "TITAN",
+    "ADANIENT",
+    "TATAPOWER",
+    "ADANIPOWER",
+    "JSWSTEEL",
+    "INDHOTEL",
+    "DABUR",
+    "BAJAJ-AUTO",
+    "BAJAJFINSV",
+    "SUNPHARMA"
+  ],
+  "roundTrips": 3,
+  "winRate": 33.33333333333333,
+  "profitFactor": 155.8285928412248,
+  "netPnl": 6397.606637910378,
+  "returnPct": 18.278876108315366,
+  "maxDrawdown": 41.32057600285043,
+  "maxDrawdownPct": 0.11805878857957265,
+  "finalEquity": 41397.60663791038,
+  "equityCurve": [
+    35000,
+    35000,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995,
+    1309.0636972167995
+  ],
+  "perSymbol": [
+    {
+      "symbol": "COFORGE",
+      "pnl": 6417.052369571057
+    },
+    {
+      "symbol": "NHPC",
+      "pnl": -19.445731660679364
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "COFORGE",
+      "direction": "SHORT",
+      "quantity": 22,
+      "price": 1828.6342,
+      "pnl": 6438.927213913229,
+      "reason": "Closed LONG position. Backtest end — force close"
+    },
+    {
+      "symbol": "COFORGE",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 1533.6932,
+      "pnl": -21.874844342172125,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "NHPC",
+      "direction": "SHORT",
+      "quantity": 47,
+      "price": 78.73425,
+      "pnl": -19.445731660679364,
+      "reason": "Closed LONG position. rebalance TRIM"
+    }
+  ]
+}
