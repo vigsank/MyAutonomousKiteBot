@@ -23,6 +23,17 @@ import * as path from 'path';
 
 const DATA_DIR = path.join(process.cwd(), 'kite-paper-node', 'data');
 
+/** Reject a promise after `ms` so a hung network/LLM call can't block the run. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timed out')), ms);
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); },
+    );
+  });
+}
+
 export interface CaseConfig {
   name: string;
   holdingsCount: number;
@@ -56,6 +67,10 @@ export interface CaseResult {
   equityCurve: number[];
   perSymbol: Array<{ symbol: string; pnl: number }>;
   topTrades: Array<{ symbol: string; direction: string; quantity: number; price: number; pnl: number; reason: string }>;
+  /** Diagnostic: how many candidate signals were rejected at each gate. */
+  gateCounters: Record<string, number>;
+  /** Diagnostic: breakdown of RiskEngine block reasons. */
+  riskReasons: Record<string, number>;
 }
 
 /** Parse a mock CSV into Candle[] (chronological). */
@@ -92,6 +107,11 @@ export function mulberry32(seed: number): () => number {
   };
 }
 
+/** A symbol is tradeable if one share (NSE min lot = 1) fits within capital budget. */
+export function isTradeable(price: number, capital: number, maxPositions: number): boolean {
+  return price > 0 && price <= capital / Math.max(1, maxPositions);
+}
+
 /** Minimal streamer stub — MarketAgent.onCandle only needs instrument lookup. */
 function makeStreamer(symbols: string[]) {
   const bySymbol = new Map(symbols.map((s, i) => [s, {
@@ -108,11 +128,17 @@ export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 6
   const config = loadConfig();
   const totalCapital = cfg.holdingsValue + cfg.newCapital;
   config.risk.availableCapital = totalCapital;
-  config.risk.maxTradeAllocation = totalCapital;
+  // Cap each position to a % of total capital so the portfolio can diversify
+  // (was 100% — one oversized trade starved all subsequent entries).
+  const weightPct = Math.min(Math.max(config.risk.maxPositionWeightPct || 20, 5), 100);
+  config.risk.maxTradeAllocation = Math.max(1, Math.round((totalCapital * weightPct) / 100));
   config.risk.autoTradeTicketThreshold = Number.MAX_SAFE_INTEGER;
   config.risk.maxDailyDrawdown = Math.max(config.risk.maxDailyDrawdown, totalCapital * 0.1);
-  config.strategy.analystEnabled = true;
+  config.strategy.analystEnabled = process.env.BACKTEST_NO_ANALYST !== '1';
   config.strategy.disableTimeFilter = true;
+  // Signal diversification: pick the strategy that fits each symbol's regime
+  // (mean-reversion for ranging, pullback-trend for trending) instead of one.
+  config.strategy.regimeAdaptive = true;
 
   const allSymbols = config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol);
   const rng = mulberry32(cfg.seed);
@@ -122,7 +148,10 @@ export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 6
   const candlesMap = new Map<string, Candle[]>();
   for (const sym of selected) {
     const c = readCandles(sym, interval);
-    if (c.length > warmupBars) candlesMap.set(sym, c);
+    if (c.length > warmupBars) {
+      // Tradeability filter: skip symbols too expensive to size at this capital.
+      if (isTradeable(c[0].close, totalCapital, cfg.pickSymbols)) candlesMap.set(sym, c);
+    }
   }
 
   const ledger = new Ledger(':memory:');
@@ -133,17 +162,29 @@ export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 6
   const risk = new RiskEngine(config, ledger);
   const trader = new PaperTrader(config, ledger);
   const llm = new LlmManager(config.llm);
+  // Backtest ensemble mode: 'fast' (default) for speed, or 'depth' for the
+  // heavier reasoning models. Controlled via ENSEMBLE_MODE env (set by the
+  // run_all_cases --ensemble arg).
+  const mode = (process.env.ENSEMBLE_MODE || 'fast') === 'depth' ? 'depth' : 'fast';
+  llm.setEnsembleMode(mode);
   const telegram = new TelegramHITL(config, llm, notify);
   const news = new NewsSentimentEngine(config, llm, ledger);
   const optionsTrader = new OptionsTrader(config, new OptionsEngine(config), ledger, risk);
   const agent = new MarketAgent(config, streamer, ledger, risk, trader, telegram, news, notify, optionsTrader);
 
-  // Pre-compute real news sentiment for selected symbols.
-  for (const sym of candlesMap.keys()) {
-    try {
-      const s = await news.sentimentFor(sym);
-      if (s && typeof s.score === 'number') (agent as any).sentiment.set(sym, s.score);
-    } catch { /* keep 0 */ }
+  // Optional pre-computation of real news sentiment per selected symbol.
+  // OFF by default (BACKTEST_PRECOMPUTE_NEWS=1 to enable): each symbol's
+  // sentimentFor() does Google-RSS + TinyFish + LLM calls that can hang for up
+  // to 45s each, stalling the whole backtest before trading starts. When off,
+  // sentiment starts neutral (0) and the LLM analyst gate still runs at
+  // proposal time.
+  if (process.env.BACKTEST_PRECOMPUTE_NEWS === '1') {
+    for (const sym of candlesMap.keys()) {
+      try {
+        const s = await withTimeout(news.sentimentFor(sym), 45_000);
+        if (s && typeof s.score === 'number') (agent as any).sentiment.set(sym, s.score);
+      } catch { /* keep 0 */ }
+    }
   }
 
   // Seed existing holdings (equal weight across holdingsCount symbols).
@@ -240,6 +281,19 @@ export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 6
   const topTrades = [...realized].sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 8)
     .map((t) => ({ symbol: t.symbol, direction: t.direction, quantity: t.quantity, price: t.price, pnl: t.pnl ?? 0, reason: t.reason }));
 
+  // Aggregate RiskEngine block reasons from the audit trail.
+  const riskRows = ledger.raw().prepare(
+    `SELECT details FROM risk_events WHERE event_type = 'TRADE_BLOCKED'`,
+  ).all() as Array<{ details: string }>;
+  const riskReasons: Record<string, number> = {};
+  for (const r of riskRows) {
+    for (const part of r.details.split(';')) {
+      const k = part.trim();
+      if (!k) continue;
+      riskReasons[k] = (riskReasons[k] ?? 0) + 1;
+    }
+  }
+
   ledger.close();
   return {
     name: cfg.name, holdingsCount: cfg.holdingsCount, holdingsValue: cfg.holdingsValue,
@@ -250,6 +304,8 @@ export async function runCase(cfg: CaseConfig, interval = '5min', warmupBars = 6
     maxDrawdownPct: (maxDd / totalCapital) * 100, finalEquity: totalCapital + totalPnl,
     equityCurve, perSymbol: [...perSymbol.entries()].map(([symbol, pnl]) => ({ symbol, pnl })).sort((a, b) => b.pnl - a.pnl),
     topTrades,
+    gateCounters: agent.getGateCounters(),
+    riskReasons,
   };
 }
 

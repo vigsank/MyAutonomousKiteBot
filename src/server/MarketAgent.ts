@@ -9,6 +9,7 @@ import { NewsSentimentEngine, AnalystVerdict } from './NewsSentimentEngine';
 import { NotificationService } from './NotificationService';
 import { OptionsTrader } from './OptionsTrader';
 import { OptionsEngine } from './OptionsEngine';
+import { kellyFraction } from './TechnicalIndicators';
 import { logger } from './Logger';
 import {
   Position,
@@ -67,12 +68,32 @@ export class MarketAgent {
   /** When the news loop last ran per symbol. */
   private lastNewsRun = new Map<string, number>();
 
+  /**
+   * Diagnostic counters: how many candidate signals were rejected at each gate
+   * (and how many were proposed). Lets us see exactly where signals die.
+   */
+  private gateCounters = new Map<string, number>();
+  private totalEvaluations = 0;
+
   /** Current accumulating OHLC bar per symbol (for ADX/ATR). */
   private bars = new Map<string, { open: number; high: number; low: number; close: number; volume: number; start: number }>();
   /** Rolling volume samples per symbol (for confirmation). */
   private volumeSamples = new Map<string, number[]>();
   /** Rolling closes per symbol (for Bollinger bands). */
   private bollingerCloses = new Map<string, number[]>();
+
+  /** Opening Range Breakout tracking per symbol. */
+  private orbHigh = new Map<string, number>();
+  private orbLow = new Map<string, number>();
+  private orbEstablished = new Map<string, boolean>();
+  private lastOrbDayKey = '';
+
+  /** Action bias per symbol from the latest daily report (Reasoning Layer veto). */
+  private reportBias = new Map<string, string>();
+  private reportBiasLoadedAt = '';
+
+  /** Symbols whose stop has ratcheted to breakeven (persistent within a run). */
+  private breakevenTriggered = new Map<string, boolean>();
 
   /** Timestamps of recent filled trades (circuit breaker). */
   private tradeTimes: number[] = [];
@@ -86,8 +107,8 @@ export class MarketAgent {
   private tradeQueue: Promise<void> = Promise.resolve();
 
   private readonly NEWS_INTERVAL_MS = 10 * 60 * 1000;
-  private readonly TAVILY_DETAIL_INTERVAL_MS = 5 * 60 * 1000;
-  private lastTavilyRun = new Map<string, number>();
+  private readonly NEWS_DETAIL_INTERVAL_MS = 5 * 60 * 1000;
+  private lastNewsDetailRun = new Map<string, number>();
 
   constructor(
     private readonly config: AppConfig,
@@ -172,6 +193,7 @@ export class MarketAgent {
       // Accumulate OHLC bar. Indicators (RSI/SMA/ADX/ATR) are updated on bar
       // close in finalizeBar — never on raw ticks — to avoid signal noise.
       this.accumulateBar(symbol, price, tick.volume_traded ?? 0, now);
+      this.updateOrb(symbol, price, now);
     }
 
     // Evaluate each tracked symbol on this batch.
@@ -237,6 +259,7 @@ export class MarketAgent {
     if (!Number.isFinite(candle.close)) return;
 
     this.lastPrices.set(symbol, candle.close);
+    this.updateOrb(symbol, candle.close, now);
 
     const r = this.rsiFor(symbol).nextValue(candle.close);
     if (r !== undefined) this.rsiValues.set(symbol, r);
@@ -314,7 +337,8 @@ export class MarketAgent {
       bar.high = Math.max(bar.high, price);
       bar.low = Math.min(bar.low, price);
       bar.close = price;
-      bar.volume += volume;
+      // tick.volume_traded is cumulative — capture the latest value, don't sum.
+      bar.volume = volume;
     }
   }
 
@@ -378,6 +402,8 @@ export class MarketAgent {
     const rsiValue = this.rsiValues.get(symbol);
     if (rsiValue === undefined || rsiValue === null) return;
 
+    this.totalEvaluations++;
+
     const position = this.ledger.getPosition(symbol, this.exchangeFor(symbol));
     const sentiment = this.sentiment.get(symbol) ?? 0;
 
@@ -399,6 +425,7 @@ export class MarketAgent {
           ? regime === 'ranging'
           : regime === 'trending_up' || regime === 'trending_down';
       if (!regimeOk) {
+        this.countGate('regime_gate');
         this.ledger.recordSignal({
           symbol,
           direction: 'NEUTRAL',
@@ -414,6 +441,7 @@ export class MarketAgent {
 
     // No strategy fits this regime (e.g. LONG-only bot in a downtrend).
     if (!mode) {
+      this.countGate('no_mode');
       this.recordNoEntry(symbol, rsiValue, price, now, `no strategy for ${regime} regime`);
       return;
     }
@@ -422,6 +450,7 @@ export class MarketAgent {
     if (this.config.strategy.minSignalConfidence > 0) {
       const conf = this.computeSignalConfidence(symbol, rsiValue, sentiment);
       if (conf < this.config.strategy.minSignalConfidence) {
+        this.countGate('confidence');
         this.ledger.recordSignal({
           symbol,
           direction: 'NEUTRAL',
@@ -442,6 +471,7 @@ export class MarketAgent {
       const targetDist = atr * this.config.strategy.targetAtrMultiplier;
       const rr = stopDist > 0 ? targetDist / stopDist : 0;
       if (rr + 1e-9 < this.config.strategy.minRiskReward) {
+        this.countGate('risk_reward');
         this.ledger.recordSignal({
           symbol,
           direction: 'NEUTRAL',
@@ -453,6 +483,40 @@ export class MarketAgent {
         });
         return;
       }
+    }
+
+    // Opening Range Breakout gate: only for breakout mode. No orders during
+    // the range; after it, LONG entries require a breakout above the opening
+    // range high with volume. Mean-reversion/pullback entries (which need price
+    // low/oversold) must NOT be gated by a breakout filter.
+    if (mode === 'breakout' && !this.orbAllowsLong(symbol, price, now)) {
+      this.countGate('orb');
+      this.ledger.recordSignal({
+        symbol,
+        direction: 'NEUTRAL',
+        rsi: rsiValue,
+        price,
+        reason: 'Skipped: ORB gate (no breakout above opening range)',
+        timestamp: now,
+        exchange: this.exchangeFor(symbol),
+      });
+      return;
+    }
+
+    // Reasoning Layer veto: the latest daily report can block entries for
+    // symbols it marks AVOID / EXIT_FULL (LLM as a signal source, not a force).
+    if (this.reportBlocksEntry(symbol)) {
+      this.countGate('report_veto');
+      this.ledger.recordSignal({
+        symbol,
+        direction: 'NEUTRAL',
+        rsi: rsiValue,
+        price,
+        reason: 'Skipped: daily report AVOID/EXIT_FULL',
+        timestamp: now,
+        exchange: this.exchangeFor(symbol),
+      });
+      return;
     }
 
     if (mode === 'breakout') {
@@ -483,7 +547,7 @@ export class MarketAgent {
     const upTrend = fast !== undefined && slow !== undefined && fast > slow;
     const downTrend = fast !== undefined && slow !== undefined && fast < slow;
     const highlyTrending = adx !== undefined && adx >= cfg.adxTrendThreshold + 10;
-    const volatile = volRatio > 0.02;
+    const volatile = volRatio > 0.005;
 
     if (volatile && !trending) return { regime: 'volatile', confidence: 0.5 };
     if (trending && upTrend) return { regime: 'trending_up', confidence: highlyTrending ? 0.8 : 0.6 };
@@ -501,7 +565,7 @@ export class MarketAgent {
       case 'trending_up':
         return 'pullback_trend';
       case 'trending_down':
-        return 'mean_reversion'; // oversold bounce even in a downtrend
+        return null; // stay flat in a downtrend — do not catch falling knives
       case 'volatile':
         return 'mean_reversion'; // oversold bounce even in high volatility
       default:
@@ -581,6 +645,19 @@ export class MarketAgent {
     });
   }
 
+  /** Increment a diagnostic gate counter. */
+  private countGate(reason: string): void {
+    this.gateCounters.set(reason, (this.gateCounters.get(reason) ?? 0) + 1);
+  }
+
+  /** Snapshot of the diagnostic gate counters (for backtest reporting). */
+  getGateCounters(): Record<string, number> {
+    return {
+      total_evaluations: this.totalEvaluations,
+      ...Object.fromEntries(this.gateCounters),
+    };
+  }
+
   /** Volatility-adaptive stop distance for a symbol at a price. */
   private stopDistance(symbol: string, price: number): number {
     const cfg = this.config.strategy;
@@ -606,40 +683,55 @@ export class MarketAgent {
 
     // 1. RSI must be oversold (stricter threshold for Bollinger entry).
     const entryRsi = cfg.bollingerEntry ? cfg.bollingerRsiEntry : cfg.rsiEntryThreshold;
-    if (rsiValue >= entryRsi) return;
+    if (rsiValue >= entryRsi) {
+      this.countGate('rsi_not_oversold');
+      return;
+    }
 
     // 1b. Bollinger mean-reversion: price must touch the lower band.
     if (cfg.bollingerEntry) {
       const bb = this.bollingerFor(symbol);
-      if (!bb || price >= bb.lower) return;
+      if (!bb || price >= bb.lower) {
+        this.countGate('bollinger_band');
+        return;
+      }
     }
 
     // 2. Sentiment must not be strongly bearish.
-    if (sentiment < -0.4) return;
+    if (sentiment < -0.4) {
+      this.countGate('sentiment_bearish');
+      return;
+    }
 
     // 3. Cooldown after last trade.
     if (!this.risk.cooldownElapsed(now)) {
+      this.countGate('cooldown');
       logger.debug({ symbol }, 'Skipping: in cooldown');
       return;
     }
 
     // 4. Circuit breaker — halt after too many trades in a window.
     if (this.isCircuitBreakerHalted(now)) {
+      this.countGate('circuit_breaker');
       logger.debug({ symbol }, 'Skipping: circuit breaker active');
       return;
     }
 
     // 5. Time-of-day filter.
     if (!this.isTradingWindowOpen(now)) {
+      this.countGate('trading_window');
       logger.debug({ symbol }, 'Skipping: outside trading window');
       return;
     }
 
     // 6. ADX regime filter — skip trending markets, unless RSI is deeply oversold
-    //    (a deep mean-reversion bounce can work even in a mild trend).
+    //    (a deep mean-reversion bounce can work even in a mild trend). Bollinger
+    //    entries use a relaxed ADX limit so they don't catch falling knives.
     const adx = this.adxValues.get(symbol);
     const deepOversold = rsiValue < cfg.rsiEntryThreshold - cfg.deepOversoldBuffer;
-    if (!cfg.bollingerEntry && adx !== undefined && adx >= cfg.adxTrendThreshold && !deepOversold) {
+    const adxLimit = cfg.bollingerEntry ? cfg.adxTrendThreshold - 5 : cfg.adxTrendThreshold;
+    if (adx !== undefined && adx >= adxLimit && !deepOversold) {
+      this.countGate('adx_trending');
       reasons.push(`ADX ${adx.toFixed(1)} trending (>${cfg.adxTrendThreshold})`);
       logger.debug({ symbol, adx }, 'Skipping: trending market');
       this.ledger.recordSignal({
@@ -655,8 +747,9 @@ export class MarketAgent {
       return;
     }
 
-    // 7. Volume confirmation — require volume above average (skipped for Bollinger entry).
-    if (!cfg.bollingerEntry && !this.hasVolumeConfirmation(symbol)) {
+    // 7. Volume confirmation — require volume above average (all entries).
+    if (!this.hasVolumeConfirmation(symbol)) {
+      this.countGate('volume');
       reasons.push('Insufficient volume confirmation');
       logger.debug({ symbol }, 'Skipping: low volume');
       return;
@@ -664,6 +757,7 @@ export class MarketAgent {
 
     // 8. Correlation cap — limit simultaneous entries.
     if (!this.entrySlotAvailable()) {
+      this.countGate('concentration_cap');
       reasons.push('Simultaneous-entry cap reached');
       logger.debug('Skipping: concentration cap reached');
       return;
@@ -677,6 +771,7 @@ export class MarketAgent {
     // 9. Volatility-based position sizing (risk parity).
     const quantity = this.sizedQuantity(symbol, watch.quantity, price);
     if (quantity <= 0) {
+      this.countGate('sizing');
       logger.debug({ symbol }, 'Skipping: risk-per-trade too small');
       return;
     }
@@ -687,6 +782,7 @@ export class MarketAgent {
       (adx !== undefined ? `ADX ${adx.toFixed(1)} ranging (<${cfg.adxTrendThreshold}), ` : '') +
       `sentiment ${sentiment.toFixed(2)}`;
 
+    this.countGate('proposed');
     this.ledger.recordSignal({
       symbol,
       direction: 'LONG',
@@ -707,6 +803,8 @@ export class MarketAgent {
       reason,
       ticketSize,
       timestamp: now,
+      stopDistance: this.stopDistance(symbol, price),
+      entryMode: 'mean_reversion',
     });
   }
 
@@ -793,6 +891,7 @@ export class MarketAgent {
       `Pullback in uptrend: RSI ${rsiValue.toFixed(1)} (<${cfg.pullbackRsiEntry}), ` +
       `fast ${fast.toFixed(0)} > slow ${slow.toFixed(0)}, price ${price.toFixed(0)}`;
 
+    this.countGate('proposed');
     this.ledger.recordSignal({
       symbol,
       direction: 'LONG',
@@ -813,6 +912,8 @@ export class MarketAgent {
       reason,
       ticketSize,
       timestamp: now,
+      stopDistance: this.stopDistance(symbol, price),
+      entryMode: 'pullback_trend',
     });
   }
 
@@ -887,6 +988,7 @@ export class MarketAgent {
     // Reset the trailing stop to the entry price.
     this.trailingHighs.set(symbol, price);
 
+    this.countGate('proposed');
     this.ledger.recordSignal({
       symbol,
       direction: 'LONG',
@@ -907,6 +1009,8 @@ export class MarketAgent {
       reason,
       ticketSize,
       timestamp: now,
+      stopDistance: this.stopDistance(symbol, price),
+      entryMode: 'breakout',
     });
 
     // Options layer: buy a CALL on the upside breakout (if enabled).
@@ -934,12 +1038,16 @@ export class MarketAgent {
     const stop = this.risk.stopLossPrice(position, atr);
 
     // Breakeven stop: once price moves favorably by breakevenAtrMult*ATR, ratchet
-    // the stop to breakeven so a winner can't turn into a loss.
+    // the stop to breakeven so a winner can't turn into a loss. Persisted so a
+    // pullback after breakeven doesn't revert the stop to the original.
     let effectiveStop = stop;
     if (atr && atr > 0) {
       const favorable =
         position.direction === 'LONG' ? price - position.avgPrice : position.avgPrice - price;
       if (favorable >= atr * cfg.breakevenAtrMult) {
+        this.breakevenTriggered.set(symbol, true);
+      }
+      if (this.breakevenTriggered.get(symbol)) {
         effectiveStop = position.avgPrice;
       }
     }
@@ -973,13 +1081,13 @@ export class MarketAgent {
       exitReason = `Stop-loss hit (price ${price.toFixed(2)} <= ${effectiveStop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
     } else if (position.direction === 'SHORT' && price >= effectiveStop) {
       exitReason = `Stop-loss hit (price ${price.toFixed(2)} >= ${effectiveStop.toFixed(2)}, ATR ${atr?.toFixed(2) ?? 'n/a'})`;
-    } else if (cfg.mode === 'pullback_trend' && position.direction === 'LONG') {
+    } else if (position.entryMode === 'pullback_trend' && position.direction === 'LONG') {
       // Trend break: price fell back below the fast SMA.
       const fast = this.smaFastValues.get(symbol);
       if (fast !== undefined && price < fast) {
         exitReason = `Trend break (price ${price.toFixed(2)} < fast SMA ${fast.toFixed(2)})`;
       }
-    } else if (cfg.mode === 'breakout' && position.direction === 'LONG') {
+    } else if (position.entryMode === 'breakout' && position.direction === 'LONG') {
       // ATR trailing stop: ratchet the stop up as price makes new highs.
       const prevHigh = this.trailingHighs.get(symbol) ?? position.avgPrice;
       const newHigh = Math.max(prevHigh, price);
@@ -1041,12 +1149,31 @@ export class MarketAgent {
 
     const riskSized = Math.floor(budget / riskPerShare);
     if (riskSized <= 0) return 0;
+
+    // Volatility-adjusted Kelly sizing (bounded by the hard risk caps).
+    let kellySized = Number.MAX_SAFE_INTEGER;
+    if (cfg.kellyEnabled) {
+      const winProb = this.computeSignalConfidence(
+        symbol,
+        this.rsiValues.get(symbol) ?? 0,
+        this.sentiment.get(symbol) ?? 0,
+      );
+      const atr = this.atrValues.get(symbol) ?? 0;
+      const targetDist = atr * cfg.targetAtrMultiplier;
+      const rr = stopDist > 0 ? targetDist / stopDist : 0;
+      const frac = kellyFraction(winProb, rr, cfg.kellyScale);
+      const kellyBudget = this.risk.capitalSnapshot().available * frac;
+      // Kelly sizes the RISK budget, not notional — divide by stop distance.
+      kellySized = Math.floor(kellyBudget / stopDist);
+      if (kellySized <= 0) return 0; // Kelly says no position
+    }
+
     // Concentration guard: never exceed the per-trade allocation cap (by notional).
     const allocCap =
       this.config.risk.maxTradeAllocation > 0
         ? Math.floor(this.config.risk.maxTradeAllocation / price)
         : Number.MAX_SAFE_INTEGER;
-    return Math.max(1, Math.min(riskSized, allocCap));
+    return Math.max(1, Math.min(riskSized, kellySized, allocCap));
   }
 
   /** Limit how many positions can be opened at the same time (correlation). */
@@ -1121,11 +1248,87 @@ export class MarketAgent {
     const open = 9 * 60 + 15;
     const close = 15 * 60 + 30;
     if (minutes < open || minutes > close) return false;
-    // Skip first N minutes.
+    // Skip first N minutes (ORB handles breakout's opening separately).
     if (minutes < open + cfg.skipFirstMinutes) return false;
     // Skip last N minutes.
     if (minutes > close - cfg.skipLastMinutes) return false;
     return true;
+  }
+
+  /** True when `now` is inside the opening-range window (no orders placed). */
+  private isInOrbWindow(now: Date): boolean {
+    const cfg = this.config.strategy;
+    const ist = new Date(now.getTime() + 5.5 * 60 * 60 * 1000);
+    const minutes = ist.getUTCHours() * 60 + ist.getUTCMinutes();
+    const open = 9 * 60 + 15;
+    return minutes >= open && minutes < open + cfg.orbMinutes;
+  }
+
+  /**
+   * Track the opening range (high/low) during the first `orbMinutes` of the
+   * session. Marks the range established once the window passes. Resets the
+   * range at the start of each new day so it never leaks across sessions.
+   */
+  private updateOrb(symbol: string, price: number, now: Date): void {
+    const cfg = this.config.strategy;
+    if (!cfg.orbEnabled) return;
+    const dayKey = now.toISOString().slice(0, 10);
+    if (this.lastOrbDayKey !== dayKey) {
+      this.lastOrbDayKey = dayKey;
+      this.orbHigh.clear();
+      this.orbLow.clear();
+      this.orbEstablished.clear();
+    }
+    if (this.isInOrbWindow(now)) {
+      const high = this.orbHigh.get(symbol) ?? -Infinity;
+      const low = this.orbLow.get(symbol) ?? Infinity;
+      this.orbHigh.set(symbol, Math.max(high, price));
+      this.orbLow.set(symbol, Math.min(low, price));
+    } else if (!this.orbEstablished.get(symbol)) {
+      // Window has passed — freeze the range and mark it established.
+      this.orbEstablished.set(symbol, true);
+    }
+  }
+
+  /**
+   * ORB gate for LONG entries: no orders during the window; after it, require
+   * a breakout above the opening-range high with volume confirmation.
+   */
+  private orbAllowsLong(symbol: string, price: number, now: Date): boolean {
+    const cfg = this.config.strategy;
+    if (!cfg.orbEnabled) return true;
+    if (this.isInOrbWindow(now)) return false; // no orders during the range
+    if (!this.orbEstablished.get(symbol)) return true; // no range yet — don't block
+    const high = this.orbHigh.get(symbol);
+    if (high === undefined || !Number.isFinite(high)) return true;
+    return price > high && this.hasVolumeConfirmation(symbol);
+  }
+
+  /** Load the latest daily report's per-symbol action bias (reloads on newer report). */
+  private loadReportBias(): void {
+    try {
+      const latest = this.ledger.getLatestReport();
+      if (!latest) return;
+      if (latest.createdAt === this.reportBiasLoadedAt) return; // already loaded
+      this.reportBiasLoadedAt = latest.createdAt;
+      this.reportBias.clear();
+      const parsed = JSON.parse(latest.reportJson);
+      const recs = parsed?.portfolio_recommendations ?? [];
+      for (const rec of recs) {
+        if (rec && typeof rec.symbol === 'string' && typeof rec.action_bias === 'string') {
+          this.reportBias.set(rec.symbol, rec.action_bias);
+        }
+      }
+    } catch {
+      /* ignore malformed report */
+    }
+  }
+
+  /** True when the latest daily report says AVOID / EXIT_FULL for a symbol. */
+  private reportBlocksEntry(symbol: string): boolean {
+    this.loadReportBias();
+    const bias = this.reportBias.get(symbol);
+    return bias === 'AVOID' || bias === 'EXIT_FULL';
   }
 
   /** Ask the LLM analyst for a verdict + risk score on a candidate trade. */
@@ -1184,6 +1387,7 @@ export class MarketAgent {
     // 1. Hard risk gate - the AI can never override this.
     const risk = this.risk.evaluate(trade);
     if (!risk.allowed) {
+      this.countGate('risk_blocked');
       this.notify.warn(
         `Risk blocked trade: ${trade.symbol}`,
         risk.reasons.join('\n'),
@@ -1196,6 +1400,7 @@ export class MarketAgent {
     if (this.config.strategy.analystEnabled) {
       const verdict = await this.analystVerdictFor(trade);
       if (verdict && (verdict.verdict === 'AVOID' || verdict.riskScore >= this.config.strategy.analystRejectThreshold)) {
+        this.countGate('analyst_rejected');
         this.notify.warn(
           `Analyst rejected trade: ${trade.symbol}`,
           `Risk ${verdict.riskScore}/100 (${verdict.verdict}) - ${verdict.rationale}`,
@@ -1226,7 +1431,10 @@ export class MarketAgent {
     switch (approval.decision) {
       case 'APPROVED': {
         const fill = this.trader.execute(trade);
-        if (fill.status === 'FILLED') this.recordTradeTime(trade.timestamp);
+        if (fill.status === 'FILLED') {
+          this.countGate('executed');
+          this.recordTradeTime(trade.timestamp);
+        }
         const pnlLine = fill.pnl !== 0 ? ` | PnL ₹${fill.pnl.toFixed(2)}` : '';
         this.notify.trade(
           `Paper ${fill.status}: ${fill.symbol}`,
@@ -1302,25 +1510,25 @@ export class MarketAgent {
     }
   }
 
-  /** Every 5 min, pull deeper Tavily details (AI answer + fresh sources). */
-  async runTavilyDetailLoop(): Promise<void> {
-    if (!this.news.tavilyConfigured) return;
+  /** Every 5 min, pull deeper TinyFish details (fresh sources) for each symbol. */
+  async runNewsDetailLoop(): Promise<void> {
+    if (!this.news.tinyfishConfigured) return;
     for (const symbol of this.trackedSymbols()) {
       const now = Date.now();
-      const last = this.lastTavilyRun.get(symbol) ?? 0;
-      if (now - last < this.TAVILY_DETAIL_INTERVAL_MS) continue;
-      this.lastTavilyRun.set(symbol, now);
+      const last = this.lastNewsDetailRun.get(symbol) ?? 0;
+      if (now - last < this.NEWS_DETAIL_INTERVAL_MS) continue;
+      this.lastNewsDetailRun.set(symbol, now);
       try {
-        const d = await this.news.fetchTavilyDetails(symbol);
+        const d = await this.news.fetchTinyFishDetails(symbol);
         if (d.articles.length > 0) {
           this.notify.sentiment(
-            `${symbol} — Tavily update`,
+            `${symbol} — TinyFish update`,
             `${d.answer ? d.answer + '\n' : ''}${d.articles.length} fresh sources.`,
             { symbol, sources: d.articles.map((a) => a.link) },
           );
         }
       } catch (err) {
-        logger.error({ symbol, err }, 'Tavily detail loop failed');
+        logger.error({ symbol, err }, 'News detail loop failed');
       }
     }
   }

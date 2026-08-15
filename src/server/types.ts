@@ -103,6 +103,8 @@ export interface WatchSymbol {
   exchange: Segment;
   quantity: number;
   enabled: boolean;
+  /** Optional sector for concentration caps (e.g. 'BANK', 'IT'). */
+  sector?: string;
 }
 
 /** A trading decision produced by the strategy/agent. */
@@ -126,6 +128,12 @@ export interface TradeRequest {
   reason: string;
   ticketSize: number;
   timestamp: Date;
+  /** MIS = intraday (squared off at close), CNC = delivery/swing. */
+  product?: 'MIS' | 'CNC';
+  /** Actual stop distance (per share) for risk-at-stop calc; falls back to stopLossPercent. */
+  stopDistance?: number;
+  /** Strategy mode that opened this trade (for mode-specific exits). */
+  entryMode?: string;
 }
 
 /** Result of executing a paper trade. */
@@ -151,6 +159,10 @@ export interface Position {
   avgPrice: number;
   entryTime: Date;
   direction: SignalDirection;
+  /** MIS = intraday (squared off at close), CNC = delivery/swing. */
+  product?: 'MIS' | 'CNC';
+  /** Strategy mode that opened this position (for mode-specific exits). */
+  entryMode?: string;
 }
 
 /** An order stored in the ledger. */
@@ -177,6 +189,24 @@ export interface RiskDecision {
   reasons: string[];
 }
 
+/**
+ * Deterministic capital snapshot at a point in time. The LLM advisor consumes
+ * `available` as advisory context; the RiskEngine re-validates against live
+ * capital at execution time.
+ */
+export interface CapitalSnapshot {
+  /** Total portfolio capital (config.availableCapital). */
+  total: number;
+  /** Capital locked in open positions (notional). */
+  used: number;
+  /** Capital reserved by pending/unfilled orders. */
+  pending: number;
+  /** Mandatory cash reserve kept free for liquidity (≥ minCashReservePct). */
+  reserve: number;
+  /** Free capital available for new trades = total - used - pending - reserve. */
+  available: number;
+}
+
 /** A single sentiment reading for a symbol. */
 export interface SentimentResult {
   symbol: string;
@@ -200,5 +230,55 @@ export interface NewsArticle {
 export interface AiSentimentJson {
   score: number;
   label: 'bullish' | 'bearish' | 'neutral';
+  summary: string;
+}
+
+/** The three stages of the daily report cycle. */
+export type ReportType = 'pre_open' | 'mid_session' | 'pre_close';
+
+/** Advisory action bias the LLM suggests for a symbol (algo enforces). */
+export type ActionBias =
+  | 'BUY_ACCUMULATE'
+  | 'CONSIDER_LONG'
+  | 'HOLD'
+  | 'TRIM_25'
+  | 'TRIM_50'
+  | 'EXIT_FULL'
+  | 'AVOID';
+
+/** A single per-symbol recommendation inside a daily report. */
+export interface SymbolRecommendation {
+  symbol: string;
+  action_bias: ActionBias;
+  sentiment_score: number;
+  current_holding_status: 'NONE' | 'HELD';
+  /** Advisory share count — the RiskEngine clamps the final size. */
+  suggested_quantity: number;
+  /** Advisory allocation in INR — the RiskEngine clamps the final size. */
+  suggested_allocation_inr: number;
+  suggested_entry_strategy: string;
+  reasoning: string;
+  invalidation_condition: string;
+}
+
+/**
+ * The comprehensive daily report (Reasoning Layer output). The LLM suggests
+ * numbers (quantities/allocation); the deterministic RiskEngine enforces them.
+ */
+export interface DailyReport {
+  report_type: ReportType;
+  timestamp: string;
+  market_regime: {
+    overall_sentiment: string;
+    regime_score: number;
+    primary_catalyst: string;
+  };
+  capital_management: {
+    available_capital: number;
+    recommended_cash_reserve_pct: number;
+    suggested_total_deployment_pct: number;
+  };
+  stocks_to_watch: string[];
+  portfolio_recommendations: SymbolRecommendation[];
   summary: string;
 }

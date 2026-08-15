@@ -281,7 +281,7 @@ function seed(db: ReturnType<Ledger['raw']>) {
       `INSERT INTO health_checks (component, status, latency_ms, details, checked_at)
        VALUES (?, ?, ?, ?, ?)`,
     );
-    const components = ['KITE_STREAMER', 'LLM', 'TELEGRAM', 'NEWS', 'TAVILY'];
+    const components = ['KITE_STREAMER', 'LLM', 'TELEGRAM', 'NEWS', 'TINYFISH'];
     for (let i = 0; i < 50; i++) {
       const comp = components[Math.floor(Math.random() * components.length)];
       const status = ['OK', 'OK', 'OK', 'DEGRADED'][Math.floor(Math.random() * 4)];

@@ -12,14 +12,19 @@ import { LlmConfig } from './AppConfig';
 export class LlmManager {
   private client: OpenAI;
   private readonly models: string[];
+  private readonly depthEnsembleModels: string[];
+  private readonly fastEnsembleModels: string[];
+  private ensembleModels: string[];
   private activeModel: string;
   private readonly jsonMode: boolean;
   private readonly hasKey: boolean;
+  private readonly timeoutMs: number;
   readonly provider: LlmConfig['provider'];
 
   constructor(config: LlmConfig) {
     this.provider = config.provider;
     this.hasKey = config.apiKey.length > 0;
+    this.timeoutMs = config.timeoutMs || 60000;
 
     // Normalise the model list: always non-empty, with the active model first.
     const list = config.models.length > 0 ? config.models : [config.activeModel];
@@ -27,6 +32,12 @@ export class LlmManager {
       ? list
       : [config.activeModel, ...list];
     this.activeModel = config.activeModel;
+
+    // Ensemble lists are already validated to be subsets of `models` by the
+    // config layer; cap defensively at 3 here too. Default mode = depth.
+    this.depthEnsembleModels = this.normaliseEnsemble(config.ensembleModels);
+    this.fastEnsembleModels = this.normaliseEnsemble(config.fastEnsembleModels);
+    this.ensembleModels = this.depthEnsembleModels;
 
     this.jsonMode = config.jsonMode;
 
@@ -36,6 +47,7 @@ export class LlmManager {
     this.client = new OpenAI({
       apiKey,
       baseURL: config.baseUrl || undefined,
+      timeout: config.timeoutMs || 60000,
     });
   }
 
@@ -44,8 +56,37 @@ export class LlmManager {
     return this.hasKey;
   }
 
+  /** Cap a validated ensemble list to ≤3, active model first. */
+  private normaliseEnsemble(list: string[] | undefined): string[] {
+    const base = list && list.length ? list : this.models;
+    const ordered = base.includes(this.activeModel)
+      ? [this.activeModel, ...base.filter((m) => m !== this.activeModel)]
+      : base;
+    return ordered.slice(0, 3);
+  }
+
+  /**
+   * Switch the ensemble between the depth (default) and fast model lists.
+   * Used by the backtest harness to trade depth for speed on high-frequency
+   * verdict loops. Returns the active ensemble list.
+   */
+  setEnsembleMode(mode: 'fast' | 'depth'): string[] {
+    this.ensembleModels =
+      mode === 'fast' ? this.fastEnsembleModels : this.depthEnsembleModels;
+    return this.ensembleModels;
+  }
+
+  get ensembleMode(): 'fast' | 'depth' {
+    return this.ensembleModels === this.fastEnsembleModels ? 'fast' : 'depth';
+  }
+
   get availableModels(): string[] {
     return [...this.models];
+  }
+
+  /** Models that participate in the ensemble (a validated subset, ≤3). */
+  get availableEnsembleModels(): string[] {
+    return [...this.ensembleModels];
   }
 
   get currentModel(): string {
@@ -59,20 +100,13 @@ export class LlmManager {
     return true;
   }
 
-  /**
-   * Send a chat prompt and return the raw text response.
-   * If jsonMode is enabled and the provider rejects `response_format`, retries
-   * without it for robustness (some Ollama models do not support that field).
-   */
+  /** Send a chat prompt and return the raw text response. */
   async chat(prompt: string): Promise<string> {
     const res = await this.createCompletion(prompt);
     return res.text;
   }
 
-  /**
-   * Send a prompt and return the text plus trace metadata (model, token usage)
-   * so callers can persist an observability trace.
-   */
+  /** Send a prompt and return the text plus trace metadata. */
   async chatWithMeta(
     prompt: string,
   ): Promise<{ text: string; model: string; tokensIn: number | null; tokensOut: number | null }> {
@@ -83,6 +117,56 @@ export class LlmManager {
       tokensIn: res.tokensIn,
       tokensOut: res.tokensOut,
     };
+  }
+
+  /**
+   * Ensemble: call the same prompt across multiple models and return each
+   * model's text + name. Reduces decision variance (AI nondeterminism) by
+   * combining verdicts from a few models instead of trusting one. Never throws.
+   */
+  async chatEnsemble(prompt: string, models?: string[]): Promise<Array<{ text: string; model: string }>> {
+    // Prefer an explicit caller-supplied list; otherwise use the validated
+    // ensemble subset. Always ≤3.
+    const list = (models && models.length ? models : this.ensembleModels).slice(0, 3);
+    const results = await Promise.all(
+      list.map(async (model) => {
+        const attempt = async (useJson: boolean): Promise<string> => {
+          const params: any = {
+            model,
+            temperature: 0,
+            messages: [{ role: 'user', content: prompt }],
+          };
+          if (useJson && this.jsonMode) params.response_format = { type: 'json_object' };
+          const res = await this.callModel(params);
+          return res.choices?.[0]?.message?.content ?? '';
+        };
+        try {
+          return { text: await attempt(true), model };
+        } catch {
+          try {
+            return { text: await attempt(false), model };
+          } catch {
+            return { text: '', model };
+          }
+        }
+      }),
+    );
+    return results.filter((r) => r.text.length > 0);
+  }
+
+  /**
+   * Call the chat-completions endpoint with a hard timeout so a hung model can
+   * never block the ensemble or the run. Uses AbortController (guaranteed abort)
+   * rather than relying on the SDK's timeout option.
+   */
+  private async callModel(params: any): Promise<any> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+    try {
+      return await this.client.chat.completions.create({ ...params, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   private async createCompletion(
@@ -99,12 +183,12 @@ export class LlmManager {
     }
 
     try {
-      const res = await this.client.chat.completions.create(params);
+      const res = await this.callModel(params);
       return this.toResult(res);
     } catch (err) {
       if (this.jsonMode) {
         delete params.response_format;
-        const res = await this.client.chat.completions.create(params);
+        const res = await this.callModel(params);
         return this.toResult(res);
       }
       throw err;

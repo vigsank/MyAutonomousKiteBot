@@ -61,21 +61,28 @@ const auditTasks = [
   {
     model: process.env.AUDIT_MODEL_STRATEGY || 'glm-5.2:cloud',
     file: 'strategy_audit_report.md',
-    prompt: `You are a senior quantitative trading strategist and systematic-trading auditor with deep expertise in Indian equity markets (NSE) and options. Perform a rigorous, evidence-based audit of this paper-trading bot's MARKET LOGIC and STRATEGY, grounded ONLY in the code below.
+    prompt: `You are a senior quantitative trading strategist and systematic-trading auditor with deep expertise in Indian equity markets (NSE). Perform a rigorous, evidence-based audit of this paper-trading bot's MARKET LOGIC and STRATEGY, grounded ONLY in the code below.
+
+ARCHITECTURE CONTEXT (the bot's focus design):
+- REASONING LAYER (LLM as a signal source, NOT a decision-maker): DailyReportEngine generates a 3-stage daily report (pre-open / mid-session / pre-close) combining global macro (GlobalMacro: S&P, Nasdaq, Nikkei, crude, USD/INR, Nifty -> regime score R) + headlines (TinyFish -> Google RSS) + per-symbol sentiment/prev-day/holding + a capital snapshot. The LLM SUGGESTS share/allocation numbers; the deterministic RiskEngine ENFORCES them. The LLM can tilt/veto but never force a trade or set a size.
+- EXECUTION LAYER (deterministic Node): TechnicalIndicators (pivots, 20/50 SMA, 7-day S/R, fractional Kelly), ORB (opening-range breakout) filter, and hard risk caps in RiskEngine: single-stock <=15% of capital, cash reserve >=20%, risk-at-stop <=1.5% of balance, sector <=30%, portfolio drawdown guard.
+- EOD LAYER: EodEngine squares off intraday (MIS) positions, logs EOD performance, and runs an overnight holding matrix.
+- EQUITY ONLY (no options/futures in scope).
 
 GOAL: Rate, grade, and deeply audit the trading logic, then give a strong, reliable, actionable plan to make the bot sense the market correctly and yield consistent profits.
 
 AUDIT FOCUS (in priority order):
-1. Strategy soundness: evaluate the strategy mode (mean_reversion / pullback_trend / breakout), the indicator set (RSI-14, ADX-14, ATR-14, volume), and the entry/exit/stop rules in MarketAgent. Are the signals statistically sensible? Are thresholds (RSI_ENTRY_THRESHOLD, RSI_EXIT_THRESHOLD, ADX_TREND_THRESHOLD, ATR_STOP_MULTIPLIER, etc.) reasonable for the intended regime?
-2. Market-sensing correctness: does the bot correctly interpret price action, trend, momentum, and mean-reversion? Are there logical errors, look-ahead bias, or misapplied indicators that would cause it to misread the market?
-3. Risk & money management: assess position sizing (RISK_PER_TRADE_PERCENT), stop-loss logic, drawdown limits, circuit breakers, and capital allocation. Are they robust enough to survive adverse conditions?
-4. Profitability levers: identify the highest-impact changes to improve win rate, expectancy, and risk-adjusted returns. Prioritize concrete, implementable improvements.
+1. Strategy soundness: evaluate the strategy mode (mean_reversion / pullback_trend / breakout), the indicator set (RSI-14, ADX-14, ATR-14, volume, plus the new pivots / 7-day S/R / Kelly in TechnicalIndicators), and the entry/exit/stop rules in MarketAgent. Are the signals statistically sensible? Are thresholds (RSI_ENTRY_THRESHOLD, RSI_EXIT_THRESHOLD, ADX_TREND_THRESHOLD, ATR_STOP_MULTIPLIER, ORB_MINUTES, etc.) reasonable for the intended regime?
+2. Market-sensing correctness: does the bot correctly interpret price action, trend, momentum, and mean-reversion? Does the ORB filter and the global-macro regime score (GlobalMacro) add or subtract signal quality? Are there logical errors, look-ahead bias, or misapplied indicators that would cause it to misread the market?
+3. Reasoning Layer quality: is the DailyReportEngine's LLM prompt well-formed? Does it correctly pass deterministic numbers (pivots, S/R, capital snapshot) to the LLM while keeping the LLM advisory-only? Is the strict JSON schema robust? Does the 3-stage cadence (09:00/11:00/15:15) make sense?
+4. Risk & money management: assess position sizing (RISK_PER_TRADE_PERCENT, Kelly), stop-loss logic, drawdown limits, circuit breakers, and the new hard caps (single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, portfolio drawdown). Are they robust enough to survive adverse conditions? Is the LLM's advisory share suggestion correctly clamped by the RiskEngine?
+5. Profitability levers: identify the highest-impact changes to improve win rate, expectancy, and risk-adjusted returns. Prioritize concrete, implementable improvements.
 
 OUTPUT FORMAT — produce a single Markdown report with EXACTLY these sections:
 ## Executive Summary
 (3-5 bullet verdicts, each tagged [PASS]/[WARN]/[FAIL])
 ## Strategy Grade Card
-A table grading each dimension (Strategy Soundness, Market Sensing, Risk Management, Execution, Profitability) with a letter grade (A-F) and a 1-10 score, plus a one-line justification.
+A table grading each dimension (Strategy Soundness, Market Sensing, Reasoning Layer, Risk Management, Execution, Profitability) with a letter grade (A-F) and a 1-10 score, plus a one-line justification.
 ## Findings
 For EACH finding use this template:
 - **Severity:** CRITICAL | HIGH | MEDIUM | LOW
@@ -86,6 +93,12 @@ For EACH finding use this template:
 - **Recommendation:** <concrete fix>
 ## Market-Sensing Gaps
 (specific ways the bot misreads the market, with fixes)
+## Reasoning Layer Review
+(assess the DailyReportEngine + GlobalMacro + LLM-as-signal design: prompt quality, JSON schema, capital-aware share suggestions, whether the LLM stays advisory-only)
+## Execution Layer Review
+(assess TechnicalIndicators, ORB filter, Kelly sizing, and whether the deterministic math is correct and well-integrated)
+## Risk & Capital Guardrails Review
+(assess the hard caps: single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, portfolio drawdown guard — are they correctly enforced and audited?)
 ## Profitability Improvement Plan
 (a prioritized, numbered list of the highest-impact changes, each with expected effect and file reference)
 ## Positive Observations

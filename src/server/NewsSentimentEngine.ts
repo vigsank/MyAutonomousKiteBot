@@ -1,5 +1,4 @@
 import Parser from 'rss-parser';
-import { tavily } from '@tavily/core';
 import { AppConfig } from './AppConfig';
 import { LlmManager } from './LlmManager';
 import { Ledger } from './Ledger';
@@ -7,16 +6,12 @@ import { logger } from './Logger';
 import { AiSentimentJson, NewsArticle, SentimentResult } from './types';
 
 /**
- * Curated Indian financial news RSS feeds. RSS-first approach: deterministic,
- * free, no API keys. The configured LLM (OpenAI or Ollama Cloud) is used only
- * to summarise and score the collected headlines into structured sentiment.
+ * News layer for the sentiment engine. Two sources only:
+ *   - Google News RSS  : free, keyless, always-on article headlines.
+ *   - TinyFish web search : free live web-search fallback for depth/backfill.
+ * The configured LLM (OpenAI or Ollama Cloud) is used only to summarise and
+ * score the collected headlines into structured sentiment.
  */
-const RSS_FEEDS: Array<{ name: string; url: string }> = [
-  { name: 'EconomicTimes', url: 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms' },
-  { name: 'Moneycontrol', url: 'https://www.moneycontrol.com/rss/Marketnews.xml' },
-  { name: 'BusinessStandard', url: 'https://www.business-standard.com/rss/markets-106.rss' },
-  { name: 'NDTVProfit', url: 'https://www.ndtv.com/rss/business/news' },
-];
 
 /** Structured analyst verdict from the LLM for a candidate trade. */
 export interface AnalystVerdict {
@@ -38,7 +33,6 @@ interface TinyFishArticle {
 
 export class NewsSentimentEngine {
   private parser = new Parser();
-  private tavilyClient: ReturnType<typeof tavily> | null = null;
 
   /** TinyFish REST endpoints (called directly via fetch — CJS-safe, no ESM SDK). */
   private readonly tinyfishSearchUrl = 'https://api.search.tinyfish.ai';
@@ -88,9 +82,8 @@ export class NewsSentimentEngine {
     private readonly llm: LlmManager,
     private readonly ledger: Ledger,
   ) {
-    if (config.tavily.enabled) {
-      this.tavilyClient = tavily({ apiKey: config.tavily.apiKey });
-      logger.info('Tavily enabled (live web search news source).');
+    if (this.config.tinyfish.enabled && this.config.tinyfish.apiKey) {
+      logger.info('TinyFish enabled (live web search news source).');
     }
   }
 
@@ -123,53 +116,19 @@ export class NewsSentimentEngine {
     }
   }
 
-  get tavilyConfigured(): boolean {
-    return this.tavilyClient !== null;
+  get tinyfishConfigured(): boolean {
+    return this.config.tinyfish.enabled && this.config.tinyfish.apiKey.length > 0;
   }
 
-  /** Fetch and aggregate recent headlines mentioning a symbol from all feeds. */
+  /** Fetch and aggregate recent headlines mentioning a symbol (Google RSS + TinyFish). */
   async fetchArticles(symbol: string): Promise<NewsArticle[]> {
-    const keyword = symbol.toUpperCase();
     const results: NewsArticle[] = [];
 
-    for (const feed of RSS_FEEDS) {
-      try {
-        const parsed = await withTimeout(this.parser.parseURL(feed.url), 10_000);
-        const items = parsed.items ?? [];
-        for (const item of items.slice(0, 30)) {
-          const title = item.title ?? '';
-          if (title.toUpperCase().includes(keyword) || (item.contentSnippet ?? '').toUpperCase().includes(keyword)) {
-            results.push({
-              title,
-              link: item.link ?? feed.url,
-              summary: item.contentSnippet,
-              pubDate: item.pubDate,
-              source: feed.name,
-            });
-          }
-        }
-      } catch (err) {
-        logger.warn({ feed: feed.name, err }, 'RSS feed fetch failed');
-      }
-    }
-
-    // Track whether the site RSS feeds yielded any articles so we can log a
-    // degraded-source warning and lean on fallbacks when they came up empty.
-    if (results.length === 0) {
-      logger.warn({ symbol }, 'News source degraded: site RSS empty, using fallbacks');
-    }
-
-    // Always run the free, keyless Google News RSS fallback and merge it in.
+    // Google News RSS: free, keyless, always-on headline source.
     results.push(...(await this.fetchGoogleNewsArticles(symbol)));
 
-    // Apply the live web-search provider switch.
-    const prov = this.config.newsSearchProvider;
-    if (prov === 'tavily' || prov === 'both') {
-      results.push(...(await this.fetchTavilyArticles(symbol)));
-    }
-    if (prov === 'tinyfish' || prov === 'both') {
-      results.push(...(await this.fetchTinyFishArticles(symbol)));
-    }
+    // TinyFish web search: free live web-search depth. No-op when unconfigured.
+    results.push(...(await this.fetchTinyFishArticles(symbol)));
 
     // De-duplicate by title.
     const seen = new Set<string>();
@@ -181,29 +140,6 @@ export class NewsSentimentEngine {
       }
     }
     return unique.slice(0, 10);
-  }
-
-  /** Search the live web via Tavily for recent news on a symbol. */
-  async fetchTavilyArticles(symbol: string): Promise<NewsArticle[]> {
-    if (!this.tavilyClient) return [];
-    try {
-      const res = await this.tavilyClient.search(`${symbol} stock news India`, {
-        searchDepth: this.config.tavily.searchDepth,
-        maxResults: this.config.tavily.maxResults,
-        topic: 'news',
-        days: 7,
-      });
-      return (res.results ?? []).map((r) => ({
-        title: r.title,
-        link: r.url,
-        summary: r.content,
-        pubDate: r.publishedDate,
-        source: 'Tavily',
-      }));
-    } catch (err) {
-      logger.warn({ symbol, err }, 'Tavily search failed');
-      return [];
-    }
   }
 
   /** Search the live web via TinyFish (free tier) for recent news on a symbol. */
@@ -277,35 +213,15 @@ export class NewsSentimentEngine {
     return data?.results?.[0]?.text ?? null;
   }
 
-  /** Fetch deeper Tavily details (AI answer + more results) for a symbol. */
-  async fetchTavilyDetails(symbol: string): Promise<{ answer?: string; articles: NewsArticle[] }> {
-    if (!this.tavilyClient) return { articles: [] };
-    try {
-      const res = await this.tavilyClient.search(
-        `Latest news and developments for ${symbol} stock`,
-        {
-          searchDepth: 'advanced',
-          maxResults: this.config.tavily.maxResults,
-          topic: 'news',
-          days: 3,
-          includeAnswer: true,
-        },
-      );
-      return {
-        answer: res.answer,
-        articles: (res.results ?? []).map((r) => ({
-          title: r.title,
-          link: r.url,
-          summary: r.content,
-          pubDate: r.publishedDate,
-          source: 'Tavily',
-        })),
-      };
-    } catch (err) {
-      logger.warn({ symbol, err }, 'Tavily details failed');
-      return { articles: [] };
-    }
+  /**
+   * Fetch deeper details for a symbol (fresh TinyFish sources) for the periodic
+   * detail loop. Replaces the former Tavily detail fetch.
+   */
+  async fetchTinyFishDetails(symbol: string): Promise<{ answer?: string; articles: NewsArticle[] }> {
+    const articles = await this.fetchTinyFishArticles(symbol);
+    return { answer: undefined, articles };
   }
+
 
   /**
    * Score sentiment for a symbol. Uses the configured LLM (OpenAI / Ollama
@@ -363,9 +279,25 @@ Return JSON:
 
     try {
       const start = Date.now();
-      const meta = await this.llm.chatWithMeta(prompt);
-      this.recordTrace('analyst', ctx.symbol, prompt, meta.text, start, meta);
-      return validateAnalystJson(extractJson(meta.text));
+      const responses = await this.llm.chatEnsemble(prompt);
+      const verdicts = responses
+        .map((r) => validateAnalystJson(extractJson(r.text)))
+        .filter((v): v is AnalystVerdict => v !== null);
+      if (verdicts.length === 0) return null;
+      // Ensemble: escalate to the most conservative, average the risk.
+      const hasAvoid = verdicts.some((v) => v.verdict === 'AVOID');
+      const hasCaution = verdicts.some((v) => v.verdict === 'CAUTION');
+      const avgRisk = Math.round(verdicts.reduce((s, v) => s + v.riskScore, 0) / verdicts.length);
+      this.recordTrace(
+        'analyst', ctx.symbol, prompt,
+        responses.map((r) => r.text).join('\n---\n'), start,
+        { model: responses.map((r) => r.model).join(','), tokensIn: null, tokensOut: null },
+      );
+      return {
+        verdict: hasAvoid ? 'AVOID' : hasCaution ? 'CAUTION' : 'AGREE',
+        riskScore: avgRisk,
+        rationale: verdicts.map((v) => v.rationale).filter(Boolean).join(' | '),
+      };
     } catch (err) {
       logger.warn({ symbol: ctx.symbol, err }, 'Analyst verdict failed — proceeding without it');
       return null;
@@ -406,9 +338,25 @@ Return JSON:
 
     try {
       const start = Date.now();
-      const meta = await this.llm.chatWithMeta(prompt);
-      this.recordTrace('holdings', ctx.symbol, prompt, meta.text, start, meta);
-      return validateHoldingsJson(extractJson(meta.text));
+      const responses = await this.llm.chatEnsemble(prompt);
+      const verdicts = responses
+        .map((r) => validateHoldingsJson(extractJson(r.text)))
+        .filter((v): v is { action: 'HOLD' | 'TRIM' | 'EXIT'; riskScore: number; rationale: string } => v !== null);
+      if (verdicts.length === 0) return null;
+      // Ensemble: escalate to the most aggressive action, average the risk.
+      const hasExit = verdicts.some((v) => v.action === 'EXIT');
+      const hasTrim = verdicts.some((v) => v.action === 'TRIM');
+      const avgRisk = Math.round(verdicts.reduce((s, v) => s + v.riskScore, 0) / verdicts.length);
+      this.recordTrace(
+        'holdings', ctx.symbol, prompt,
+        responses.map((r) => r.text).join('\n---\n'), start,
+        { model: responses.map((r) => r.model).join(','), tokensIn: null, tokensOut: null },
+      );
+      return {
+        action: hasExit ? 'EXIT' : hasTrim ? 'TRIM' : 'HOLD',
+        riskScore: avgRisk,
+        rationale: verdicts.map((v) => v.rationale).filter(Boolean).join(' | '),
+      };
     } catch (err) {
       logger.warn({ symbol: ctx.symbol, err }, 'Holdings verdict failed — falling back to rules');
       return null;

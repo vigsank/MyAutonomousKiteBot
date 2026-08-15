@@ -30,7 +30,6 @@ async function main(): Promise<void> {
   // =====================================================================
   const tf: string[] = [];
   tf.push(`TinyFish probe report — symbol: ${symbol}`);
-  tf.push(`NEWS_SEARCH_PROVIDER=${config.newsSearchProvider}`);
   tf.push(`TINYFISH enabled=${config.tinyfish.enabled} (key len=${config.tinyfish.apiKey.length})`);
   tf.push('='.repeat(70));
 

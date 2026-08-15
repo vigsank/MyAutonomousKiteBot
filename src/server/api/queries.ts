@@ -139,6 +139,37 @@ export interface AgentSignalRow {
   createdAt: string;
 }
 
+export interface DailyReportRow {
+  reportId: number;
+  reportType: string;
+  reportDate: string;
+  reportJson: string;
+  summary: string | null;
+  createdAt: string;
+}
+
+export interface EodPerformanceRow {
+  reportDate: string;
+  realizedPnl: number;
+  totalTrades: number;
+  winning: number;
+  losing: number;
+  winRate: number | null;
+  slippageTotal: number;
+  executionAccuracy: number | null;
+  summary: string | null;
+  createdAt: string;
+}
+
+export interface OvernightMatrixRow {
+  reportDate: string;
+  symbol: string;
+  gapRiskPct: number | null;
+  flagged: number;
+  events: string | null;
+  createdAt: string;
+}
+
 export interface Overview {
   capital: { total: number; available: number; used: number };
   daily: DailySummaryRow | null;
@@ -444,6 +475,47 @@ export class UiQueries {
           .all(symbol, limit)
       : this.db.prepare(`${base} ORDER BY fetched_at DESC LIMIT ?`).all(limit);
     return rows as NewsArticleRow[];
+  }
+
+  /** Recent daily reports (Reasoning Layer — the 3-stage report cycle). */
+  dailyReports(reportType?: string, limit = 20): DailyReportRow[] {
+    const base = `SELECT report_id AS reportId, report_type AS reportType,
+                         report_date AS reportDate, report_json AS reportJson,
+                         summary AS summary, created_at AS createdAt
+                  FROM ${this.t('daily_reports')}`;
+    const rows = reportType
+      ? this.db
+          .prepare(`${base} WHERE report_type = ? ORDER BY created_at DESC LIMIT ?`)
+          .all(reportType, limit)
+      : this.db.prepare(`${base} ORDER BY created_at DESC LIMIT ?`).all(limit);
+    return rows as DailyReportRow[];
+  }
+
+  /** Recent EOD performance records. */
+  eodPerformance(limit = 20): EodPerformanceRow[] {
+    return this.db
+      .prepare(
+        `SELECT report_date AS reportDate, realized_pnl AS realizedPnl,
+                total_trades AS totalTrades, winning_trades AS winning,
+                losing_trades AS losing, win_rate AS winRate,
+                slippage_total AS slippageTotal,
+                execution_accuracy AS executionAccuracy, summary AS summary,
+                created_at AS createdAt
+           FROM ${this.t('eod_performance')} ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as EodPerformanceRow[];
+  }
+
+  /** Recent overnight holding-matrix rows. */
+  overnightMatrix(limit = 50): OvernightMatrixRow[] {
+    return this.db
+      .prepare(
+        `SELECT report_date AS reportDate, symbol AS symbol,
+                gap_risk_pct AS gapRiskPct, flagged AS flagged,
+                events AS events, created_at AS createdAt
+           FROM ${this.t('overnight_matrix')} ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as OvernightMatrixRow[];
   }
 
   /** Recent agent signals (fleet observability — what the agents decided). */

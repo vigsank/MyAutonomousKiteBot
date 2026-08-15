@@ -1,0 +1,3364 @@
+# Mock-Data Backtest — 4 Cases (run3, 1x capital, AI-backed, real NSE data)
+
+> Tiers: **tier1** · Ensemble mode: **fast** · Strategy: Bollinger mean-reversion + AI analyst (news sentiment + LLM verdict) gating entries. Paper-only, net of costs. 5-min bars from real historical CSVs.
+
+## Summary
+
+| Case | Holdings | New Cap | Total Cap | Picks | Days | Rebal | Trades | Win% | PF | Net P&L | Return | MaxDD | Final |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| case1 | 0 | ₹20,000 | ₹20,000 | 20 | 30 | 1d | 73 | 41.1% | 0.40 | ₹-466 | -2.33% | ₹466 (2.3%) | ₹19,534 |
+| case2 | 2 | ₹20,000 | ₹35,000 | 18 | 30 | 1d | 76 | 31.6% | 0.32 | ₹-1,076 | -3.08% | ₹1,096 (3.1%) | ₹33,924 |
+| case4 | 0 | ₹10,000 | ₹10,000 | 10 | 30 | 1d | 59 | 32.2% | 0.30 | ₹-292 | -2.92% | ₹297 (3.0%) | ₹9,708 |
+| case5 | 1 | ₹10,000 | ₹40,000 | 5 | 30 | 1d | 2 | 100.0% | inf | ₹4,468 | 11.17% | ₹0 (0.0%) | ₹44,468 |
+
+## case1
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹20,000 new capital = **₹20,000** total. Picked 20 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** CONCOR, INDHOTEL, PFC, IOC, DELHIVERY, BANDHANBNK, TATAMOTORS, NMDC, IRB
+- **Result:** 73 round trips, win rate 41.1%, profit factor 0.40, net P&L **₹-466** (-2.33%), max drawdown ₹466 (2.3%), final equity **₹19,534**.
+
+| Symbol | P&L |
+|---|---|
+| DELHIVERY | ₹46 |
+| BANDHANBNK | ₹18 |
+| NMDC | ₹-16 |
+| INDHOTEL | ₹-26 |
+| IRB | ₹-35 |
+| TATAMOTORS | ₹-35 |
+| IOC | ₹-57 |
+| CONCOR | ₹-160 |
+| PFC | ₹-201 |
+
+**Top trades:**
+- PFC SHORT 5 @ 385.07 → ₹-141 (Closed LONG position. rebalance TRIM)
+- CONCOR SHORT 8 @ 482.00 → ₹-54 (Closed LONG position. Bollinger target hit (price 482.10 >= middle band 481.80))
+- PFC SHORT 9 @ 405.67 → ₹-34 (Closed LONG position. Bollinger target hit (price 405.75 >= middle band 405.55))
+- CONCOR SHORT 3 @ 511.95 → ₹-34 (Closed LONG position. rebalance TRIM)
+- CONCOR SHORT 8 @ 481.10 → ₹-33 (Closed LONG position. Bollinger target hit (price 481.20 >= middle band 480.80))
+- TATAMOTORS SHORT 11 @ 332.58 → ₹-31 (Closed LONG position. Bollinger target hit (price 332.65 >= middle band 332.43))
+- CONCOR SHORT 7 @ 511.90 → ₹-31 (Closed LONG position. Bollinger target hit (price 512.00 >= middle band 511.74))
+- DELHIVERY SHORT 8 @ 489.85 → ₹31 (Closed LONG position. Bollinger target hit (price 489.95 >= middle band 489.35))
+
+**Gate counters (why signals died):**
+- total_evaluations: 14581
+- rsi_not_oversold: 9915
+- circuit_breaker: 282
+- bollinger_band: 162
+- executed: 130
+- proposed: 73
+- risk_blocked: 22
+- cooldown: 11
+- concentration_cap: 9
+
+**RiskEngine block reasons:**
+- Ticket size 4009.5999145507812 exceeds max trade allocation 4000.: 4
+- Ticket size 4009.039794921875 exceeds max trade allocation 4000.: 2
+- Ticket size 4006.5198974609375 exceeds max trade allocation 4000.: 2
+- Ticket size 4006.8001708984375 exceeds max trade allocation 4000.: 1
+- Ticket size 4009.8801879882812 exceeds max trade allocation 4000.: 1
+- Ticket size 4008.4801025390625 exceeds max trade allocation 4000.: 1
+- Ticket size 4013.8001708984375 exceeds max trade allocation 4000.: 1
+- Ticket size 4011.5601196289062 exceeds max trade allocation 4000.: 1
+- Ticket size 4012.679931640625 exceeds max trade allocation 4000.: 1
+- Ticket size 4008.7599487304688 exceeds max trade allocation 4000.: 1
+- Ticket size 4007.9199829101562 exceeds max trade allocation 4000.: 1
+- Ticket size 4003.199951171875 exceeds max trade allocation 4000.: 1
+- Ticket size 4002.39990234375 exceeds max trade allocation 4000.: 1
+- Ticket size 4012 exceeds max trade allocation 4000.: 1
+- Ticket size 4012.800048828125 exceeds max trade allocation 4000.: 1
+- Ticket size 4009.199951171875 exceeds max trade allocation 4000.: 1
+- Ticket size 4015.199951171875 exceeds max trade allocation 4000.: 1
+
+## case2
+
+- **Setup:** 2 existing holding(s) worth ₹15,000 + ₹20,000 new capital = **₹35,000** total. Picked 18 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** LICI, NATCOPHARM, COALINDIA, TATASTEEL, AXISBANK, ICICIBANK, INFY, HINDALCO, DRREDDY, MOTHERSON, ADANIGREEN, IDFCFIRSTB
+- **Result:** 76 round trips, win rate 31.6%, profit factor 0.32, net P&L **₹-1,076** (-3.08%), max drawdown ₹1,096 (3.1%), final equity **₹33,924**.
+
+| Symbol | P&L |
+|---|---|
+| MOTHERSON | ₹72 |
+| IDFCFIRSTB | ₹37 |
+| DRREDDY | ₹33 |
+| AXISBANK | ₹-16 |
+| HINDALCO | ₹-30 |
+| ADANIGREEN | ₹-38 |
+| INFY | ₹-102 |
+| ICICIBANK | ₹-136 |
+| COALINDIA | ₹-150 |
+| TATASTEEL | ₹-174 |
+| NATCOPHARM | ₹-210 |
+| LICI | ₹-362 |
+
+**Top trades:**
+- NATCOPHARM SHORT 7 @ 936.11 → ₹-107 (Closed LONG position. Bollinger target hit (price 936.30 >= middle band 935.61))
+- LICI SHORT 15 @ 435.31 → ₹-89 (Closed LONG position. Bollinger target hit (price 435.40 >= middle band 435.28))
+- ICICIBANK SHORT 2 @ 1420.72 → ₹-79 (Closed LONG position. rebalance TRIM)
+- MOTHERSON SHORT 23 @ 150.97 → ₹77 (Closed LONG position. rebalance TRIM)
+- INFY SHORT 3 @ 1156.47 → ₹-76 (Closed LONG position. rebalance TRIM)
+- TATASTEEL SHORT 37 @ 184.63 → ₹-74 (Closed LONG position. Bollinger target hit (price 184.67 >= middle band 184.42))
+- TATASTEEL SHORT 19 @ 185.85 → ₹69 (Closed LONG position. rebalance TRIM)
+- COALINDIA SHORT 16 @ 410.67 → ₹-65 (Closed LONG position. Bollinger target hit (price 410.75 >= middle band 410.70))
+
+**Gate counters (why signals died):**
+- total_evaluations: 19453
+- rsi_not_oversold: 13411
+- circuit_breaker: 376
+- bollinger_band: 204
+- executed: 128
+- proposed: 74
+- risk_blocked: 54
+- concentration_cap: 29
+- cooldown: 15
+
+**RiskEngine block reasons:**
+- Ticket size 7011 exceeds max trade allocation 7000.: 5
+- Ticket size 7011.820175170898 exceeds max trade allocation 7000.: 4
+- Ticket size 7015.100250244141 exceeds max trade allocation 7000.: 3
+- Ticket size 7013.459899902344 exceeds max trade allocation 7000.: 3
+- Ticket size 7006.899749755859 exceeds max trade allocation 7000.: 2
+- Ticket size 7012.639724731445 exceeds max trade allocation 7000.: 2
+- Ticket size 7001.120208740234 exceeds max trade allocation 7000.: 2
+- Ticket size 7002.639953613281 exceeds max trade allocation 7000.: 2
+- Ticket size 7006.39990234375 exceeds max trade allocation 7000.: 1
+- Ticket size 7012.7998046875 exceeds max trade allocation 7000.: 1
+- Ticket size 7014.39990234375 exceeds max trade allocation 7000.: 1
+- Ticket size 7012 exceeds max trade allocation 7000.: 1
+- Ticket size 7008 exceeds max trade allocation 7000.: 1
+- Ticket size 7010.239837646484 exceeds max trade allocation 7000.: 1
+- Ticket size 7015.180023193359 exceeds max trade allocation 7000.: 1
+- Ticket size 7018.980255126953 exceeds max trade allocation 7000.: 1
+- Ticket size 7018.599884033203 exceeds max trade allocation 7000.: 1
+- Ticket size 7023.1602783203125 exceeds max trade allocation 7000.: 1
+- Ticket size 7039.120208740234 exceeds max trade allocation 7000.: 1
+- Ticket size 7059.260162353516 exceeds max trade allocation 7000.: 1
+- Ticket size 7044.819976806641 exceeds max trade allocation 7000.: 1
+- Ticket size 7060.400115966797 exceeds max trade allocation 7000.: 1
+- Ticket size 7079.400115966797 exceeds max trade allocation 7000.: 1
+- Ticket size 7071.040069580078 exceeds max trade allocation 7000.: 1
+- Ticket size 7068.379791259766 exceeds max trade allocation 7000.: 1
+- Ticket size 7052.040069580078 exceeds max trade allocation 7000.: 1
+- Ticket size 7058.879791259766 exceeds max trade allocation 7000.: 1
+- Ticket size 7063.819976806641 exceeds max trade allocation 7000.: 1
+- Ticket size 7012.900115966797 exceeds max trade allocation 7000.: 1
+- Ticket size 7004.919860839844 exceeds max trade allocation 7000.: 1
+- Ticket size 7002.299896240234 exceeds max trade allocation 7000.: 1
+- Ticket size 7003.150207519531 exceeds max trade allocation 7000.: 1
+- Ticket size 7002.80012512207 exceeds max trade allocation 7000.: 1
+- Ticket size 7020.020050048828 exceeds max trade allocation 7000.: 1
+- Ticket size 7014.280075073242 exceeds max trade allocation 7000.: 1
+- Ticket size 7010.179824829102 exceeds max trade allocation 7000.: 1
+- Ticket size 7097 exceeds max trade allocation 7000.: 1
+- Ticket size 7000.599792480469 exceeds max trade allocation 7000.: 1
+- Ticket size 7002.260162353516 exceeds max trade allocation 7000.: 1
+
+## case4
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹10,000 new capital = **₹10,000** total. Picked 10 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** MOTILALOFS, SYNGENE, POONAWALLA, WHIRLPOOL, MARICO, INDUSINDBK
+- **Result:** 59 round trips, win rate 32.2%, profit factor 0.30, net P&L **₹-292** (-2.92%), max drawdown ₹297 (3.0%), final equity **₹9,708**.
+
+| Symbol | P&L |
+|---|---|
+| SYNGENE | ₹30 |
+| MARICO | ₹-15 |
+| INDUSINDBK | ₹-18 |
+| WHIRLPOOL | ₹-40 |
+| POONAWALLA | ₹-66 |
+| MOTILALOFS | ₹-183 |
+
+**Top trades:**
+- MOTILALOFS SHORT 2 @ 863.03 → ₹-141 (Closed LONG position. Bollinger target hit (price 863.20 >= middle band 862.58))
+- SYNGENE SHORT 5 @ 388.57 → ₹37 (Closed LONG position. Bollinger target hit (price 388.65 >= middle band 386.99))
+- MOTILALOFS SHORT 2 @ 946.61 → ₹-28 (Closed LONG position. Bollinger target hit (price 946.80 >= middle band 946.69))
+- POONAWALLA SHORT 4 @ 454.91 → ₹-27 (Closed LONG position. Bollinger target hit (price 455.00 >= middle band 453.84))
+- WHIRLPOOL SHORT 1 @ 808.14 → ₹23 (Closed LONG position. rebalance TRIM)
+- SYNGENE SHORT 4 @ 398.67 → ₹-13 (Closed LONG position. Bollinger target hit (price 398.75 >= middle band 398.71))
+- MOTILALOFS SHORT 2 @ 844.83 → ₹-12 (Closed LONG position. Bollinger target hit (price 845.00 >= middle band 843.06))
+- MOTILALOFS SHORT 2 @ 873.83 → ₹12 (Closed LONG position. Bollinger target hit (price 874.00 >= middle band 868.87))
+
+**Gate counters (why signals died):**
+- total_evaluations: 9764
+- rsi_not_oversold: 6204
+- executed: 107
+- circuit_breaker: 92
+- bollinger_band: 71
+- proposed: 59
+- cooldown: 2
+
+**RiskEngine block reasons:**
+
+## case5
+
+- **Setup:** 1 existing holding(s) worth ₹30,000 + ₹10,000 new capital = **₹40,000** total. Picked 5 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** TECHM, COFORGE, HAVELLS, JIOFIN
+- **Result:** 2 round trips, win rate 100.0%, profit factor inf, net P&L **₹4,468** (11.17%), max drawdown ₹0 (0.0%), final equity **₹44,468**.
+
+| Symbol | P&L |
+|---|---|
+| TECHM | ₹3,005 |
+| COFORGE | ₹1,463 |
+
+**Top trades:**
+- TECHM SHORT 20 @ 1638.67 → ₹3,005 (Closed LONG position. Backtest end — force close)
+- COFORGE SHORT 5 @ 1828.63 → ₹1,463 (Closed LONG position. Backtest end — force close)
+
+**Gate counters (why signals died):**
+- total_evaluations: 6482
+- risk_blocked: 2823
+- rsi_not_oversold: 2153
+- concentration_cap: 93
+- bollinger_band: 25
+- proposed: 1
+- executed: 1
+- cooldown: 1
+
+**RiskEngine block reasons:**
+- Ticket size 33000 exceeds max trade allocation 8000.: 20
+- Insufficient capital: used 37340.97 + ticket 33000.00 > available 40000.00.: 20
+- Ticket size 32800 exceeds max trade allocation 8000.: 16
+- Insufficient capital: used 37340.97 + ticket 32800.00 > available 40000.00.: 16
+- Ticket size 32900 exceeds max trade allocation 8000.: 15
+- Insufficient capital: used 37340.97 + ticket 32900.00 > available 40000.00.: 15
+- Ticket size 32940 exceeds max trade allocation 8000.: 14
+- Insufficient capital: used 37340.97 + ticket 32940.00 > available 40000.00.: 14
+- Ticket size 32860 exceeds max trade allocation 8000.: 11
+- Insufficient capital: used 37340.97 + ticket 32860.00 > available 40000.00.: 11
+- Ticket size 32880 exceeds max trade allocation 8000.: 11
+- Insufficient capital: used 37340.97 + ticket 32880.00 > available 40000.00.: 11
+- Ticket size 32978.00048828125 exceeds max trade allocation 8000.: 9
+- Insufficient capital: used 37340.97 + ticket 32978.00 > available 40000.00.: 9
+- Ticket size 32960 exceeds max trade allocation 8000.: 9
+- Insufficient capital: used 37340.97 + ticket 32960.00 > available 40000.00.: 9
+- Ticket size 32958.00048828125 exceeds max trade allocation 8000.: 9
+- Insufficient capital: used 37340.97 + ticket 32958.00 > available 40000.00.: 9
+- Ticket size 32996.0009765625 exceeds max trade allocation 8000.: 9
+- Insufficient capital: used 37340.97 + ticket 32996.00 > available 40000.00.: 9
+- Ticket size 32700 exceeds max trade allocation 8000.: 8
+- Insufficient capital: used 37340.97 + ticket 32700.00 > available 40000.00.: 8
+- Ticket size 33140 exceeds max trade allocation 8000.: 8
+- Insufficient capital: used 37340.97 + ticket 33140.00 > available 40000.00.: 8
+- Ticket size 32980 exceeds max trade allocation 8000.: 8
+- Insufficient capital: used 37340.97 + ticket 32980.00 > available 40000.00.: 8
+- Ticket size 8900 exceeds max trade allocation 8000.: 8
+- Insufficient capital: used 37340.97 + ticket 8900.00 > available 40000.00.: 8
+- Ticket size 9000 exceeds max trade allocation 8000.: 8
+- Insufficient capital: used 37340.97 + ticket 9000.00 > available 40000.00.: 8
+- Ticket size 31180 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 31180.00 > available 40000.00.: 7
+- Ticket size 33010 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 33010.00 > available 40000.00.: 7
+- Ticket size 32968.00048828125 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 32968.00 > available 40000.00.: 7
+- Ticket size 32850 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 32850.00 > available 40000.00.: 7
+- Ticket size 8700 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 8700.00 > available 40000.00.: 7
+- Ticket size 8600 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 8600.00 > available 40000.00.: 7
+- Ticket size 33003.9990234375 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 33004.00 > available 40000.00.: 7
+- Ticket size 32798.00048828125 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 32798.00 > available 40000.00.: 7
+- Ticket size 32780 exceeds max trade allocation 8000.: 7
+- Insufficient capital: used 37340.97 + ticket 32780.00 > available 40000.00.: 7
+- Ticket size 31236.0009765625 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 31236.00 > available 40000.00.: 6
+- Ticket size 31526.0009765625 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 31526.00 > available 40000.00.: 6
+- Ticket size 31661.99951171875 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 31662.00 > available 40000.00.: 6
+- Ticket size 31198.00048828125 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 31198.00 > available 40000.00.: 6
+- Ticket size 31188.00048828125 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 31188.00 > available 40000.00.: 6
+- Ticket size 32783.9990234375 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32784.00 > available 40000.00.: 6
+- Ticket size 32981.99951171875 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32982.00 > available 40000.00.: 6
+- Ticket size 33131.99951171875 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 33132.00 > available 40000.00.: 6
+- Ticket size 32976.0009765625 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32976.00 > available 40000.00.: 6
+- Ticket size 32920 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32920.00 > available 40000.00.: 6
+- Ticket size 32876.0009765625 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32876.00 > available 40000.00.: 6
+- Ticket size 32998.00048828125 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32998.00 > available 40000.00.: 6
+- Ticket size 32878.00048828125 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32878.00 > available 40000.00.: 6
+- Ticket size 32938.00048828125 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 32938.00 > available 40000.00.: 6
+- Ticket size 9015 exceeds max trade allocation 8000.: 6
+- Insufficient capital: used 37340.97 + ticket 9015.00 > available 40000.00.: 6
+- Ticket size 31040 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31040.00 > available 40000.00.: 5
+- Ticket size 31126.0009765625 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31126.00 > available 40000.00.: 5
+- Ticket size 31488.00048828125 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31488.00 > available 40000.00.: 5
+- Ticket size 31640 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31640.00 > available 40000.00.: 5
+- Ticket size 31540 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31540.00 > available 40000.00.: 5
+- Ticket size 31240 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31240.00 > available 40000.00.: 5
+- Ticket size 31203.9990234375 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 31204.00 > available 40000.00.: 5
+- Ticket size 32590 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32590.00 > available 40000.00.: 5
+- Ticket size 33036.0009765625 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 33036.00 > available 40000.00.: 5
+- Ticket size 33081.99951171875 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 33082.00 > available 40000.00.: 5
+- Ticket size 32973.9990234375 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32974.00 > available 40000.00.: 5
+- Ticket size 32970 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32970.00 > available 40000.00.: 5
+- Ticket size 32928.00048828125 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32928.00 > available 40000.00.: 5
+- Ticket size 32961.99951171875 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32962.00 > available 40000.00.: 5
+- Ticket size 32903.9990234375 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32904.00 > available 40000.00.: 5
+- Ticket size 8690 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 8690.00 > available 40000.00.: 5
+- Ticket size 8705 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 8705.00 > available 40000.00.: 5
+- Ticket size 33053.9990234375 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 33054.00 > available 40000.00.: 5
+- Ticket size 32863.9990234375 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32864.00 > available 40000.00.: 5
+- Ticket size 32986.0009765625 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32986.00 > available 40000.00.: 5
+- Ticket size 32906.0009765625 exceeds max trade allocation 8000.: 5
+- Insufficient capital: used 37340.97 + ticket 32906.00 > available 40000.00.: 5
+- Ticket size 31103.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31104.00 > available 40000.00.: 4
+- Ticket size 31620 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31620.00 > available 40000.00.: 4
+- Ticket size 31651.99951171875 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31652.00 > available 40000.00.: 4
+- Ticket size 31788.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31788.00 > available 40000.00.: 4
+- Ticket size 31561.99951171875 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31562.00 > available 40000.00.: 4
+- Ticket size 31806.0009765625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31806.00 > available 40000.00.: 4
+- Ticket size 31090 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 31090.00 > available 40000.00.: 4
+- Insufficient capital: used 37340.97 + ticket 7630.00 > available 40000.00.: 4
+- Ticket size 32423.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32424.00 > available 40000.00.: 4
+- Ticket size 32766.0009765625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32766.00 > available 40000.00.: 4
+- Ticket size 33170 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33170.00 > available 40000.00.: 4
+- Ticket size 33078.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33078.00 > available 40000.00.: 4
+- Ticket size 33058.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33058.00 > available 40000.00.: 4
+- Ticket size 32971.99951171875 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32972.00 > available 40000.00.: 4
+- Ticket size 32921.99951171875 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32922.00 > available 40000.00.: 4
+- Ticket size 32983.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32984.00 > available 40000.00.: 4
+- Ticket size 32950 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32950.00 > available 40000.00.: 4
+- Ticket size 32948.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32948.00 > available 40000.00.: 4
+- Ticket size 32843.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32844.00 > available 40000.00.: 4
+- Ticket size 32923.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32924.00 > available 40000.00.: 4
+- Ticket size 8770 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8770.00 > available 40000.00.: 4
+- Ticket size 33578.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33578.00 > available 40000.00.: 4
+- Ticket size 8705.499877929688 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8705.50 > available 40000.00.: 4
+- Ticket size 8715 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8715.00 > available 40000.00.: 4
+- Ticket size 8742.5 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8742.50 > available 40000.00.: 4
+- Ticket size 8745.499877929688 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8745.50 > available 40000.00.: 4
+- Ticket size 33001.99951171875 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33002.00 > available 40000.00.: 4
+- Ticket size 33090 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33090.00 > available 40000.00.: 4
+- Ticket size 33138.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33138.00 > available 40000.00.: 4
+- Ticket size 33173.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33174.00 > available 40000.00.: 4
+- Ticket size 32988.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32988.00 > available 40000.00.: 4
+- Ticket size 32890 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32890.00 > available 40000.00.: 4
+- Ticket size 32840 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32840.00 > available 40000.00.: 4
+- Ticket size 32883.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32884.00 > available 40000.00.: 4
+- Ticket size 32778.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32778.00 > available 40000.00.: 4
+- Ticket size 32886.0009765625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32886.00 > available 40000.00.: 4
+- Ticket size 32910 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32910.00 > available 40000.00.: 4
+- Ticket size 32966.0009765625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32966.00 > available 40000.00.: 4
+- Ticket size 33056.0009765625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33056.00 > available 40000.00.: 4
+- Ticket size 33193.9990234375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 33194.00 > available 40000.00.: 4
+- Ticket size 32838.00048828125 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 32838.00 > available 40000.00.: 4
+- Ticket size 8910 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8910.00 > available 40000.00.: 4
+- Ticket size 8904.500122070312 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8904.50 > available 40000.00.: 4
+- Ticket size 8889.500122070312 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8889.50 > available 40000.00.: 4
+- Ticket size 8904.000244140625 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8904.00 > available 40000.00.: 4
+- Ticket size 8890 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 8890.00 > available 40000.00.: 4
+- Ticket size 9045 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9045.00 > available 40000.00.: 4
+- Ticket size 9013.499755859375 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9013.50 > available 40000.00.: 4
+- Ticket size 9049.500122070312 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9049.50 > available 40000.00.: 4
+- Ticket size 9040 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9040.00 > available 40000.00.: 4
+- Ticket size 9010 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9010.00 > available 40000.00.: 4
+- Ticket size 9007.000122070312 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9007.00 > available 40000.00.: 4
+- Ticket size 9050 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9050.00 > available 40000.00.: 4
+- Ticket size 9120 exceeds max trade allocation 8000.: 4
+- Insufficient capital: used 37340.97 + ticket 9120.00 > available 40000.00.: 4
+- Ticket size 30493.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30494.00 > available 40000.00.: 3
+- Ticket size 30288.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30288.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7739.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7675.50 > available 40000.00.: 3
+- Ticket size 30880 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30880.00 > available 40000.00.: 3
+- Ticket size 30923.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30924.00 > available 40000.00.: 3
+- Ticket size 30776.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30776.00 > available 40000.00.: 3
+- Ticket size 31171.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31172.00 > available 40000.00.: 3
+- Ticket size 31200 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31200.00 > available 40000.00.: 3
+- Ticket size 31530 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31530.00 > available 40000.00.: 3
+- Ticket size 31493.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31494.00 > available 40000.00.: 3
+- Ticket size 31611.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31612.00 > available 40000.00.: 3
+- Ticket size 31300 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31300.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7543.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7553.00 > available 40000.00.: 3
+- Ticket size 31778.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31778.00 > available 40000.00.: 3
+- Ticket size 31746.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31746.00 > available 40000.00.: 3
+- Ticket size 31740 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31740.00 > available 40000.00.: 3
+- Ticket size 31736.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31736.00 > available 40000.00.: 3
+- Ticket size 31541.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31542.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7596.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7495.50 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7525.00 > available 40000.00.: 3
+- Ticket size 31800 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31800.00 > available 40000.00.: 3
+- Ticket size 31548.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31548.00 > available 40000.00.: 3
+- Ticket size 31543.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31544.00 > available 40000.00.: 3
+- Ticket size 31213.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31214.00 > available 40000.00.: 3
+- Ticket size 31201.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31202.00 > available 40000.00.: 3
+- Ticket size 31246.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31246.00 > available 40000.00.: 3
+- Ticket size 31190 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31190.00 > available 40000.00.: 3
+- Ticket size 31250 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31250.00 > available 40000.00.: 3
+- Ticket size 31251.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31252.00 > available 40000.00.: 3
+- Ticket size 31196.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31196.00 > available 40000.00.: 3
+- Ticket size 31220 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31220.00 > available 40000.00.: 3
+- Ticket size 31191.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31192.00 > available 40000.00.: 3
+- Ticket size 31078.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31078.00 > available 40000.00.: 3
+- Ticket size 31053.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 31054.00 > available 40000.00.: 3
+- Ticket size 30866.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30866.00 > available 40000.00.: 3
+- Ticket size 30771.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 30772.00 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7299.50 > available 40000.00.: 3
+- Insufficient capital: used 37340.97 + ticket 7299.00 > available 40000.00.: 3
+- Ticket size 32603.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32604.00 > available 40000.00.: 3
+- Ticket size 32600 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32600.00 > available 40000.00.: 3
+- Ticket size 32643.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32644.00 > available 40000.00.: 3
+- Ticket size 8356.500244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8356.50 > available 40000.00.: 3
+- Ticket size 8417.999877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8418.00 > available 40000.00.: 3
+- Ticket size 33160 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33160.00 > available 40000.00.: 3
+- Ticket size 33158.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33158.00 > available 40000.00.: 3
+- Ticket size 33210 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33210.00 > available 40000.00.: 3
+- Ticket size 33070 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33070.00 > available 40000.00.: 3
+- Ticket size 33148.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33148.00 > available 40000.00.: 3
+- Ticket size 33143.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33144.00 > available 40000.00.: 3
+- Ticket size 33026.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33026.00 > available 40000.00.: 3
+- Ticket size 33021.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33022.00 > available 40000.00.: 3
+- Ticket size 32990 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32990.00 > available 40000.00.: 3
+- Ticket size 32951.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32952.00 > available 40000.00.: 3
+- Ticket size 32953.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32954.00 > available 40000.00.: 3
+- Ticket size 32901.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32902.00 > available 40000.00.: 3
+- Ticket size 32891.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32892.00 > available 40000.00.: 3
+- Ticket size 8723.499755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8723.50 > available 40000.00.: 3
+- Ticket size 8699.000244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8699.00 > available 40000.00.: 3
+- Ticket size 8738.499755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8738.50 > available 40000.00.: 3
+- Ticket size 8697.999877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8698.00 > available 40000.00.: 3
+- Ticket size 8605 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8605.00 > available 40000.00.: 3
+- Ticket size 8607.999877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8608.00 > available 40000.00.: 3
+- Ticket size 8620 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8620.00 > available 40000.00.: 3
+- Ticket size 8585.499877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8585.50 > available 40000.00.: 3
+- Ticket size 8600.999755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8601.00 > available 40000.00.: 3
+- Ticket size 33613.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33614.00 > available 40000.00.: 3
+- Ticket size 33618.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33618.00 > available 40000.00.: 3
+- Ticket size 8740.499877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8740.50 > available 40000.00.: 3
+- Ticket size 8735 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8735.00 > available 40000.00.: 3
+- Ticket size 8704.000244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8704.00 > available 40000.00.: 3
+- Ticket size 8685 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8685.00 > available 40000.00.: 3
+- Ticket size 8740 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8740.00 > available 40000.00.: 3
+- Ticket size 33060 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33060.00 > available 40000.00.: 3
+- Ticket size 33136.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33136.00 > available 40000.00.: 3
+- Ticket size 32991.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32992.00 > available 40000.00.: 3
+- Ticket size 33041.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33042.00 > available 40000.00.: 3
+- Ticket size 32993.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32994.00 > available 40000.00.: 3
+- Ticket size 33018.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33018.00 > available 40000.00.: 3
+- Ticket size 32913.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32914.00 > available 40000.00.: 3
+- Ticket size 33043.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33044.00 > available 40000.00.: 3
+- Ticket size 33163.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33164.00 > available 40000.00.: 3
+- Ticket size 33156.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33156.00 > available 40000.00.: 3
+- Ticket size 33061.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33062.00 > available 40000.00.: 3
+- Ticket size 33093.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33094.00 > available 40000.00.: 3
+- Ticket size 33116.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33116.00 > available 40000.00.: 3
+- Ticket size 33068.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33068.00 > available 40000.00.: 3
+- Ticket size 32898.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32898.00 > available 40000.00.: 3
+- Ticket size 32763.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32764.00 > available 40000.00.: 3
+- Ticket size 32893.9990234375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32894.00 > available 40000.00.: 3
+- Ticket size 32826.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32826.00 > available 40000.00.: 3
+- Ticket size 32788.00048828125 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32788.00 > available 40000.00.: 3
+- Ticket size 32811.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32812.00 > available 40000.00.: 3
+- Ticket size 32851.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32852.00 > available 40000.00.: 3
+- Ticket size 8749.500122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8749.50 > available 40000.00.: 3
+- Ticket size 8747.000122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8747.00 > available 40000.00.: 3
+- Ticket size 8840 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8840.00 > available 40000.00.: 3
+- Ticket size 32930 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32930.00 > available 40000.00.: 3
+- Ticket size 32941.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32942.00 > available 40000.00.: 3
+- Ticket size 32916.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32916.00 > available 40000.00.: 3
+- Ticket size 8701.500244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8701.50 > available 40000.00.: 3
+- Ticket size 33076.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33076.00 > available 40000.00.: 3
+- Ticket size 33200 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33200.00 > available 40000.00.: 3
+- Ticket size 32936.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32936.00 > available 40000.00.: 3
+- Ticket size 8880 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8880.00 > available 40000.00.: 3
+- Ticket size 8894.500122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8894.50 > available 40000.00.: 3
+- Ticket size 8900.999755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8901.00 > available 40000.00.: 3
+- Ticket size 8872.000122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8872.00 > available 40000.00.: 3
+- Ticket size 8875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8875.00 > available 40000.00.: 3
+- Ticket size 8885 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8885.00 > available 40000.00.: 3
+- Ticket size 32756.0009765625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32756.00 > available 40000.00.: 3
+- Ticket size 8917.000122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8917.00 > available 40000.00.: 3
+- Ticket size 8905.999755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8906.00 > available 40000.00.: 3
+- Ticket size 8860 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8860.00 > available 40000.00.: 3
+- Ticket size 33180 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 33180.00 > available 40000.00.: 3
+- Ticket size 32710 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32710.00 > available 40000.00.: 3
+- Ticket size 8985 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 8985.00 > available 40000.00.: 3
+- Ticket size 9025 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9025.00 > available 40000.00.: 3
+- Ticket size 9036.500244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9036.50 > available 40000.00.: 3
+- Ticket size 9030 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9030.00 > available 40000.00.: 3
+- Ticket size 9022.5 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9022.50 > available 40000.00.: 3
+- Ticket size 9067.5 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9067.50 > available 40000.00.: 3
+- Ticket size 32911.99951171875 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32912.00 > available 40000.00.: 3
+- Ticket size 9100 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9100.00 > available 40000.00.: 3
+- Ticket size 9110 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9110.00 > available 40000.00.: 3
+- Ticket size 9090 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9090.00 > available 40000.00.: 3
+- Ticket size 9120.499877929688 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9120.50 > available 40000.00.: 3
+- Ticket size 9119.000244140625 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9119.00 > available 40000.00.: 3
+- Ticket size 9090.999755859375 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9091.00 > available 40000.00.: 3
+- Ticket size 32500 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 32500.00 > available 40000.00.: 3
+- Ticket size 9014.500122070312 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9014.50 > available 40000.00.: 3
+- Ticket size 9007.5 exceeds max trade allocation 8000.: 3
+- Insufficient capital: used 37340.97 + ticket 9007.50 > available 40000.00.: 3
+- Ticket size 29910 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 29683.94 + ticket 29910.00 > available 40000.00.: 2
+- Ticket size 29920 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 29683.94 + ticket 29920.00 > available 40000.00.: 2
+- Ticket size 29900 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 29683.94 + ticket 29900.00 > available 40000.00.: 2
+- Ticket size 29926.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 29683.94 + ticket 29926.00 > available 40000.00.: 2
+- Ticket size 30380 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30380.00 > available 40000.00.: 2
+- Ticket size 30273.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30274.00 > available 40000.00.: 2
+- Ticket size 30320 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30320.00 > available 40000.00.: 2
+- Ticket size 30428.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30428.00 > available 40000.00.: 2
+- Ticket size 30481.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30482.00 > available 40000.00.: 2
+- Ticket size 30528.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30528.00 > available 40000.00.: 2
+- Ticket size 30688.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30688.00 > available 40000.00.: 2
+- Ticket size 30618.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30618.00 > available 40000.00.: 2
+- Ticket size 30580 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30580.00 > available 40000.00.: 2
+- Ticket size 30498.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30498.00 > available 40000.00.: 2
+- Ticket size 30400 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30400.00 > available 40000.00.: 2
+- Ticket size 30298.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30298.00 > available 40000.00.: 2
+- Ticket size 30291.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30292.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7750.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7739.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7676.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7673.50 > available 40000.00.: 2
+- Ticket size 30920 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30920.00 > available 40000.00.: 2
+- Ticket size 30760 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30760.00 > available 40000.00.: 2
+- Ticket size 30740 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30740.00 > available 40000.00.: 2
+- Ticket size 30766.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30766.00 > available 40000.00.: 2
+- Ticket size 31133.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31134.00 > available 40000.00.: 2
+- Ticket size 31556.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31556.00 > available 40000.00.: 2
+- Ticket size 31538.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31538.00 > available 40000.00.: 2
+- Ticket size 31690 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31690.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7552.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7551.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7557.00 > available 40000.00.: 2
+- Ticket size 31660 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31660.00 > available 40000.00.: 2
+- Ticket size 31650 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31650.00 > available 40000.00.: 2
+- Ticket size 31666.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31666.00 > available 40000.00.: 2
+- Ticket size 31773.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31774.00 > available 40000.00.: 2
+- Ticket size 31716.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31716.00 > available 40000.00.: 2
+- Ticket size 31731.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31732.00 > available 40000.00.: 2
+- Ticket size 31630 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31630.00 > available 40000.00.: 2
+- Ticket size 31680 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31680.00 > available 40000.00.: 2
+- Ticket size 31621.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31622.00 > available 40000.00.: 2
+- Ticket size 31720 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31720.00 > available 40000.00.: 2
+- Ticket size 31653.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31654.00 > available 40000.00.: 2
+- Ticket size 31616.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31616.00 > available 40000.00.: 2
+- Ticket size 31600 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31600.00 > available 40000.00.: 2
+- Ticket size 31618.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31618.00 > available 40000.00.: 2
+- Ticket size 31628.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31628.00 > available 40000.00.: 2
+- Ticket size 31560 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31560.00 > available 40000.00.: 2
+- Ticket size 31546.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31546.00 > available 40000.00.: 2
+- Ticket size 31508.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31508.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7566.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7535.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7550.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7545.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7546.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7518.00 > available 40000.00.: 2
+- Ticket size 31758.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31758.00 > available 40000.00.: 2
+- Ticket size 31781.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31782.00 > available 40000.00.: 2
+- Ticket size 31760 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31760.00 > available 40000.00.: 2
+- Ticket size 31776.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31776.00 > available 40000.00.: 2
+- Ticket size 31728.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31728.00 > available 40000.00.: 2
+- Ticket size 31573.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31574.00 > available 40000.00.: 2
+- Ticket size 31578.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31578.00 > available 40000.00.: 2
+- Ticket size 31468.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31468.00 > available 40000.00.: 2
+- Ticket size 31491.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31492.00 > available 40000.00.: 2
+- Ticket size 31536.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31536.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7634.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7633.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7630.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7646.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7645.00 > available 40000.00.: 2
+- Ticket size 31313.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31314.00 > available 40000.00.: 2
+- Ticket size 31303.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31304.00 > available 40000.00.: 2
+- Ticket size 31228.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31228.00 > available 40000.00.: 2
+- Ticket size 31296.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31296.00 > available 40000.00.: 2
+- Ticket size 31310 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31310.00 > available 40000.00.: 2
+- Ticket size 31233.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31234.00 > available 40000.00.: 2
+- Ticket size 31230 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31230.00 > available 40000.00.: 2
+- Ticket size 31226.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31226.00 > available 40000.00.: 2
+- Ticket size 31168.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31168.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7430.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7422.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7361.00 > available 40000.00.: 2
+- Ticket size 31058.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31058.00 > available 40000.00.: 2
+- Ticket size 31130 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31130.00 > available 40000.00.: 2
+- Ticket size 31176.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31176.00 > available 40000.00.: 2
+- Ticket size 31080 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31080.00 > available 40000.00.: 2
+- Ticket size 30950 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30950.00 > available 40000.00.: 2
+- Ticket size 31523.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31524.00 > available 40000.00.: 2
+- Ticket size 30800 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30800.00 > available 40000.00.: 2
+- Ticket size 30720 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30720.00 > available 40000.00.: 2
+- Ticket size 30956.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 30956.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7283.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7302.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7285.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7305.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7298.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7395.00 > available 40000.00.: 2
+- Ticket size 31926.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31926.00 > available 40000.00.: 2
+- Ticket size 31756.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31756.00 > available 40000.00.: 2
+- Ticket size 31798.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31798.00 > available 40000.00.: 2
+- Ticket size 31723.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31724.00 > available 40000.00.: 2
+- Ticket size 31726.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31726.00 > available 40000.00.: 2
+- Ticket size 31513.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31514.00 > available 40000.00.: 2
+- Ticket size 31510 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31510.00 > available 40000.00.: 2
+- Ticket size 31531.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 31532.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7649.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7644.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7621.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7621.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7617.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7624.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7636.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7627.00 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7626.50 > available 40000.00.: 2
+- Insufficient capital: used 37340.97 + ticket 7653.50 > available 40000.00.: 2
+- Ticket size 32378.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32378.00 > available 40000.00.: 2
+- Ticket size 32556.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32556.00 > available 40000.00.: 2
+- Ticket size 32650 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32650.00 > available 40000.00.: 2
+- Ticket size 32616.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32616.00 > available 40000.00.: 2
+- Ticket size 32583.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32584.00 > available 40000.00.: 2
+- Ticket size 32618.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32618.00 > available 40000.00.: 2
+- Ticket size 32606.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32606.00 > available 40000.00.: 2
+- Ticket size 32701.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32702.00 > available 40000.00.: 2
+- Ticket size 32558.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32558.00 > available 40000.00.: 2
+- Ticket size 32546.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32546.00 > available 40000.00.: 2
+- Ticket size 32541.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32542.00 > available 40000.00.: 2
+- Ticket size 32563.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32564.00 > available 40000.00.: 2
+- Ticket size 32536.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32536.00 > available 40000.00.: 2
+- Ticket size 32568.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32568.00 > available 40000.00.: 2
+- Ticket size 32601.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32602.00 > available 40000.00.: 2
+- Ticket size 32750 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32750.00 > available 40000.00.: 2
+- Ticket size 32758.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32758.00 > available 40000.00.: 2
+- Ticket size 32861.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32862.00 > available 40000.00.: 2
+- Ticket size 32781.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32782.00 > available 40000.00.: 2
+- Ticket size 32703.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32704.00 > available 40000.00.: 2
+- Ticket size 32731.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32732.00 > available 40000.00.: 2
+- Ticket size 8355 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8355.00 > available 40000.00.: 2
+- Ticket size 8357.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8357.00 > available 40000.00.: 2
+- Ticket size 8354.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8354.50 > available 40000.00.: 2
+- Ticket size 8370.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8371.00 > available 40000.00.: 2
+- Ticket size 8362.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8362.00 > available 40000.00.: 2
+- Ticket size 8367.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8367.00 > available 40000.00.: 2
+- Ticket size 8382.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8382.50 > available 40000.00.: 2
+- Ticket size 8365.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8366.00 > available 40000.00.: 2
+- Ticket size 8347.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8347.50 > available 40000.00.: 2
+- Ticket size 8410 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8410.00 > available 40000.00.: 2
+- Ticket size 8405 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8405.00 > available 40000.00.: 2
+- Ticket size 8409.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8409.50 > available 40000.00.: 2
+- Ticket size 8392.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8392.50 > available 40000.00.: 2
+- Ticket size 8420.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8420.50 > available 40000.00.: 2
+- Ticket size 8442.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8443.00 > available 40000.00.: 2
+- Ticket size 33121.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33122.00 > available 40000.00.: 2
+- Ticket size 33111.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33112.00 > available 40000.00.: 2
+- Ticket size 33171.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33172.00 > available 40000.00.: 2
+- Ticket size 33063.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33064.00 > available 40000.00.: 2
+- Ticket size 33091.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33092.00 > available 40000.00.: 2
+- Ticket size 33083.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33084.00 > available 40000.00.: 2
+- Ticket size 32931.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32932.00 > available 40000.00.: 2
+- Ticket size 32888.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32888.00 > available 40000.00.: 2
+- Ticket size 8652.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8652.00 > available 40000.00.: 2
+- Ticket size 8624.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8624.00 > available 40000.00.: 2
+- Ticket size 8697.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8697.50 > available 40000.00.: 2
+- Ticket size 8777.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8777.50 > available 40000.00.: 2
+- Ticket size 8800 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8800.00 > available 40000.00.: 2
+- Ticket size 8802.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8802.50 > available 40000.00.: 2
+- Ticket size 8720.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8720.50 > available 40000.00.: 2
+- Ticket size 8695 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8695.00 > available 40000.00.: 2
+- Ticket size 8625.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8625.50 > available 40000.00.: 2
+- Ticket size 8622.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8622.50 > available 40000.00.: 2
+- Ticket size 8600.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8600.50 > available 40000.00.: 2
+- Ticket size 8612.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8612.50 > available 40000.00.: 2
+- Ticket size 8607.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8607.00 > available 40000.00.: 2
+- Ticket size 8598.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8598.50 > available 40000.00.: 2
+- Ticket size 8585.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8586.00 > available 40000.00.: 2
+- Ticket size 8612.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8612.00 > available 40000.00.: 2
+- Ticket size 8594.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8594.50 > available 40000.00.: 2
+- Ticket size 8615 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8615.00 > available 40000.00.: 2
+- Ticket size 8595.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8595.50 > available 40000.00.: 2
+- Ticket size 8597.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8598.00 > available 40000.00.: 2
+- Ticket size 8614.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8614.50 > available 40000.00.: 2
+- Ticket size 8603.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8603.50 > available 40000.00.: 2
+- Ticket size 8597.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8597.50 > available 40000.00.: 2
+- Ticket size 8608.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8608.50 > available 40000.00.: 2
+- Ticket size 33240 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33240.00 > available 40000.00.: 2
+- Ticket size 33300 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33300.00 > available 40000.00.: 2
+- Ticket size 33463.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33464.00 > available 40000.00.: 2
+- Ticket size 33471.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33472.00 > available 40000.00.: 2
+- Ticket size 33588.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33588.00 > available 40000.00.: 2
+- Ticket size 33606.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33606.00 > available 40000.00.: 2
+- Ticket size 33603.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33604.00 > available 40000.00.: 2
+- Ticket size 33638.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33638.00 > available 40000.00.: 2
+- Ticket size 33640 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33640.00 > available 40000.00.: 2
+- Ticket size 33488.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33488.00 > available 40000.00.: 2
+- Ticket size 33598.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33598.00 > available 40000.00.: 2
+- Ticket size 33636.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33636.00 > available 40000.00.: 2
+- Ticket size 33576.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33576.00 > available 40000.00.: 2
+- Ticket size 33530 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33530.00 > available 40000.00.: 2
+- Ticket size 33400 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33400.00 > available 40000.00.: 2
+- Ticket size 33411.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33412.00 > available 40000.00.: 2
+- Ticket size 33350 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33350.00 > available 40000.00.: 2
+- Ticket size 33313.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33314.00 > available 40000.00.: 2
+- Ticket size 8759.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8759.00 > available 40000.00.: 2
+- Ticket size 8784.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8784.50 > available 40000.00.: 2
+- Ticket size 8767.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8768.00 > available 40000.00.: 2
+- Ticket size 8775.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8776.00 > available 40000.00.: 2
+- Ticket size 8760.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8761.00 > available 40000.00.: 2
+- Ticket size 8772.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8773.00 > available 40000.00.: 2
+- Ticket size 8781.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8781.50 > available 40000.00.: 2
+- Ticket size 8785 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8785.00 > available 40000.00.: 2
+- Ticket size 8787.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8787.00 > available 40000.00.: 2
+- Ticket size 8769.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8769.50 > available 40000.00.: 2
+- Ticket size 8744.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8744.50 > available 40000.00.: 2
+- Ticket size 8707.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8707.00 > available 40000.00.: 2
+- Ticket size 8724.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8724.50 > available 40000.00.: 2
+- Ticket size 8688.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8688.50 > available 40000.00.: 2
+- Ticket size 8737.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8738.00 > available 40000.00.: 2
+- Ticket size 32573.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32574.00 > available 40000.00.: 2
+- Ticket size 32740 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32740.00 > available 40000.00.: 2
+- Ticket size 33050 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33050.00 > available 40000.00.: 2
+- Ticket size 32926.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32926.00 > available 40000.00.: 2
+- Ticket size 32963.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32964.00 > available 40000.00.: 2
+- Ticket size 33020 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33020.00 > available 40000.00.: 2
+- Ticket size 33031.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33032.00 > available 40000.00.: 2
+- Ticket size 33100 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33100.00 > available 40000.00.: 2
+- Ticket size 33196.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33196.00 > available 40000.00.: 2
+- Ticket size 33176.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33176.00 > available 40000.00.: 2
+- Ticket size 33133.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33134.00 > available 40000.00.: 2
+- Ticket size 33013.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33014.00 > available 40000.00.: 2
+- Ticket size 8545.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8546.00 > available 40000.00.: 2
+- Ticket size 8645 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8645.00 > available 40000.00.: 2
+- Ticket size 8640 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8640.00 > available 40000.00.: 2
+- Ticket size 8592.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8593.00 > available 40000.00.: 2
+- Ticket size 8627.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8628.00 > available 40000.00.: 2
+- Ticket size 8625.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8626.00 > available 40000.00.: 2
+- Ticket size 8582.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8583.00 > available 40000.00.: 2
+- Ticket size 8584.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8584.50 > available 40000.00.: 2
+- Ticket size 8555.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8556.00 > available 40000.00.: 2
+- Ticket size 8547.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8547.00 > available 40000.00.: 2
+- Ticket size 8544.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8544.50 > available 40000.00.: 2
+- Ticket size 33128.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33128.00 > available 40000.00.: 2
+- Ticket size 33166.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33166.00 > available 40000.00.: 2
+- Ticket size 33150 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33150.00 > available 40000.00.: 2
+- Ticket size 32943.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32944.00 > available 40000.00.: 2
+- Ticket size 32870 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32870.00 > available 40000.00.: 2
+- Ticket size 32793.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32794.00 > available 40000.00.: 2
+- Ticket size 32736.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32736.00 > available 40000.00.: 2
+- Ticket size 32770 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32770.00 > available 40000.00.: 2
+- Ticket size 32866.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32866.00 > available 40000.00.: 2
+- Ticket size 32828.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32828.00 > available 40000.00.: 2
+- Ticket size 32856.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32856.00 > available 40000.00.: 2
+- Ticket size 32848.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32848.00 > available 40000.00.: 2
+- Ticket size 32858.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32858.00 > available 40000.00.: 2
+- Ticket size 32873.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32874.00 > available 40000.00.: 2
+- Ticket size 8632.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8633.00 > available 40000.00.: 2
+- Ticket size 8646.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8646.50 > available 40000.00.: 2
+- Ticket size 8702.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8703.00 > available 40000.00.: 2
+- Ticket size 8710.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8710.50 > available 40000.00.: 2
+- Ticket size 8707.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8708.00 > available 40000.00.: 2
+- Ticket size 8713.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8713.50 > available 40000.00.: 2
+- Ticket size 33006.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33006.00 > available 40000.00.: 2
+- Ticket size 32946.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32946.00 > available 40000.00.: 2
+- Ticket size 32918.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32918.00 > available 40000.00.: 2
+- Ticket size 8750.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8751.00 > available 40000.00.: 2
+- Ticket size 8739.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8739.50 > available 40000.00.: 2
+- Ticket size 33101.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33102.00 > available 40000.00.: 2
+- Ticket size 33030 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33030.00 > available 40000.00.: 2
+- Ticket size 33098.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33098.00 > available 40000.00.: 2
+- Ticket size 33113.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33114.00 > available 40000.00.: 2
+- Ticket size 33198.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33198.00 > available 40000.00.: 2
+- Ticket size 33251.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33252.00 > available 40000.00.: 2
+- Ticket size 33258.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33258.00 > available 40000.00.: 2
+- Ticket size 33208.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33208.00 > available 40000.00.: 2
+- Ticket size 33211.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33212.00 > available 40000.00.: 2
+- Ticket size 33118.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33118.00 > available 40000.00.: 2
+- Ticket size 32821.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32822.00 > available 40000.00.: 2
+- Ticket size 32868.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32868.00 > available 40000.00.: 2
+- Ticket size 8835 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8835.00 > available 40000.00.: 2
+- Ticket size 8850.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8850.50 > available 40000.00.: 2
+- Ticket size 8899.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8899.50 > available 40000.00.: 2
+- Ticket size 8886.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8886.50 > available 40000.00.: 2
+- Ticket size 8905 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8905.00 > available 40000.00.: 2
+- Ticket size 8915 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8915.00 > available 40000.00.: 2
+- Ticket size 8920 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8920.00 > available 40000.00.: 2
+- Ticket size 8907.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8907.00 > available 40000.00.: 2
+- Ticket size 8902.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8902.50 > available 40000.00.: 2
+- Ticket size 8865.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8865.50 > available 40000.00.: 2
+- Ticket size 8867.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8867.00 > available 40000.00.: 2
+- Ticket size 8863.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8863.50 > available 40000.00.: 2
+- Ticket size 8825 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8825.00 > available 40000.00.: 2
+- Ticket size 33168.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33168.00 > available 40000.00.: 2
+- Ticket size 33046.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33046.00 > available 40000.00.: 2
+- Ticket size 33080 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33080.00 > available 40000.00.: 2
+- Ticket size 33071.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33072.00 > available 40000.00.: 2
+- Ticket size 32833.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32834.00 > available 40000.00.: 2
+- Ticket size 32790 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32790.00 > available 40000.00.: 2
+- Ticket size 32786.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32786.00 > available 40000.00.: 2
+- Ticket size 32760 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32760.00 > available 40000.00.: 2
+- Ticket size 32741.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32742.00 > available 40000.00.: 2
+- Ticket size 32738.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32738.00 > available 40000.00.: 2
+- Ticket size 8845 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8845.00 > available 40000.00.: 2
+- Ticket size 8885.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8886.00 > available 40000.00.: 2
+- Ticket size 8917.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8917.50 > available 40000.00.: 2
+- Ticket size 8893.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8893.50 > available 40000.00.: 2
+- Ticket size 8897.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8897.00 > available 40000.00.: 2
+- Ticket size 8907.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8907.50 > available 40000.00.: 2
+- Ticket size 8901.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8901.50 > available 40000.00.: 2
+- Ticket size 8922.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8922.00 > available 40000.00.: 2
+- Ticket size 8912.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8912.00 > available 40000.00.: 2
+- Ticket size 8895.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8896.00 > available 40000.00.: 2
+- Ticket size 8895 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8895.00 > available 40000.00.: 2
+- Ticket size 8872.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8872.50 > available 40000.00.: 2
+- Ticket size 8870 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8870.00 > available 40000.00.: 2
+- Ticket size 8874.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8874.50 > available 40000.00.: 2
+- Ticket size 8877.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8878.00 > available 40000.00.: 2
+- Ticket size 8903.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8903.50 > available 40000.00.: 2
+- Ticket size 8902.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8903.00 > available 40000.00.: 2
+- Ticket size 8897.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8897.50 > available 40000.00.: 2
+- Ticket size 8892.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8892.00 > available 40000.00.: 2
+- Ticket size 8864.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8864.00 > available 40000.00.: 2
+- Ticket size 33181.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33182.00 > available 40000.00.: 2
+- Ticket size 32813.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32814.00 > available 40000.00.: 2
+- Ticket size 32796.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32796.00 > available 40000.00.: 2
+- Ticket size 32711.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32712.00 > available 40000.00.: 2
+- Ticket size 32836.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32836.00 > available 40000.00.: 2
+- Ticket size 8979.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8979.50 > available 40000.00.: 2
+- Ticket size 9028.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9028.50 > available 40000.00.: 2
+- Ticket size 9012.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9012.50 > available 40000.00.: 2
+- Ticket size 8850.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8851.00 > available 40000.00.: 2
+- Ticket size 8846.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8846.50 > available 40000.00.: 2
+- Ticket size 8872.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8873.00 > available 40000.00.: 2
+- Ticket size 33106.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 33106.00 > available 40000.00.: 2
+- Ticket size 32853.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32854.00 > available 40000.00.: 2
+- Ticket size 32690 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32690.00 > available 40000.00.: 2
+- Ticket size 32683.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32684.00 > available 40000.00.: 2
+- Ticket size 32666.0009765625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32666.00 > available 40000.00.: 2
+- Ticket size 9058.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9058.50 > available 40000.00.: 2
+- Ticket size 9044.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9044.00 > available 40000.00.: 2
+- Ticket size 9084.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9084.50 > available 40000.00.: 2
+- Ticket size 9082.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9082.50 > available 40000.00.: 2
+- Ticket size 9067.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9068.00 > available 40000.00.: 2
+- Ticket size 9052.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9052.00 > available 40000.00.: 2
+- Ticket size 9062.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9062.50 > available 40000.00.: 2
+- Ticket size 9080.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9081.00 > available 40000.00.: 2
+- Ticket size 9070 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9070.00 > available 40000.00.: 2
+- Ticket size 9062.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9062.00 > available 40000.00.: 2
+- Ticket size 9038.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9038.50 > available 40000.00.: 2
+- Ticket size 9018.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9018.50 > available 40000.00.: 2
+- Ticket size 9022.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9022.00 > available 40000.00.: 2
+- Ticket size 9057.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9057.50 > available 40000.00.: 2
+- Ticket size 9053.499755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9053.50 > available 40000.00.: 2
+- Ticket size 9029.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9029.50 > available 40000.00.: 2
+- Ticket size 32908.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32908.00 > available 40000.00.: 2
+- Ticket size 9134.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9134.00 > available 40000.00.: 2
+- Ticket size 9140 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9140.00 > available 40000.00.: 2
+- Ticket size 9117.999877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9118.00 > available 40000.00.: 2
+- Ticket size 9132.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9132.00 > available 40000.00.: 2
+- Ticket size 9124.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9124.00 > available 40000.00.: 2
+- Ticket size 9087.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9087.00 > available 40000.00.: 2
+- Ticket size 9114.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9114.00 > available 40000.00.: 2
+- Ticket size 9127.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9127.50 > available 40000.00.: 2
+- Ticket size 9129.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9129.50 > available 40000.00.: 2
+- Ticket size 9130.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9131.00 > available 40000.00.: 2
+- Ticket size 9109.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9109.50 > available 40000.00.: 2
+- Ticket size 9116.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9116.50 > available 40000.00.: 2
+- Ticket size 9091.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9091.50 > available 40000.00.: 2
+- Ticket size 9085 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9085.00 > available 40000.00.: 2
+- Ticket size 9069.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9069.00 > available 40000.00.: 2
+- Ticket size 9095 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9095.00 > available 40000.00.: 2
+- Ticket size 32550 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32550.00 > available 40000.00.: 2
+- Ticket size 32521.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32522.00 > available 40000.00.: 2
+- Ticket size 32578.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32578.00 > available 40000.00.: 2
+- Ticket size 32580 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32580.00 > available 40000.00.: 2
+- Ticket size 32540 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32540.00 > available 40000.00.: 2
+- Ticket size 32498.00048828125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32498.00 > available 40000.00.: 2
+- Ticket size 32523.9990234375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32524.00 > available 40000.00.: 2
+- Ticket size 32501.99951171875 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 32502.00 > available 40000.00.: 2
+- Ticket size 9024.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9024.00 > available 40000.00.: 2
+- Ticket size 9009.500122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9009.50 > available 40000.00.: 2
+- Ticket size 8990 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8990.00 > available 40000.00.: 2
+- Ticket size 8991.500244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8991.50 > available 40000.00.: 2
+- Ticket size 8994.000244140625 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 8994.00 > available 40000.00.: 2
+- Ticket size 9042.5 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9042.50 > available 40000.00.: 2
+- Ticket size 9010.499877929688 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9010.50 > available 40000.00.: 2
+- Ticket size 9040.999755859375 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9041.00 > available 40000.00.: 2
+- Ticket size 9092.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9092.00 > available 40000.00.: 2
+- Ticket size 9105 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9105.00 > available 40000.00.: 2
+- Ticket size 9112.000122070312 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9112.00 > available 40000.00.: 2
+- Ticket size 9125 exceeds max trade allocation 8000.: 2
+- Insufficient capital: used 37340.97 + ticket 9125.00 > available 40000.00.: 2
+- Ticket size 14840 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 14840.00 > available 40000.00.: 1
+- Ticket size 29651.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29652.00 > available 40000.00.: 1
+- Ticket size 29693.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29694.00 > available 40000.00.: 1
+- Ticket size 29656.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29656.00 > available 40000.00.: 1
+- Ticket size 29600 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29600.00 > available 40000.00.: 1
+- Ticket size 29591.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29592.00 > available 40000.00.: 1
+- Ticket size 29598.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29598.00 > available 40000.00.: 1
+- Ticket size 29646.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29646.00 > available 40000.00.: 1
+- Ticket size 29746.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29746.00 > available 40000.00.: 1
+- Ticket size 29730 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29730.00 > available 40000.00.: 1
+- Ticket size 29946.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29946.00 > available 40000.00.: 1
+- Ticket size 29876.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29876.00 > available 40000.00.: 1
+- Ticket size 29861.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29862.00 > available 40000.00.: 1
+- Ticket size 29880 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29880.00 > available 40000.00.: 1
+- Ticket size 29928.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29928.00 > available 40000.00.: 1
+- Ticket size 29976.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29976.00 > available 40000.00.: 1
+- Ticket size 29961.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29962.00 > available 40000.00.: 1
+- Ticket size 29906.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29906.00 > available 40000.00.: 1
+- Ticket size 29851.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29852.00 > available 40000.00.: 1
+- Ticket size 29866.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29866.00 > available 40000.00.: 1
+- Ticket size 29843.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29844.00 > available 40000.00.: 1
+- Ticket size 29901.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29902.00 > available 40000.00.: 1
+- Ticket size 29970 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29970.00 > available 40000.00.: 1
+- Ticket size 29911.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29912.00 > available 40000.00.: 1
+- Ticket size 30000 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30000.00 > available 40000.00.: 1
+- Ticket size 30076.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30076.00 > available 40000.00.: 1
+- Ticket size 30098.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30098.00 > available 40000.00.: 1
+- Ticket size 30040 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30040.00 > available 40000.00.: 1
+- Ticket size 30020 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30020.00 > available 40000.00.: 1
+- Ticket size 30003.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30004.00 > available 40000.00.: 1
+- Ticket size 30018.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30018.00 > available 40000.00.: 1
+- Ticket size 30023.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30024.00 > available 40000.00.: 1
+- Ticket size 29958.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29958.00 > available 40000.00.: 1
+- Ticket size 29951.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29952.00 > available 40000.00.: 1
+- Ticket size 29931.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29932.00 > available 40000.00.: 1
+- Ticket size 29908.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29908.00 > available 40000.00.: 1
+- Ticket size 29991.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29992.00 > available 40000.00.: 1
+- Ticket size 30053.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 30054.00 > available 40000.00.: 1
+- Ticket size 29973.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 29683.94 + ticket 29974.00 > available 40000.00.: 1
+- Ticket size 14986.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 14987.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3066.40 > available 40000.00.: 1
+- Ticket size 30416.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30416.00 > available 40000.00.: 1
+- Ticket size 30351.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30352.00 > available 40000.00.: 1
+- Ticket size 30408.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30408.00 > available 40000.00.: 1
+- Ticket size 30383.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30384.00 > available 40000.00.: 1
+- Ticket size 30461.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30462.00 > available 40000.00.: 1
+- Ticket size 30553.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30554.00 > available 40000.00.: 1
+- Ticket size 30663.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30664.00 > available 40000.00.: 1
+- Ticket size 30603.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30604.00 > available 40000.00.: 1
+- Ticket size 30520 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30520.00 > available 40000.00.: 1
+- Ticket size 30556.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30556.00 > available 40000.00.: 1
+- Ticket size 30450 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30450.00 > available 40000.00.: 1
+- Ticket size 30536.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30536.00 > available 40000.00.: 1
+- Ticket size 30606.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30606.00 > available 40000.00.: 1
+- Ticket size 30561.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30562.00 > available 40000.00.: 1
+- Ticket size 30541.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30542.00 > available 40000.00.: 1
+- Ticket size 30500 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30500.00 > available 40000.00.: 1
+- Ticket size 30491.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30492.00 > available 40000.00.: 1
+- Ticket size 30480 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30480.00 > available 40000.00.: 1
+- Ticket size 30388.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30388.00 > available 40000.00.: 1
+- Ticket size 30391.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30392.00 > available 40000.00.: 1
+- Ticket size 30460 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30460.00 > available 40000.00.: 1
+- Ticket size 30238.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30238.00 > available 40000.00.: 1
+- Ticket size 30263.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30264.00 > available 40000.00.: 1
+- Ticket size 30353.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30354.00 > available 40000.00.: 1
+- Ticket size 30321.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30322.00 > available 40000.00.: 1
+- Ticket size 30316.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30316.00 > available 40000.00.: 1
+- Ticket size 30306.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30306.00 > available 40000.00.: 1
+- Ticket size 30311.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30312.00 > available 40000.00.: 1
+- Ticket size 30281.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30282.00 > available 40000.00.: 1
+- Ticket size 30271.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30272.00 > available 40000.00.: 1
+- Ticket size 30308.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30308.00 > available 40000.00.: 1
+- Ticket size 30300 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30300.00 > available 40000.00.: 1
+- Ticket size 30200 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30200.00 > available 40000.00.: 1
+- Ticket size 30361.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30362.00 > available 40000.00.: 1
+- Ticket size 30331.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30332.00 > available 40000.00.: 1
+- Ticket size 30310 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30310.00 > available 40000.00.: 1
+- Ticket size 30280 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30280.00 > available 40000.00.: 1
+- Ticket size 30283.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30284.00 > available 40000.00.: 1
+- Ticket size 30231.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30232.00 > available 40000.00.: 1
+- Ticket size 30266.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30266.00 > available 40000.00.: 1
+- Ticket size 30218.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30218.00 > available 40000.00.: 1
+- Ticket size 30201.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30202.00 > available 40000.00.: 1
+- Ticket size 30148.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30148.00 > available 40000.00.: 1
+- Ticket size 30260 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30260.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7740.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7772.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7717.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7728.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7730.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7713.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7731.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7745.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7725.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7757.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7756.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7747.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7752.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7756.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7737.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7678.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7675.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7671.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7679.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7681.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7673.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7669.50 > available 40000.00.: 1
+- Ticket size 15130 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15130.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3067.80 > available 40000.00.: 1
+- Ticket size 30968.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30968.00 > available 40000.00.: 1
+- Ticket size 31030 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31030.00 > available 40000.00.: 1
+- Ticket size 30736.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30736.00 > available 40000.00.: 1
+- Ticket size 30870 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30870.00 > available 40000.00.: 1
+- Ticket size 31000 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31000.00 > available 40000.00.: 1
+- Ticket size 31091.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31092.00 > available 40000.00.: 1
+- Ticket size 31048.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31048.00 > available 40000.00.: 1
+- Ticket size 30980 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30980.00 > available 40000.00.: 1
+- Ticket size 30708.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30708.00 > available 40000.00.: 1
+- Ticket size 30700 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30700.00 > available 40000.00.: 1
+- Ticket size 30683.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30684.00 > available 40000.00.: 1
+- Ticket size 30698.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30698.00 > available 40000.00.: 1
+- Ticket size 30696.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30696.00 > available 40000.00.: 1
+- Ticket size 30676.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30676.00 > available 40000.00.: 1
+- Ticket size 30658.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30658.00 > available 40000.00.: 1
+- Ticket size 30711.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30712.00 > available 40000.00.: 1
+- Ticket size 30608.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30608.00 > available 40000.00.: 1
+- Ticket size 30761.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30762.00 > available 40000.00.: 1
+- Ticket size 30823.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30824.00 > available 40000.00.: 1
+- Ticket size 30801.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30802.00 > available 40000.00.: 1
+- Ticket size 30750 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30750.00 > available 40000.00.: 1
+- Ticket size 30843.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30844.00 > available 40000.00.: 1
+- Ticket size 30836.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30836.00 > available 40000.00.: 1
+- Ticket size 31038.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31038.00 > available 40000.00.: 1
+- Ticket size 31081.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31082.00 > available 40000.00.: 1
+- Ticket size 31141.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31142.00 > available 40000.00.: 1
+- Ticket size 31261.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31262.00 > available 40000.00.: 1
+- Ticket size 31211.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31212.00 > available 40000.00.: 1
+- Ticket size 31268.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31268.00 > available 40000.00.: 1
+- Ticket size 31263.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31264.00 > available 40000.00.: 1
+- Ticket size 31383.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31384.00 > available 40000.00.: 1
+- Ticket size 31411.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31412.00 > available 40000.00.: 1
+- Ticket size 31368.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31368.00 > available 40000.00.: 1
+- Ticket size 31433.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31434.00 > available 40000.00.: 1
+- Ticket size 31496.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31496.00 > available 40000.00.: 1
+- Ticket size 31430 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31430.00 > available 40000.00.: 1
+- Ticket size 31501.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31502.00 > available 40000.00.: 1
+- Ticket size 31566.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31566.00 > available 40000.00.: 1
+- Ticket size 31601.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31602.00 > available 40000.00.: 1
+- Ticket size 31668.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31668.00 > available 40000.00.: 1
+- Ticket size 31656.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31656.00 > available 40000.00.: 1
+- Ticket size 31396.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31396.00 > available 40000.00.: 1
+- Ticket size 31420 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31420.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7752.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7744.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7720.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7681.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7568.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7561.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7545.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7540.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7540.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7552.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7546.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7550.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7580.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7558.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7555.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7562.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7559.00 > available 40000.00.: 1
+- Ticket size 15710 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15710.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3016.80 > available 40000.00.: 1
+- Ticket size 32030 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32030.00 > available 40000.00.: 1
+- Ticket size 31916.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31916.00 > available 40000.00.: 1
+- Ticket size 31766.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31766.00 > available 40000.00.: 1
+- Ticket size 31741.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31742.00 > available 40000.00.: 1
+- Ticket size 31700 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31700.00 > available 40000.00.: 1
+- Ticket size 31733.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31734.00 > available 40000.00.: 1
+- Ticket size 31718.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31718.00 > available 40000.00.: 1
+- Ticket size 31580 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31580.00 > available 40000.00.: 1
+- Ticket size 31710 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31710.00 > available 40000.00.: 1
+- Ticket size 31750 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31750.00 > available 40000.00.: 1
+- Ticket size 31713.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31714.00 > available 40000.00.: 1
+- Ticket size 31711.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31712.00 > available 40000.00.: 1
+- Ticket size 31633.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31634.00 > available 40000.00.: 1
+- Ticket size 31590 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31590.00 > available 40000.00.: 1
+- Ticket size 31643.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31644.00 > available 40000.00.: 1
+- Ticket size 31670 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31670.00 > available 40000.00.: 1
+- Ticket size 31663.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31664.00 > available 40000.00.: 1
+- Ticket size 31683.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31684.00 > available 40000.00.: 1
+- Ticket size 31693.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31694.00 > available 40000.00.: 1
+- Ticket size 31623.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31624.00 > available 40000.00.: 1
+- Ticket size 31603.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31604.00 > available 40000.00.: 1
+- Ticket size 31613.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31614.00 > available 40000.00.: 1
+- Ticket size 31646.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31646.00 > available 40000.00.: 1
+- Ticket size 31593.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31594.00 > available 40000.00.: 1
+- Ticket size 31591.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31592.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7538.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7571.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7492.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7524.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7516.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7517.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7520.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7521.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7519.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7523.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7536.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7565.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7555.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7548.50 > available 40000.00.: 1
+- Ticket size 15754.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15754.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3014.80 > available 40000.00.: 1
+- Ticket size 32050 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32050.00 > available 40000.00.: 1
+- Ticket size 32150 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32150.00 > available 40000.00.: 1
+- Ticket size 32243.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32244.00 > available 40000.00.: 1
+- Ticket size 32040 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32040.00 > available 40000.00.: 1
+- Ticket size 32028.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32028.00 > available 40000.00.: 1
+- Ticket size 31958.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31958.00 > available 40000.00.: 1
+- Ticket size 31980 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31980.00 > available 40000.00.: 1
+- Ticket size 31990 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31990.00 > available 40000.00.: 1
+- Ticket size 32031.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32032.00 > available 40000.00.: 1
+- Ticket size 32056.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32056.00 > available 40000.00.: 1
+- Ticket size 32071.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32072.00 > available 40000.00.: 1
+- Ticket size 32010 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32010.00 > available 40000.00.: 1
+- Ticket size 31910 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31910.00 > available 40000.00.: 1
+- Ticket size 31793.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31794.00 > available 40000.00.: 1
+- Ticket size 31791.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31792.00 > available 40000.00.: 1
+- Ticket size 31768.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31768.00 > available 40000.00.: 1
+- Ticket size 31721.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31722.00 > available 40000.00.: 1
+- Ticket size 31751.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31752.00 > available 40000.00.: 1
+- Ticket size 31770 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31770.00 > available 40000.00.: 1
+- Ticket size 31686.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31686.00 > available 40000.00.: 1
+- Ticket size 31658.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31658.00 > available 40000.00.: 1
+- Ticket size 31571.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31572.00 > available 40000.00.: 1
+- Ticket size 31570 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31570.00 > available 40000.00.: 1
+- Ticket size 31503.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31504.00 > available 40000.00.: 1
+- Ticket size 31521.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31522.00 > available 40000.00.: 1
+- Ticket size 31533.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31534.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7612.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7613.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7605.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7602.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7616.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7640.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7570.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7518.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7506.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7511.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7515.00 > available 40000.00.: 1
+- Ticket size 15774.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15774.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 2988.00 > available 40000.00.: 1
+- Ticket size 31271.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31272.00 > available 40000.00.: 1
+- Ticket size 31258.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31258.00 > available 40000.00.: 1
+- Ticket size 31320 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31320.00 > available 40000.00.: 1
+- Ticket size 31166.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31166.00 > available 40000.00.: 1
+- Ticket size 31266.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31266.00 > available 40000.00.: 1
+- Ticket size 31326.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31326.00 > available 40000.00.: 1
+- Ticket size 31333.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31334.00 > available 40000.00.: 1
+- Ticket size 31340 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31340.00 > available 40000.00.: 1
+- Ticket size 31360 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31360.00 > available 40000.00.: 1
+- Ticket size 31353.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31354.00 > available 40000.00.: 1
+- Ticket size 31348.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31348.00 > available 40000.00.: 1
+- Ticket size 31273.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31274.00 > available 40000.00.: 1
+- Ticket size 31193.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31194.00 > available 40000.00.: 1
+- Ticket size 31163.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31164.00 > available 40000.00.: 1
+- Ticket size 31238.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31238.00 > available 40000.00.: 1
+- Ticket size 31218.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31218.00 > available 40000.00.: 1
+- Ticket size 31210 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31210.00 > available 40000.00.: 1
+- Ticket size 31216.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31216.00 > available 40000.00.: 1
+- Ticket size 31253.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31254.00 > available 40000.00.: 1
+- Ticket size 31181.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31182.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7402.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7411.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7420.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7425.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7423.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7425.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7415.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7416.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7416.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7424.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7368.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7366.00 > available 40000.00.: 1
+- Ticket size 15584.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15584.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 2942.80 > available 40000.00.: 1
+- Ticket size 31138.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31138.00 > available 40000.00.: 1
+- Ticket size 31121.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31122.00 > available 40000.00.: 1
+- Ticket size 31270 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31270.00 > available 40000.00.: 1
+- Ticket size 31160 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31160.00 > available 40000.00.: 1
+- Ticket size 31156.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31156.00 > available 40000.00.: 1
+- Ticket size 31106.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31106.00 > available 40000.00.: 1
+- Ticket size 31206.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31206.00 > available 40000.00.: 1
+- Ticket size 31170 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31170.00 > available 40000.00.: 1
+- Ticket size 31301.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31302.00 > available 40000.00.: 1
+- Ticket size 31221.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31222.00 > available 40000.00.: 1
+- Ticket size 31150 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31150.00 > available 40000.00.: 1
+- Ticket size 31021.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31022.00 > available 40000.00.: 1
+- Ticket size 30998.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30998.00 > available 40000.00.: 1
+- Ticket size 30963.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30964.00 > available 40000.00.: 1
+- Ticket size 30936.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30936.00 > available 40000.00.: 1
+- Ticket size 30960 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30960.00 > available 40000.00.: 1
+- Ticket size 30971.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30972.00 > available 40000.00.: 1
+- Ticket size 30990 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30990.00 > available 40000.00.: 1
+- Ticket size 31098.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31098.00 > available 40000.00.: 1
+- Ticket size 31113.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31114.00 > available 40000.00.: 1
+- Ticket size 31153.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31154.00 > available 40000.00.: 1
+- Ticket size 31096.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31096.00 > available 40000.00.: 1
+- Ticket size 31041.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31042.00 > available 40000.00.: 1
+- Ticket size 31083.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31084.00 > available 40000.00.: 1
+- Ticket size 31110 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31110.00 > available 40000.00.: 1
+- Ticket size 31068.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31068.00 > available 40000.00.: 1
+- Ticket size 31116.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31116.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7331.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7345.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7340.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7327.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7342.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7349.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7326.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7334.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7324.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7336.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7330.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7239.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7236.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7240.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7231.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7234.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7235.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7271.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7263.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7243.00 > available 40000.00.: 1
+- Ticket size 15558.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15558.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7220.00 > available 40000.00.: 1
+- Ticket size 31381.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31382.00 > available 40000.00.: 1
+- Ticket size 31278.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31278.00 > available 40000.00.: 1
+- Ticket size 31011.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31012.00 > available 40000.00.: 1
+- Ticket size 31043.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31044.00 > available 40000.00.: 1
+- Ticket size 31088.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31088.00 > available 40000.00.: 1
+- Ticket size 30926.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30926.00 > available 40000.00.: 1
+- Ticket size 30831.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30832.00 > available 40000.00.: 1
+- Ticket size 30790 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30790.00 > available 40000.00.: 1
+- Ticket size 30716.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30716.00 > available 40000.00.: 1
+- Ticket size 30781.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30782.00 > available 40000.00.: 1
+- Ticket size 30841.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30842.00 > available 40000.00.: 1
+- Ticket size 30756.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30756.00 > available 40000.00.: 1
+- Ticket size 30751.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30752.00 > available 40000.00.: 1
+- Ticket size 30778.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30778.00 > available 40000.00.: 1
+- Ticket size 30680 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30680.00 > available 40000.00.: 1
+- Ticket size 30806.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30806.00 > available 40000.00.: 1
+- Ticket size 30816.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30816.00 > available 40000.00.: 1
+- Ticket size 30838.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30838.00 > available 40000.00.: 1
+- Ticket size 30768.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30768.00 > available 40000.00.: 1
+- Ticket size 30743.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30744.00 > available 40000.00.: 1
+- Ticket size 30786.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30786.00 > available 40000.00.: 1
+- Ticket size 30856.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30856.00 > available 40000.00.: 1
+- Ticket size 30833.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30834.00 > available 40000.00.: 1
+- Ticket size 30860 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30860.00 > available 40000.00.: 1
+- Ticket size 30940 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30940.00 > available 40000.00.: 1
+- Ticket size 30878.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30878.00 > available 40000.00.: 1
+- Ticket size 30901.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30902.00 > available 40000.00.: 1
+- Ticket size 30943.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30944.00 > available 40000.00.: 1
+- Ticket size 30958.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30958.00 > available 40000.00.: 1
+- Ticket size 30966.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30966.00 > available 40000.00.: 1
+- Ticket size 31036.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31036.00 > available 40000.00.: 1
+- Ticket size 31060 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31060.00 > available 40000.00.: 1
+- Ticket size 30976.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30976.00 > available 40000.00.: 1
+- Ticket size 30988.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 30988.00 > available 40000.00.: 1
+- Ticket size 31128.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31128.00 > available 40000.00.: 1
+- Ticket size 31183.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31184.00 > available 40000.00.: 1
+- Ticket size 31186.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31186.00 > available 40000.00.: 1
+- Ticket size 31146.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31146.00 > available 40000.00.: 1
+- Ticket size 31148.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31148.00 > available 40000.00.: 1
+- Ticket size 31208.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31208.00 > available 40000.00.: 1
+- Ticket size 31173.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31174.00 > available 40000.00.: 1
+- Ticket size 31151.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31152.00 > available 40000.00.: 1
+- Ticket size 31120 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31120.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7322.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7286.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7253.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7278.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7260.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7275.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7254.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7253.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7262.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7265.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7290.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7296.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7319.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7312.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7291.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7292.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7293.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7308.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7301.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7289.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7283.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7292.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7296.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7298.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7295.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7308.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7315.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7320.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7352.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7376.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7361.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7401.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7410.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7390.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7377.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7380.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7392.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7407.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7402.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7420.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7428.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7434.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7423.50 > available 40000.00.: 1
+- Ticket size 15560 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15560.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 2969.40 > available 40000.00.: 1
+- Ticket size 31701.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31702.00 > available 40000.00.: 1
+- Ticket size 31841.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31842.00 > available 40000.00.: 1
+- Ticket size 31868.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31868.00 > available 40000.00.: 1
+- Ticket size 31956.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31956.00 > available 40000.00.: 1
+- Ticket size 31950 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31950.00 > available 40000.00.: 1
+- Ticket size 31931.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31932.00 > available 40000.00.: 1
+- Ticket size 31891.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31892.00 > available 40000.00.: 1
+- Ticket size 31903.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31904.00 > available 40000.00.: 1
+- Ticket size 31856.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31856.00 > available 40000.00.: 1
+- Ticket size 31850 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31850.00 > available 40000.00.: 1
+- Ticket size 31818.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31818.00 > available 40000.00.: 1
+- Ticket size 31830 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31830.00 > available 40000.00.: 1
+- Ticket size 31748.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31748.00 > available 40000.00.: 1
+- Ticket size 31761.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31762.00 > available 40000.00.: 1
+- Ticket size 31786.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31786.00 > available 40000.00.: 1
+- Ticket size 31743.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31744.00 > available 40000.00.: 1
+- Ticket size 31753.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31754.00 > available 40000.00.: 1
+- Ticket size 31691.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31692.00 > available 40000.00.: 1
+- Ticket size 31703.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31704.00 > available 40000.00.: 1
+- Ticket size 31673.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31674.00 > available 40000.00.: 1
+- Ticket size 31528.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31528.00 > available 40000.00.: 1
+- Ticket size 31516.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31516.00 > available 40000.00.: 1
+- Ticket size 31558.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31558.00 > available 40000.00.: 1
+- Ticket size 31568.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31568.00 > available 40000.00.: 1
+- Ticket size 31518.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31518.00 > available 40000.00.: 1
+- Ticket size 31470 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 31470.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7507.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7531.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7574.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7617.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7620.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7585.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7586.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7604.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7635.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7650.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7632.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7627.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7639.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7622.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7652.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7656.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7663.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7662.50 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7660.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 7656.00 > available 40000.00.: 1
+- Ticket size 15770 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 15770.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3056.80 > available 40000.00.: 1
+- Ticket size 32320 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32320.00 > available 40000.00.: 1
+- Ticket size 32480 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32480.00 > available 40000.00.: 1
+- Ticket size 32400 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32400.00 > available 40000.00.: 1
+- Ticket size 32440 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32440.00 > available 40000.00.: 1
+- Ticket size 32463.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32464.00 > available 40000.00.: 1
+- Ticket size 32286.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32286.00 > available 40000.00.: 1
+- Ticket size 32436.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32436.00 > available 40000.00.: 1
+- Ticket size 32398.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32398.00 > available 40000.00.: 1
+- Ticket size 32413.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32414.00 > available 40000.00.: 1
+- Ticket size 32453.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32454.00 > available 40000.00.: 1
+- Ticket size 32346.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32346.00 > available 40000.00.: 1
+- Ticket size 32341.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32342.00 > available 40000.00.: 1
+- Ticket size 32483.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32484.00 > available 40000.00.: 1
+- Ticket size 32570 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32570.00 > available 40000.00.: 1
+- Ticket size 32630 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32630.00 > available 40000.00.: 1
+- Ticket size 32648.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32648.00 > available 40000.00.: 1
+- Ticket size 32610 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32610.00 > available 40000.00.: 1
+- Ticket size 32613.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32614.00 > available 40000.00.: 1
+- Ticket size 32743.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32744.00 > available 40000.00.: 1
+- Ticket size 32596.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32596.00 > available 40000.00.: 1
+- Ticket size 32591.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32592.00 > available 40000.00.: 1
+- Ticket size 32576.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32576.00 > available 40000.00.: 1
+- Ticket size 32543.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32544.00 > available 40000.00.: 1
+- Ticket size 32553.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32554.00 > available 40000.00.: 1
+- Ticket size 32588.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32588.00 > available 40000.00.: 1
+- Ticket size 32668.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32668.00 > available 40000.00.: 1
+- Ticket size 32686.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32686.00 > available 40000.00.: 1
+- Ticket size 32681.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32682.00 > available 40000.00.: 1
+- Ticket size 32720 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32720.00 > available 40000.00.: 1
+- Ticket size 32688.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32688.00 > available 40000.00.: 1
+- Ticket size 32708.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32708.00 > available 40000.00.: 1
+- Ticket size 8134.5001220703125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8134.50 > available 40000.00.: 1
+- Ticket size 8150.4998779296875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8150.50 > available 40000.00.: 1
+- Ticket size 8204.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8204.50 > available 40000.00.: 1
+- Ticket size 8320 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8320.00 > available 40000.00.: 1
+- Ticket size 8310 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8310.00 > available 40000.00.: 1
+- Ticket size 8342.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8342.50 > available 40000.00.: 1
+- Ticket size 8380 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8380.00 > available 40000.00.: 1
+- Ticket size 8377.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8377.00 > available 40000.00.: 1
+- Ticket size 8339.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8339.00 > available 40000.00.: 1
+- Ticket size 8315 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8315.00 > available 40000.00.: 1
+- Ticket size 8360.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8360.50 > available 40000.00.: 1
+- Ticket size 8330 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8330.00 > available 40000.00.: 1
+- Ticket size 8324.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8324.50 > available 40000.00.: 1
+- Ticket size 8375.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8375.50 > available 40000.00.: 1
+- Ticket size 8370.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8370.50 > available 40000.00.: 1
+- Ticket size 8371.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8371.50 > available 40000.00.: 1
+- Ticket size 8373.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8373.50 > available 40000.00.: 1
+- Ticket size 8337.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8338.00 > available 40000.00.: 1
+- Ticket size 8348.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8348.50 > available 40000.00.: 1
+- Ticket size 8385 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8385.00 > available 40000.00.: 1
+- Ticket size 8349.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8349.00 > available 40000.00.: 1
+- Ticket size 8347.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8347.00 > available 40000.00.: 1
+- Ticket size 8372.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8373.00 > available 40000.00.: 1
+- Ticket size 8355.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8356.00 > available 40000.00.: 1
+- Ticket size 8350.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8351.00 > available 40000.00.: 1
+- Ticket size 8359.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8359.00 > available 40000.00.: 1
+- Ticket size 8360 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8360.00 > available 40000.00.: 1
+- Ticket size 8390 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8390.00 > available 40000.00.: 1
+- Ticket size 8398.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8398.50 > available 40000.00.: 1
+- Ticket size 8412.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8413.00 > available 40000.00.: 1
+- Ticket size 8408.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8408.50 > available 40000.00.: 1
+- Ticket size 8405.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8406.00 > available 40000.00.: 1
+- Ticket size 8395.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8395.50 > available 40000.00.: 1
+- Ticket size 8395 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8395.00 > available 40000.00.: 1
+- Ticket size 8417.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8417.50 > available 40000.00.: 1
+- Ticket size 8425.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8425.50 > available 40000.00.: 1
+- Ticket size 8414.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8414.00 > available 40000.00.: 1
+- Ticket size 8425 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8425.00 > available 40000.00.: 1
+- Ticket size 8415.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8416.00 > available 40000.00.: 1
+- Ticket size 16351.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16352.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3366.40 > available 40000.00.: 1
+- Ticket size 33280 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33280.00 > available 40000.00.: 1
+- Ticket size 33321.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33322.00 > available 40000.00.: 1
+- Ticket size 33161.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33162.00 > available 40000.00.: 1
+- Ticket size 33103.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33104.00 > available 40000.00.: 1
+- Ticket size 33110 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33110.00 > available 40000.00.: 1
+- Ticket size 33086.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33086.00 > available 40000.00.: 1
+- Ticket size 32896.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32896.00 > available 40000.00.: 1
+- Ticket size 32871.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32872.00 > available 40000.00.: 1
+- Ticket size 32881.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32882.00 > available 40000.00.: 1
+- Ticket size 8752.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8752.50 > available 40000.00.: 1
+- Ticket size 8810.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8810.50 > available 40000.00.: 1
+- Ticket size 8800.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8801.00 > available 40000.00.: 1
+- Ticket size 8755.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8756.00 > available 40000.00.: 1
+- Ticket size 8670.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8671.00 > available 40000.00.: 1
+- Ticket size 8675 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8675.00 > available 40000.00.: 1
+- Ticket size 8724.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8724.00 > available 40000.00.: 1
+- Ticket size 8689.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8689.50 > available 40000.00.: 1
+- Ticket size 8680.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8681.00 > available 40000.00.: 1
+- Ticket size 8655 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8655.00 > available 40000.00.: 1
+- Ticket size 8611.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8611.50 > available 40000.00.: 1
+- Ticket size 8622.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8623.00 > available 40000.00.: 1
+- Ticket size 8621.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8621.50 > available 40000.00.: 1
+- Ticket size 8610.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8611.00 > available 40000.00.: 1
+- Ticket size 8599.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8599.50 > available 40000.00.: 1
+- Ticket size 8588.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8588.50 > available 40000.00.: 1
+- Ticket size 8609.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8609.00 > available 40000.00.: 1
+- Ticket size 8617.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8618.00 > available 40000.00.: 1
+- Ticket size 8589.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8589.50 > available 40000.00.: 1
+- Ticket size 8602.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8602.50 > available 40000.00.: 1
+- Ticket size 8616.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8616.50 > available 40000.00.: 1
+- Ticket size 8620.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8621.00 > available 40000.00.: 1
+- Ticket size 8599.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8599.00 > available 40000.00.: 1
+- Ticket size 8589.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8589.00 > available 40000.00.: 1
+- Ticket size 8579.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8579.00 > available 40000.00.: 1
+- Ticket size 8565 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8565.00 > available 40000.00.: 1
+- Ticket size 8545 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8545.00 > available 40000.00.: 1
+- Ticket size 8550 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8550.00 > available 40000.00.: 1
+- Ticket size 16444.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16444.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3420.00 > available 40000.00.: 1
+- Ticket size 33503.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33504.00 > available 40000.00.: 1
+- Ticket size 33296.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33296.00 > available 40000.00.: 1
+- Ticket size 33346.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33346.00 > available 40000.00.: 1
+- Ticket size 33470 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33470.00 > available 40000.00.: 1
+- Ticket size 33490 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33490.00 > available 40000.00.: 1
+- Ticket size 33596.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33596.00 > available 40000.00.: 1
+- Ticket size 33580 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33580.00 > available 40000.00.: 1
+- Ticket size 33558.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33558.00 > available 40000.00.: 1
+- Ticket size 33516.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33516.00 > available 40000.00.: 1
+- Ticket size 33393.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33394.00 > available 40000.00.: 1
+- Ticket size 33420 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33420.00 > available 40000.00.: 1
+- Ticket size 33403.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33404.00 > available 40000.00.: 1
+- Ticket size 33438.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33438.00 > available 40000.00.: 1
+- Ticket size 33526.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33526.00 > available 40000.00.: 1
+- Ticket size 33590 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33590.00 > available 40000.00.: 1
+- Ticket size 33586.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33586.00 > available 40000.00.: 1
+- Ticket size 33600 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33600.00 > available 40000.00.: 1
+- Ticket size 33628.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33628.00 > available 40000.00.: 1
+- Ticket size 33686.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33686.00 > available 40000.00.: 1
+- Ticket size 33666.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33666.00 > available 40000.00.: 1
+- Ticket size 33660 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33660.00 > available 40000.00.: 1
+- Ticket size 33540 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33540.00 > available 40000.00.: 1
+- Ticket size 33581.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33582.00 > available 40000.00.: 1
+- Ticket size 33541.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33542.00 > available 40000.00.: 1
+- Ticket size 33518.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33518.00 > available 40000.00.: 1
+- Ticket size 33500 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33500.00 > available 40000.00.: 1
+- Ticket size 33450 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33450.00 > available 40000.00.: 1
+- Ticket size 33388.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33388.00 > available 40000.00.: 1
+- Ticket size 33413.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33414.00 > available 40000.00.: 1
+- Ticket size 33330 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33330.00 > available 40000.00.: 1
+- Ticket size 33363.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33364.00 > available 40000.00.: 1
+- Ticket size 33373.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33374.00 > available 40000.00.: 1
+- Ticket size 33380 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33380.00 > available 40000.00.: 1
+- Ticket size 8664.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8664.00 > available 40000.00.: 1
+- Ticket size 8714.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8714.00 > available 40000.00.: 1
+- Ticket size 8702.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8702.00 > available 40000.00.: 1
+- Ticket size 8731.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8731.50 > available 40000.00.: 1
+- Ticket size 8804.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8804.00 > available 40000.00.: 1
+- Ticket size 8792.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8792.00 > available 40000.00.: 1
+- Ticket size 8794.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8794.50 > available 40000.00.: 1
+- Ticket size 8803.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8803.50 > available 40000.00.: 1
+- Ticket size 8789.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8789.00 > available 40000.00.: 1
+- Ticket size 8765.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8765.50 > available 40000.00.: 1
+- Ticket size 8762.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8762.00 > available 40000.00.: 1
+- Ticket size 8771.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8771.50 > available 40000.00.: 1
+- Ticket size 8782.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8782.00 > available 40000.00.: 1
+- Ticket size 8785.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8785.50 > available 40000.00.: 1
+- Ticket size 8776.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8776.50 > available 40000.00.: 1
+- Ticket size 8786.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8786.50 > available 40000.00.: 1
+- Ticket size 8784.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8784.00 > available 40000.00.: 1
+- Ticket size 8796.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8796.50 > available 40000.00.: 1
+- Ticket size 8792.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8792.50 > available 40000.00.: 1
+- Ticket size 8793.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8793.50 > available 40000.00.: 1
+- Ticket size 8790 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8790.00 > available 40000.00.: 1
+- Ticket size 8795.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8795.50 > available 40000.00.: 1
+- Ticket size 8795 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8795.00 > available 40000.00.: 1
+- Ticket size 8783.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8783.50 > available 40000.00.: 1
+- Ticket size 8769.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8769.00 > available 40000.00.: 1
+- Ticket size 8765 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8765.00 > available 40000.00.: 1
+- Ticket size 8730.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8730.50 > available 40000.00.: 1
+- Ticket size 8716.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8716.50 > available 40000.00.: 1
+- Ticket size 8689.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8689.00 > available 40000.00.: 1
+- Ticket size 8685.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8685.50 > available 40000.00.: 1
+- Ticket size 16690 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16690.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3482.00 > available 40000.00.: 1
+- Ticket size 33016.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33016.00 > available 40000.00.: 1
+- Ticket size 33051.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33052.00 > available 40000.00.: 1
+- Ticket size 8515.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8515.50 > available 40000.00.: 1
+- Ticket size 8593.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8593.50 > available 40000.00.: 1
+- Ticket size 8605.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8605.50 > available 40000.00.: 1
+- Ticket size 8686.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8686.50 > available 40000.00.: 1
+- Ticket size 8637.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8637.00 > available 40000.00.: 1
+- Ticket size 8636.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8636.50 > available 40000.00.: 1
+- Ticket size 8632.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8632.50 > available 40000.00.: 1
+- Ticket size 8629.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8629.50 > available 40000.00.: 1
+- Ticket size 8567.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8567.50 > available 40000.00.: 1
+- Ticket size 8613.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8613.50 > available 40000.00.: 1
+- Ticket size 8605.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8606.00 > available 40000.00.: 1
+- Ticket size 8575.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8576.00 > available 40000.00.: 1
+- Ticket size 8604.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8604.50 > available 40000.00.: 1
+- Ticket size 8606.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8606.50 > available 40000.00.: 1
+- Ticket size 8610.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8610.50 > available 40000.00.: 1
+- Ticket size 8622.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8622.00 > available 40000.00.: 1
+- Ticket size 8625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8625.00 > available 40000.00.: 1
+- Ticket size 8582.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8582.50 > available 40000.00.: 1
+- Ticket size 8587.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8587.50 > available 40000.00.: 1
+- Ticket size 8580 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8580.00 > available 40000.00.: 1
+- Ticket size 8581.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8581.50 > available 40000.00.: 1
+- Ticket size 8582.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8582.00 > available 40000.00.: 1
+- Ticket size 8587.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8587.00 > available 40000.00.: 1
+- Ticket size 8568.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8568.50 > available 40000.00.: 1
+- Ticket size 8570.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8571.00 > available 40000.00.: 1
+- Ticket size 8540 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8540.00 > available 40000.00.: 1
+- Ticket size 8553.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8553.50 > available 40000.00.: 1
+- Ticket size 8554.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8554.50 > available 40000.00.: 1
+- Ticket size 8549.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8549.50 > available 40000.00.: 1
+- Ticket size 8539.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8539.50 > available 40000.00.: 1
+- Ticket size 8539.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8539.00 > available 40000.00.: 1
+- Ticket size 8569.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8569.50 > available 40000.00.: 1
+- Ticket size 8574.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8574.50 > available 40000.00.: 1
+- Ticket size 8576.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8576.50 > available 40000.00.: 1
+- Ticket size 8570.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8570.50 > available 40000.00.: 1
+- Ticket size 8602.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8602.00 > available 40000.00.: 1
+- Ticket size 16513.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16513.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3440.80 > available 40000.00.: 1
+- Ticket size 32823.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32824.00 > available 40000.00.: 1
+- Ticket size 32841.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32842.00 > available 40000.00.: 1
+- Ticket size 32773.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32774.00 > available 40000.00.: 1
+- Ticket size 32831.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32832.00 > available 40000.00.: 1
+- Ticket size 8652.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8652.50 > available 40000.00.: 1
+- Ticket size 8627.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8627.00 > available 40000.00.: 1
+- Ticket size 8614.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8614.00 > available 40000.00.: 1
+- Ticket size 8626.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8626.50 > available 40000.00.: 1
+- Ticket size 8615.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8616.00 > available 40000.00.: 1
+- Ticket size 8617.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8617.50 > available 40000.00.: 1
+- Ticket size 8670.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8670.50 > available 40000.00.: 1
+- Ticket size 8665.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8666.00 > available 40000.00.: 1
+- Ticket size 8653.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8653.50 > available 40000.00.: 1
+- Ticket size 8645.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8645.50 > available 40000.00.: 1
+- Ticket size 8633.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8633.50 > available 40000.00.: 1
+- Ticket size 8643.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8643.50 > available 40000.00.: 1
+- Ticket size 8637.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8637.50 > available 40000.00.: 1
+- Ticket size 8631.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8631.50 > available 40000.00.: 1
+- Ticket size 8648.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8648.50 > available 40000.00.: 1
+- Ticket size 8650 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8650.00 > available 40000.00.: 1
+- Ticket size 8672.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8673.00 > available 40000.00.: 1
+- Ticket size 8657.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8658.00 > available 40000.00.: 1
+- Ticket size 8667.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8667.50 > available 40000.00.: 1
+- Ticket size 8650.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8650.50 > available 40000.00.: 1
+- Ticket size 8645.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8646.00 > available 40000.00.: 1
+- Ticket size 8647.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8647.00 > available 40000.00.: 1
+- Ticket size 8642.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8643.00 > available 40000.00.: 1
+- Ticket size 8674.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8674.50 > available 40000.00.: 1
+- Ticket size 8679.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8679.50 > available 40000.00.: 1
+- Ticket size 8690.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8691.00 > available 40000.00.: 1
+- Ticket size 8702.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8702.50 > available 40000.00.: 1
+- Ticket size 8714.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8714.50 > available 40000.00.: 1
+- Ticket size 8709.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8709.00 > available 40000.00.: 1
+- Ticket size 8708.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8708.50 > available 40000.00.: 1
+- Ticket size 8705.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8706.00 > available 40000.00.: 1
+- Ticket size 8699.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8699.50 > available 40000.00.: 1
+- Ticket size 8690.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8690.50 > available 40000.00.: 1
+- Ticket size 8698.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8698.50 > available 40000.00.: 1
+- Ticket size 8721.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8721.50 > available 40000.00.: 1
+- Ticket size 8734.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8734.00 > available 40000.00.: 1
+- Ticket size 8752.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8752.00 > available 40000.00.: 1
+- Ticket size 8747.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8748.00 > available 40000.00.: 1
+- Ticket size 8792.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8793.00 > available 40000.00.: 1
+- Ticket size 8808.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8808.50 > available 40000.00.: 1
+- Ticket size 8839.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8839.50 > available 40000.00.: 1
+- Ticket size 8834.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8834.50 > available 40000.00.: 1
+- Ticket size 8830.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8831.00 > available 40000.00.: 1
+- Ticket size 8832.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8832.00 > available 40000.00.: 1
+- Ticket size 16490 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16490.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3536.00 > available 40000.00.: 1
+- Ticket size 8730 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8730.00 > available 40000.00.: 1
+- Ticket size 8773.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8773.50 > available 40000.00.: 1
+- Ticket size 8750 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8750.00 > available 40000.00.: 1
+- Ticket size 8727.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8727.50 > available 40000.00.: 1
+- Ticket size 8748.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8748.50 > available 40000.00.: 1
+- Ticket size 8737.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8737.50 > available 40000.00.: 1
+- Ticket size 8727.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8728.00 > available 40000.00.: 1
+- Ticket size 8730.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8731.00 > available 40000.00.: 1
+- Ticket size 8734.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8734.50 > available 40000.00.: 1
+- Ticket size 8754.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8754.50 > available 40000.00.: 1
+- Ticket size 8742.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8742.00 > available 40000.00.: 1
+- Ticket size 8725.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8726.00 > available 40000.00.: 1
+- Ticket size 8710.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8711.00 > available 40000.00.: 1
+- Ticket size 8715.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8716.00 > available 40000.00.: 1
+- Ticket size 8712.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8712.50 > available 40000.00.: 1
+- Ticket size 8710 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8710.00 > available 40000.00.: 1
+- Ticket size 8700.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8700.50 > available 40000.00.: 1
+- Ticket size 8695.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8695.50 > available 40000.00.: 1
+- Ticket size 8703.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8703.50 > available 40000.00.: 1
+- Ticket size 8697.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8697.00 > available 40000.00.: 1
+- Ticket size 8706.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8706.50 > available 40000.00.: 1
+- Ticket size 8694.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8694.50 > available 40000.00.: 1
+- Ticket size 8695.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8696.00 > available 40000.00.: 1
+- Ticket size 8692.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8692.50 > available 40000.00.: 1
+- Ticket size 8693.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8693.50 > available 40000.00.: 1
+- Ticket size 8672.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8672.50 > available 40000.00.: 1
+- Ticket size 16485 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16485.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3499.80 > available 40000.00.: 1
+- Ticket size 33260 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33260.00 > available 40000.00.: 1
+- Ticket size 33261.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33262.00 > available 40000.00.: 1
+- Ticket size 33226.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33226.00 > available 40000.00.: 1
+- Ticket size 33190 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33190.00 > available 40000.00.: 1
+- Ticket size 33203.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33204.00 > available 40000.00.: 1
+- Ticket size 33241.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33242.00 > available 40000.00.: 1
+- Ticket size 33183.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33184.00 > available 40000.00.: 1
+- Ticket size 33126.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33126.00 > available 40000.00.: 1
+- Ticket size 33151.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33152.00 > available 40000.00.: 1
+- Ticket size 32956.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32956.00 > available 40000.00.: 1
+- Ticket size 32801.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32802.00 > available 40000.00.: 1
+- Ticket size 8805.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8805.50 > available 40000.00.: 1
+- Ticket size 8797.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8797.50 > available 40000.00.: 1
+- Ticket size 8787.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8788.00 > available 40000.00.: 1
+- Ticket size 8790.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8791.00 > available 40000.00.: 1
+- Ticket size 8789.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8789.50 > available 40000.00.: 1
+- Ticket size 8780.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8781.00 > available 40000.00.: 1
+- Ticket size 8814.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8814.50 > available 40000.00.: 1
+- Ticket size 8819.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8819.50 > available 40000.00.: 1
+- Ticket size 8822.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8823.00 > available 40000.00.: 1
+- Ticket size 8815 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8815.00 > available 40000.00.: 1
+- Ticket size 8848.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8848.50 > available 40000.00.: 1
+- Ticket size 8908.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8908.50 > available 40000.00.: 1
+- Ticket size 8910.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8910.50 > available 40000.00.: 1
+- Ticket size 8923.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8923.50 > available 40000.00.: 1
+- Ticket size 8887.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8887.50 > available 40000.00.: 1
+- Ticket size 8909.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8909.00 > available 40000.00.: 1
+- Ticket size 8907.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8908.00 > available 40000.00.: 1
+- Ticket size 8913.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8913.50 > available 40000.00.: 1
+- Ticket size 8922.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8922.50 > available 40000.00.: 1
+- Ticket size 8920.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8920.50 > available 40000.00.: 1
+- Ticket size 8919.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8919.00 > available 40000.00.: 1
+- Ticket size 8900.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8900.50 > available 40000.00.: 1
+- Ticket size 8896.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8896.50 > available 40000.00.: 1
+- Ticket size 8877.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8877.50 > available 40000.00.: 1
+- Ticket size 8861.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8861.50 > available 40000.00.: 1
+- Ticket size 8860.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8861.00 > available 40000.00.: 1
+- Ticket size 8862.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8863.00 > available 40000.00.: 1
+- Ticket size 8883.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8883.50 > available 40000.00.: 1
+- Ticket size 8857.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8858.00 > available 40000.00.: 1
+- Ticket size 8835.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8835.50 > available 40000.00.: 1
+- Ticket size 16500 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16500.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3554.00 > available 40000.00.: 1
+- Ticket size 33220 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33220.00 > available 40000.00.: 1
+- Ticket size 33088.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33088.00 > available 40000.00.: 1
+- Ticket size 33023.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33024.00 > available 40000.00.: 1
+- Ticket size 33040 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33040.00 > available 40000.00.: 1
+- Ticket size 33073.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33074.00 > available 40000.00.: 1
+- Ticket size 32768.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32768.00 > available 40000.00.: 1
+- Ticket size 32696.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32696.00 > available 40000.00.: 1
+- Ticket size 8926.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8926.50 > available 40000.00.: 1
+- Ticket size 8840.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8840.50 > available 40000.00.: 1
+- Ticket size 8924.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8924.50 > available 40000.00.: 1
+- Ticket size 8915.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8916.00 > available 40000.00.: 1
+- Ticket size 8905.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8905.50 > available 40000.00.: 1
+- Ticket size 8895.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8895.50 > available 40000.00.: 1
+- Ticket size 8890.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8890.50 > available 40000.00.: 1
+- Ticket size 8884.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8884.00 > available 40000.00.: 1
+- Ticket size 8870.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8870.50 > available 40000.00.: 1
+- Ticket size 8868.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8868.50 > available 40000.00.: 1
+- Ticket size 8862.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8862.50 > available 40000.00.: 1
+- Ticket size 8865 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8865.00 > available 40000.00.: 1
+- Ticket size 8865.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8866.00 > available 40000.00.: 1
+- Ticket size 8854.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8854.00 > available 40000.00.: 1
+- Ticket size 8880.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8880.50 > available 40000.00.: 1
+- Ticket size 8887.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8888.00 > available 40000.00.: 1
+- Ticket size 16321.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16322.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3545.60 > available 40000.00.: 1
+- Ticket size 33281.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33282.00 > available 40000.00.: 1
+- Ticket size 33553.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33554.00 > available 40000.00.: 1
+- Ticket size 33560 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33560.00 > available 40000.00.: 1
+- Ticket size 33583.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33584.00 > available 40000.00.: 1
+- Ticket size 33551.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33552.00 > available 40000.00.: 1
+- Ticket size 33303.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33304.00 > available 40000.00.: 1
+- Ticket size 33243.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33244.00 > available 40000.00.: 1
+- Ticket size 33266.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33266.00 > available 40000.00.: 1
+- Ticket size 33120 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33120.00 > available 40000.00.: 1
+- Ticket size 32818.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32818.00 > available 40000.00.: 1
+- Ticket size 32753.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32754.00 > available 40000.00.: 1
+- Ticket size 32698.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32698.00 > available 40000.00.: 1
+- Ticket size 32816.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32816.00 > available 40000.00.: 1
+- Ticket size 32803.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32804.00 > available 40000.00.: 1
+- Ticket size 32791.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32792.00 > available 40000.00.: 1
+- Ticket size 32776.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32776.00 > available 40000.00.: 1
+- Ticket size 8955 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8955.00 > available 40000.00.: 1
+- Ticket size 8970.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8971.00 > available 40000.00.: 1
+- Ticket size 9039.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9039.50 > available 40000.00.: 1
+- Ticket size 8983.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8983.50 > available 40000.00.: 1
+- Ticket size 9024.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9024.50 > available 40000.00.: 1
+- Ticket size 9020.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9020.50 > available 40000.00.: 1
+- Ticket size 8990.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8991.00 > available 40000.00.: 1
+- Ticket size 8967.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8967.50 > available 40000.00.: 1
+- Ticket size 8946.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8946.50 > available 40000.00.: 1
+- Ticket size 8948.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8948.50 > available 40000.00.: 1
+- Ticket size 8947.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8947.50 > available 40000.00.: 1
+- Ticket size 8914.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8914.00 > available 40000.00.: 1
+- Ticket size 8930 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8930.00 > available 40000.00.: 1
+- Ticket size 8937.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8938.00 > available 40000.00.: 1
+- Ticket size 8930.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8930.50 > available 40000.00.: 1
+- Ticket size 8927.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8927.00 > available 40000.00.: 1
+- Ticket size 8915.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8915.50 > available 40000.00.: 1
+- Ticket size 8889.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8889.00 > available 40000.00.: 1
+- Ticket size 8892.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8892.50 > available 40000.00.: 1
+- Ticket size 8894.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8894.00 > available 40000.00.: 1
+- Ticket size 8867.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8868.00 > available 40000.00.: 1
+- Ticket size 8845.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8845.50 > available 40000.00.: 1
+- Ticket size 8842.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8843.00 > available 40000.00.: 1
+- Ticket size 8850 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8850.00 > available 40000.00.: 1
+- Ticket size 8849.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8849.50 > available 40000.00.: 1
+- Ticket size 8844.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8844.00 > available 40000.00.: 1
+- Ticket size 8858.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8858.50 > available 40000.00.: 1
+- Ticket size 8866.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8866.50 > available 40000.00.: 1
+- Ticket size 8899.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8899.00 > available 40000.00.: 1
+- Ticket size 8890.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8891.00 > available 40000.00.: 1
+- Ticket size 8884.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8884.50 > available 40000.00.: 1
+- Ticket size 8878.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8878.50 > available 40000.00.: 1
+- Ticket size 8869.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8869.50 > available 40000.00.: 1
+- Ticket size 8882.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8883.00 > available 40000.00.: 1
+- Ticket size 16350 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16350.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3552.00 > available 40000.00.: 1
+- Ticket size 33108.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33108.00 > available 40000.00.: 1
+- Ticket size 33188.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33188.00 > available 40000.00.: 1
+- Ticket size 33146.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33146.00 > available 40000.00.: 1
+- Ticket size 33141.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33142.00 > available 40000.00.: 1
+- Ticket size 33223.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33224.00 > available 40000.00.: 1
+- Ticket size 33250 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33250.00 > available 40000.00.: 1
+- Ticket size 33231.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33232.00 > available 40000.00.: 1
+- Ticket size 33130 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33130.00 > available 40000.00.: 1
+- Ticket size 32761.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32762.00 > available 40000.00.: 1
+- Ticket size 32726.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32726.00 > available 40000.00.: 1
+- Ticket size 32723.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32724.00 > available 40000.00.: 1
+- Ticket size 32751.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32752.00 > available 40000.00.: 1
+- Ticket size 32733.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32734.00 > available 40000.00.: 1
+- Ticket size 32706.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32706.00 > available 40000.00.: 1
+- Ticket size 32671.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32672.00 > available 40000.00.: 1
+- Ticket size 32626.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32626.00 > available 40000.00.: 1
+- Ticket size 32660 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32660.00 > available 40000.00.: 1
+- Ticket size 32641.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32642.00 > available 40000.00.: 1
+- Ticket size 9069.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9069.50 > available 40000.00.: 1
+- Ticket size 8997.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8998.00 > available 40000.00.: 1
+- Ticket size 9025.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9025.50 > available 40000.00.: 1
+- Ticket size 9031.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9031.50 > available 40000.00.: 1
+- Ticket size 9060 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9060.00 > available 40000.00.: 1
+- Ticket size 9088.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9088.50 > available 40000.00.: 1
+- Ticket size 9075 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9075.00 > available 40000.00.: 1
+- Ticket size 9061.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9061.50 > available 40000.00.: 1
+- Ticket size 9052.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9052.50 > available 40000.00.: 1
+- Ticket size 9057.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9057.00 > available 40000.00.: 1
+- Ticket size 9074.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9074.50 > available 40000.00.: 1
+- Ticket size 9042.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9042.00 > available 40000.00.: 1
+- Ticket size 9002.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9002.50 > available 40000.00.: 1
+- Ticket size 9027.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9027.50 > available 40000.00.: 1
+- Ticket size 9027.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9028.00 > available 40000.00.: 1
+- Ticket size 8998.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8998.50 > available 40000.00.: 1
+- Ticket size 9009.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9009.00 > available 40000.00.: 1
+- Ticket size 9001.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9001.50 > available 40000.00.: 1
+- Ticket size 9043.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9043.50 > available 40000.00.: 1
+- Ticket size 9047.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9048.00 > available 40000.00.: 1
+- Ticket size 9067.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9067.00 > available 40000.00.: 1
+- Ticket size 9059.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9059.00 > available 40000.00.: 1
+- Ticket size 9055 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9055.00 > available 40000.00.: 1
+- Ticket size 9035.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9035.50 > available 40000.00.: 1
+- Ticket size 9055.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9055.50 > available 40000.00.: 1
+- Ticket size 9047.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9047.50 > available 40000.00.: 1
+- Ticket size 9035 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9035.00 > available 40000.00.: 1
+- Ticket size 9032.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9033.00 > available 40000.00.: 1
+- Ticket size 16400 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16400.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3620.00 > available 40000.00.: 1
+- Ticket size 33066.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33066.00 > available 40000.00.: 1
+- Ticket size 33033.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33034.00 > available 40000.00.: 1
+- Ticket size 32846.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32846.00 > available 40000.00.: 1
+- Ticket size 32933.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32934.00 > available 40000.00.: 1
+- Ticket size 32830 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32830.00 > available 40000.00.: 1
+- Ticket size 9159.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9159.00 > available 40000.00.: 1
+- Ticket size 9154.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9154.00 > available 40000.00.: 1
+- Ticket size 9125.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9125.50 > available 40000.00.: 1
+- Ticket size 9125.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9126.00 > available 40000.00.: 1
+- Ticket size 9112.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9112.50 > available 40000.00.: 1
+- Ticket size 9092.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9093.00 > available 40000.00.: 1
+- Ticket size 9104.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9104.50 > available 40000.00.: 1
+- Ticket size 9094.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9094.00 > available 40000.00.: 1
+- Ticket size 9097.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9097.00 > available 40000.00.: 1
+- Ticket size 9104.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9104.00 > available 40000.00.: 1
+- Ticket size 9122.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9122.50 > available 40000.00.: 1
+- Ticket size 9110.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9111.00 > available 40000.00.: 1
+- Ticket size 9107.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9107.00 > available 40000.00.: 1
+- Ticket size 9110.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9110.50 > available 40000.00.: 1
+- Ticket size 9137.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9137.00 > available 40000.00.: 1
+- Ticket size 9148.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9148.50 > available 40000.00.: 1
+- Ticket size 9135 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9135.00 > available 40000.00.: 1
+- Ticket size 9117.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9117.50 > available 40000.00.: 1
+- Ticket size 9119.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9119.50 > available 40000.00.: 1
+- Ticket size 9124.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9124.50 > available 40000.00.: 1
+- Ticket size 9106.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9106.50 > available 40000.00.: 1
+- Ticket size 9108.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9108.50 > available 40000.00.: 1
+- Ticket size 9101.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9101.50 > available 40000.00.: 1
+- Ticket size 9094.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9094.50 > available 40000.00.: 1
+- Ticket size 9082.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9083.00 > available 40000.00.: 1
+- Ticket size 9081.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9081.50 > available 40000.00.: 1
+- Ticket size 9082.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9082.00 > available 40000.00.: 1
+- Ticket size 9079.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9079.00 > available 40000.00.: 1
+- Ticket size 9093.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9093.50 > available 40000.00.: 1
+- Ticket size 16430 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16430.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3638.00 > available 40000.00.: 1
+- Ticket size 33028.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 33028.00 > available 40000.00.: 1
+- Ticket size 32663.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32664.00 > available 40000.00.: 1
+- Ticket size 32633.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32634.00 > available 40000.00.: 1
+- Ticket size 32653.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32654.00 > available 40000.00.: 1
+- Ticket size 32676.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32676.00 > available 40000.00.: 1
+- Ticket size 32593.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32594.00 > available 40000.00.: 1
+- Ticket size 32506.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32506.00 > available 40000.00.: 1
+- Ticket size 32520 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32520.00 > available 40000.00.: 1
+- Ticket size 32548.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32548.00 > available 40000.00.: 1
+- Ticket size 32538.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32538.00 > available 40000.00.: 1
+- Ticket size 32516.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32516.00 > available 40000.00.: 1
+- Ticket size 32513.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32514.00 > available 40000.00.: 1
+- Ticket size 32493.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32494.00 > available 40000.00.: 1
+- Ticket size 32511.99951171875 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32512.00 > available 40000.00.: 1
+- Ticket size 32530 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32530.00 > available 40000.00.: 1
+- Ticket size 32528.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32528.00 > available 40000.00.: 1
+- Ticket size 32518.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32518.00 > available 40000.00.: 1
+- Ticket size 32526.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32526.00 > available 40000.00.: 1
+- Ticket size 32503.9990234375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32504.00 > available 40000.00.: 1
+- Ticket size 9026.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9026.50 > available 40000.00.: 1
+- Ticket size 9004.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9004.50 > available 40000.00.: 1
+- Ticket size 9004.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9004.00 > available 40000.00.: 1
+- Ticket size 9005 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9005.00 > available 40000.00.: 1
+- Ticket size 8992.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8992.50 > available 40000.00.: 1
+- Ticket size 8980 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8980.00 > available 40000.00.: 1
+- Ticket size 8982.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8983.00 > available 40000.00.: 1
+- Ticket size 8952.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8953.00 > available 40000.00.: 1
+- Ticket size 8940 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8940.00 > available 40000.00.: 1
+- Ticket size 8964.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8964.50 > available 40000.00.: 1
+- Ticket size 8962.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8963.00 > available 40000.00.: 1
+- Ticket size 8981.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8981.50 > available 40000.00.: 1
+- Ticket size 8985.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8985.50 > available 40000.00.: 1
+- Ticket size 8987.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8988.00 > available 40000.00.: 1
+- Ticket size 8987.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8987.00 > available 40000.00.: 1
+- Ticket size 8993.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8993.50 > available 40000.00.: 1
+- Ticket size 9030.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9030.50 > available 40000.00.: 1
+- Ticket size 9017.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9018.00 > available 40000.00.: 1
+- Ticket size 9037.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9037.50 > available 40000.00.: 1
+- Ticket size 9007.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9008.00 > available 40000.00.: 1
+- Ticket size 9016.500244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9016.50 > available 40000.00.: 1
+- Ticket size 9010.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9011.00 > available 40000.00.: 1
+- Ticket size 9005.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9006.00 > available 40000.00.: 1
+- Ticket size 9008.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9008.50 > available 40000.00.: 1
+- Ticket size 8995 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 8995.00 > available 40000.00.: 1
+- Ticket size 16250 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16250.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3603.00 > available 40000.00.: 1
+- Ticket size 32718.00048828125 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32718.00 > available 40000.00.: 1
+- Ticket size 32806.0009765625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 32806.00 > available 40000.00.: 1
+- Ticket size 9005.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9005.50 > available 40000.00.: 1
+- Ticket size 9030.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9031.00 > available 40000.00.: 1
+- Ticket size 9060.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9061.00 > available 40000.00.: 1
+- Ticket size 9068.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9068.50 > available 40000.00.: 1
+- Ticket size 9063.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9063.50 > available 40000.00.: 1
+- Ticket size 9048.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9048.50 > available 40000.00.: 1
+- Ticket size 9045.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9045.50 > available 40000.00.: 1
+- Ticket size 9062.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9063.00 > available 40000.00.: 1
+- Ticket size 9032.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9032.00 > available 40000.00.: 1
+- Ticket size 9020 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9020.00 > available 40000.00.: 1
+- Ticket size 9044.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9044.50 > available 40000.00.: 1
+- Ticket size 9034.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9034.00 > available 40000.00.: 1
+- Ticket size 9037.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9038.00 > available 40000.00.: 1
+- Ticket size 9019.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9019.00 > available 40000.00.: 1
+- Ticket size 9049.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9049.00 > available 40000.00.: 1
+- Ticket size 9074.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9074.00 > available 40000.00.: 1
+- Ticket size 9107.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9107.50 > available 40000.00.: 1
+- Ticket size 9113.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9113.50 > available 40000.00.: 1
+- Ticket size 9095.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9095.50 > available 40000.00.: 1
+- Ticket size 9102.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9102.50 > available 40000.00.: 1
+- Ticket size 9089.000244140625 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9089.00 > available 40000.00.: 1
+- Ticket size 9087.5 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9087.50 > available 40000.00.: 1
+- Ticket size 9077.000122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9077.00 > available 40000.00.: 1
+- Ticket size 9115.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9115.50 > available 40000.00.: 1
+- Ticket size 9112.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9113.00 > available 40000.00.: 1
+- Ticket size 9127.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9128.00 > available 40000.00.: 1
+- Ticket size 9122.999877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9123.00 > available 40000.00.: 1
+- Ticket size 9139.500122070312 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9139.50 > available 40000.00.: 1
+- Ticket size 9140.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9141.00 > available 40000.00.: 1
+- Ticket size 9130.499877929688 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9130.50 > available 40000.00.: 1
+- Ticket size 9128.499755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9128.50 > available 40000.00.: 1
+- Ticket size 9105.999755859375 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9106.00 > available 40000.00.: 1
+- Ticket size 9145 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 9145.00 > available 40000.00.: 1
+- Ticket size 16390 exceeds max trade allocation 8000.: 1
+- Insufficient capital: used 37340.97 + ticket 16390.00 > available 40000.00.: 1
+- Insufficient capital: used 37340.97 + ticket 3658.00 > available 40000.00.: 1

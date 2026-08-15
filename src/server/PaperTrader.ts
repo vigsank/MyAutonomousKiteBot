@@ -106,6 +106,8 @@ export class PaperTrader {
         avgPrice: fillPrice,
         entryTime: request.timestamp,
         direction: request.direction,
+        product: request.product ?? 'CNC',
+        entryMode: request.entryMode,
       });
       const tradeId = newTradeId();
       this.recordOrder(request, side, tradeId, 'OPEN');

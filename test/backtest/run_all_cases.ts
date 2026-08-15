@@ -4,6 +4,12 @@
  *
  * Usage:
  *   ENV_FILE=.env.test npx ts-node test/backtest/run_all_cases.ts
+ *   ENV_FILE=.env.test npx ts-node test/backtest/run_all_cases.ts --tiers=1,2 --ensemble=fast
+ *
+ * Args:
+ *   --tiers=1,2|all   Which priority tiers to run (default: all).
+ *   --cases=case1,case4   Explicit case names (overrides --tiers).
+ *   --ensemble=fast|depth   Ensemble model set (default: fast).
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -12,29 +18,64 @@ import { runCase, CaseConfig, CaseResult } from './mock_backtest';
 /** Run name (used as the output subfolder) and capital multiplier. */
 const RUN_NAME = process.env.RUN_NAME || 'run1';
 const CAPITAL_MULT = Number(process.env.CAPITAL_MULT) || 1;
+
+// Ensemble mode for the backtest: --ensemble=fast (default) | --ensemble=depth.
+// 'fast' uses the small/fast models (LLM_FAST_ENSEMBLE_MODELS) for speed;
+// 'depth' uses the heavier reasoning models (LLM_ENSEMBLE_MODELS).
+const ensArg = process.argv.find((a) => a.startsWith('--ensemble='));
+const ENSEMBLE_MODE = ensArg ? ensArg.split('=')[1] : 'fast';
+process.env.ENSEMBLE_MODE = ENSEMBLE_MODE === 'depth' ? 'depth' : 'fast';
+
+// Tier selection: --tiers=1,2 (comma-separated) or --tiers=all (default).
+// Tiers group the cases by priority so you can run a subset first.
+const tiersArg = process.argv.find((a) => a.startsWith('--tiers='));
+const TIERS: number[] = tiersArg
+  ? tiersArg
+      .split('=')[1]
+      .split(',')
+      .map((s) => Number(s.trim()))
+      .filter((n) => Number.isFinite(n) && n >= 1 && n <= 3)
+  : [1, 2, 3];
+const TIER_LABEL = tiersArg ? `tier${TIERS.join('+')}` : 'all';
+
+// Optional explicit case selection: --cases=case1,case4 (overrides tiers).
+const casesArg = process.argv.find((a) => a.startsWith('--cases='));
+const CASE_NAMES: string[] | null = casesArg
+  ? casesArg.split('=')[1].split(',').map((s) => s.trim()).filter(Boolean)
+  : null;
+
 const OUT_DIR = path.join(process.cwd(), 'test', 'backtest', 'results', RUN_NAME);
 
-const CASES: CaseConfig[] = [
-  { name: 'case1', holdingsCount: 0, holdingsValue: 0, newCapital: 20000, pickSymbols: 20, days: 30, rebalanceDays: 1, seed: 7 },
-  { name: 'case2', holdingsCount: 2, holdingsValue: 15000, newCapital: 20000, pickSymbols: 18, days: 30, rebalanceDays: 1, seed: 8 },
-  { name: 'case3', holdingsCount: 10, holdingsValue: 60000, newCapital: 30000, pickSymbols: 10, days: 30, rebalanceDays: 1, seed: 9 },
-  { name: 'case4', holdingsCount: 0, holdingsValue: 0, newCapital: 10000, pickSymbols: 10, days: 30, rebalanceDays: 1, seed: 10 },
-  { name: 'case5', holdingsCount: 1, holdingsValue: 30000, newCapital: 10000, pickSymbols: 5, days: 30, rebalanceDays: 1, seed: 11 },
-  { name: 'case6', holdingsCount: 5, holdingsValue: 50000, newCapital: 50000, pickSymbols: 15, days: 30, rebalanceDays: 1, seed: 12 },
-  { name: 'case7', holdingsCount: 20, holdingsValue: 200000, newCapital: 100000, pickSymbols: 20, days: 30, rebalanceDays: 1, seed: 13 },
-  { name: 'case8', holdingsCount: 0, holdingsValue: 0, newCapital: 50000, pickSymbols: 20, days: 60, rebalanceDays: 1, seed: 14 },
-  { name: 'case9', holdingsCount: 10, holdingsValue: 60000, newCapital: 30000, pickSymbols: 10, days: 30, rebalanceDays: 5, seed: 15 },
-  { name: 'case10', holdingsCount: 0, holdingsValue: 0, newCapital: 500000, pickSymbols: 40, days: 30, rebalanceDays: 1, seed: 16 },
+// Each case carries a priority tier:
+//   Tier 1 — small-capital retail premise (tradeability + low-price universe).
+//   Tier 2 — edge validation (nondeterminism fix at scale, longer window).
+//   Tier 3 — portfolio management (holdings-heavy, slower).
+const CASES: Array<CaseConfig & { tier: number }> = [
+  { name: 'case1', tier: 1, holdingsCount: 0, holdingsValue: 0, newCapital: 20000, pickSymbols: 20, days: 30, rebalanceDays: 1, seed: 7 },
+  { name: 'case2', tier: 1, holdingsCount: 2, holdingsValue: 15000, newCapital: 20000, pickSymbols: 18, days: 30, rebalanceDays: 1, seed: 8 },
+  { name: 'case3', tier: 3, holdingsCount: 10, holdingsValue: 60000, newCapital: 30000, pickSymbols: 10, days: 30, rebalanceDays: 1, seed: 9 },
+  { name: 'case4', tier: 1, holdingsCount: 0, holdingsValue: 0, newCapital: 10000, pickSymbols: 10, days: 30, rebalanceDays: 1, seed: 10 },
+  { name: 'case5', tier: 1, holdingsCount: 1, holdingsValue: 30000, newCapital: 10000, pickSymbols: 5, days: 30, rebalanceDays: 1, seed: 11 },
+  { name: 'case6', tier: 3, holdingsCount: 5, holdingsValue: 50000, newCapital: 50000, pickSymbols: 15, days: 30, rebalanceDays: 1, seed: 12 },
+  { name: 'case7', tier: 3, holdingsCount: 20, holdingsValue: 200000, newCapital: 100000, pickSymbols: 20, days: 30, rebalanceDays: 1, seed: 13 },
+  { name: 'case8', tier: 2, holdingsCount: 0, holdingsValue: 0, newCapital: 50000, pickSymbols: 20, days: 60, rebalanceDays: 1, seed: 14 },
+  { name: 'case9', tier: 3, holdingsCount: 10, holdingsValue: 60000, newCapital: 30000, pickSymbols: 10, days: 30, rebalanceDays: 5, seed: 15 },
+  { name: 'case10', tier: 2, holdingsCount: 0, holdingsValue: 0, newCapital: 500000, pickSymbols: 40, days: 30, rebalanceDays: 1, seed: 16 },
 ];
+
+// Cases selected by the requested tiers, in the original order.
+const SELECTED = CASES.filter((c) => TIERS.includes(c.tier));
+// If explicit case names were given, use those instead (overrides tiers).
+const FINAL_CASES = CASE_NAMES ? CASES.filter((c) => CASE_NAMES.includes(c.name)) : SELECTED;
 
 function fmtRu(n: number): string { return '₹' + Math.round(n).toLocaleString('en-IN'); }
 function fmtPct(n: number): string { return n.toFixed(2) + '%'; }
 
 function generateMarkdown(results: CaseResult[]): string {
   const lines: string[] = [];
-  lines.push(`# Mock-Data Backtest — 10 Cases (${RUN_NAME}, ${CAPITAL_MULT}x capital, AI-backed, real NSE data)`);
+  lines.push(`# Mock-Data Backtest — ${FINAL_CASES.length} Cases (${RUN_NAME}, ${CAPITAL_MULT}x capital, AI-backed, real NSE data)`);
   lines.push('');
-  lines.push('> Strategy: Bollinger mean-reversion + AI analyst (news sentiment + LLM verdict) gating entries. Paper-only, net of costs. 5-min bars from real historical CSVs.');
+  lines.push(`> Tiers: **${TIER_LABEL}** · Ensemble mode: **${ENSEMBLE_MODE}** · Strategy: Bollinger mean-reversion + AI analyst (news sentiment + LLM verdict) gating entries. Paper-only, net of costs. 5-min bars from real historical CSVs.`);
   lines.push('');
   lines.push('## Summary');
   lines.push('');
@@ -57,6 +98,14 @@ function generateMarkdown(results: CaseResult[]): string {
     lines.push('');
     lines.push('**Top trades:**');
     for (const t of r.topTrades) lines.push(`- ${t.symbol} ${t.direction} ${t.quantity} @ ${t.price.toFixed(2)} → ${fmtRu(t.pnl)} (${t.reason})`);
+    lines.push('');
+    lines.push('**Gate counters (why signals died):**');
+    const gates = Object.entries(r.gateCounters ?? {}).sort((a, b) => b[1] - a[1]);
+    for (const [k, v] of gates) lines.push(`- ${k}: ${v}`);
+    lines.push('');
+    lines.push('**RiskEngine block reasons:**');
+    const rr = Object.entries(r.riskReasons ?? {}).sort((a, b) => b[1] - a[1]);
+    for (const [k, v] of rr) lines.push(`- ${k}: ${v}`);
     lines.push('');
   }
   return lines.join('\n');
@@ -91,8 +140,8 @@ function generateHtml(results: CaseResult[]): string {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>body{font-family:system-ui,sans-serif;margin:2rem;background:#0f172a;color:#e2e8f0}.case{border:1px solid #334155;border-radius:8px;padding:1rem;margin-bottom:2rem}.chart{max-width:600px;margin:1rem 0}h1{color:#22c55e}h2{color:#f8fafc}p{color:#cbd5e1}</style>
 </head><body>
-<h1>Mock-Data Backtest — 10 Cases (${RUN_NAME}, ${CAPITAL_MULT}x capital, AI-backed, real NSE data)</h1>
-<p>Strategy: Bollinger mean-reversion + AI analyst (news sentiment + LLM verdict). Paper-only, net of costs, 5-min bars from real historical CSVs.</p>
+<h1>Mock-Data Backtest — ${FINAL_CASES.length} Cases (${RUN_NAME}, ${CAPITAL_MULT}x capital, AI-backed, real NSE data)</h1>
+<p>Tiers: <b>${TIER_LABEL}</b> · Ensemble mode: <b>${ENSEMBLE_MODE}</b> · Strategy: Bollinger mean-reversion + AI analyst (news sentiment + LLM verdict). Paper-only, net of costs, 5-min bars from real historical CSVs.</p>
 ${charts}
 <script>${chartScripts}</script>
 </body></html>`;
@@ -101,13 +150,17 @@ ${charts}
 async function main(): Promise<void> {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const results: CaseResult[] = [];
-  for (const cfg of CASES) {
+  for (const cfg of FINAL_CASES) {
     const c = { ...cfg, newCapital: Math.round(cfg.newCapital * CAPITAL_MULT) };
     console.log(`\n=== Running ${c.name} (${c.holdingsCount} holdings, ${fmtRu(c.newCapital)} new, ${c.pickSymbols} symbols, ${c.days}d, rebalance ${c.rebalanceDays}d) ===`);
     const r = await runCase(c);
     results.push(r);
     fs.writeFileSync(path.join(OUT_DIR, `${c.name}.json`), JSON.stringify(r, null, 2));
     console.log(`  ${c.name}: ${r.roundTrips} trades, net ${fmtRu(r.netPnl)} (${fmtPct(r.returnPct)})`);
+    const gates = Object.entries(r.gateCounters ?? {}).sort((a, b) => b[1] - a[1]);
+    console.log(`    gates: ${gates.map(([k, v]) => `${k}=${v}`).join(', ')}`);
+    const rr = Object.entries(r.riskReasons ?? {}).sort((a, b) => b[1] - a[1]);
+    console.log(`    risk: ${rr.map(([k, v]) => `${k}=${v}`).join(', ')}`);
   }
   fs.writeFileSync(path.join(OUT_DIR, 'report.md'), generateMarkdown(results));
   fs.writeFileSync(path.join(OUT_DIR, 'report.html'), generateHtml(results));

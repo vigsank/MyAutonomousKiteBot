@@ -1,6 +1,6 @@
 import { AppConfig } from './AppConfig';
 import { Ledger } from './Ledger';
-import { Position, RiskDecision, TradeRequest } from './types';
+import { CapitalSnapshot, Position, RiskDecision, TradeRequest } from './types';
 
 /**
  * Risk engine - the immutable gatekeeper.
@@ -26,7 +26,7 @@ export class RiskEngine {
       failures.push('Ticket size must be positive.');
     }
 
-    // Per-trade allocation cap.
+    // Per-trade allocation cap (absolute).
     if (trade.ticketSize > this.config.risk.maxTradeAllocation) {
       failures.push(
         `Ticket size ${trade.ticketSize} exceeds max trade allocation ` +
@@ -34,17 +34,43 @@ export class RiskEngine {
       );
     }
 
+    // Single-stock concentration cap: ≤ maxSingleStockPct of total capital.
+    const singleStockCap =
+      (this.config.risk.availableCapital * this.config.risk.maxSingleStockPct) / 100;
+    if (trade.ticketSize > singleStockCap) {
+      failures.push(
+        `Ticket size ${trade.ticketSize} exceeds single-stock cap ` +
+          `${singleStockCap.toFixed(0)} (${this.config.risk.maxSingleStockPct}% of capital).`,
+      );
+    }
+
     // Per-symbol concentration cap: an add must not push the position's total
-    // notional past the per-trade allocation limit (repeated adds can otherwise
-    // build a single oversized position).
+    // notional past the single-stock cap (repeated adds can otherwise build a
+    // single oversized position).
     const existing = this.ledger.getPosition(trade.symbol, trade.exchange);
     if (existing && existing.direction === trade.direction) {
       const newNotional =
         existing.quantity * existing.avgPrice + trade.quantity * trade.entryPrice;
-      if (newNotional > this.config.risk.maxTradeAllocation) {
+      if (newNotional > singleStockCap) {
         failures.push(
-          `Position ${trade.symbol} would exceed max allocation ` +
-            `${this.config.risk.maxTradeAllocation} (${newNotional.toFixed(0)}).`,
+          `Position ${trade.symbol} would exceed single-stock cap ` +
+            `${singleStockCap.toFixed(0)} (${newNotional.toFixed(0)}).`,
+        );
+      }
+    }
+
+    // Sector concentration cap: total notional in a sector (incl. this trade)
+    // must stay ≤ maxSectorWeightPct of capital. Only enforced when the symbol
+    // has a sector mapped in the watchlist.
+    const sector = this.sectorFor(trade.symbol);
+    if (sector) {
+      const sectorCap =
+        (this.config.risk.availableCapital * this.config.risk.maxSectorWeightPct) / 100;
+      const sectorExposure = this.sectorExposure(sector) + trade.ticketSize;
+      if (sectorExposure > sectorCap) {
+        failures.push(
+          `Sector ${sector} exposure ${sectorExposure.toFixed(0)} exceeds cap ` +
+            `${sectorCap.toFixed(0)} (${this.config.risk.maxSectorWeightPct}% of capital).`,
         );
       }
     }
@@ -58,13 +84,61 @@ export class RiskEngine {
       );
     }
 
-    // Ensure we have open capital capacity (not over-allocated).
+    // Portfolio-level drawdown guard: halt trading if the book is down more
+    // than maxPortfolioDrawdownPct of capital (cumulative realized PnL).
+    const realized = this.ledger.cumulativeRealizedPnl();
+    const portfolioDdPct =
+      (Math.abs(Math.min(0, realized)) / this.config.risk.availableCapital) * 100;
+    if (portfolioDdPct > this.config.risk.maxPortfolioDrawdownPct) {
+      failures.push(
+        `Portfolio drawdown ${portfolioDdPct.toFixed(1)}% exceeds max ` +
+          `${this.config.risk.maxPortfolioDrawdownPct}%. Trading halted.`,
+      );
+    }
+
+    // Monthly drawdown guard: halt trading for the month if monthly P&L is down
+    // more than maxMonthlyDrawdownPct of capital (protects month-end P&L).
+    const monthlyPnl = this.ledger.monthlyRealizedPnl();
+    const monthlyDdPct =
+      (Math.abs(Math.min(0, monthlyPnl)) / this.config.risk.availableCapital) * 100;
+    if (monthlyDdPct > this.config.risk.maxMonthlyDrawdownPct) {
+      failures.push(
+        `Monthly drawdown ${monthlyDdPct.toFixed(1)}% exceeds max ` +
+          `${this.config.risk.maxMonthlyDrawdownPct}%. Trading halted for the month.`,
+      );
+    }
+
+    // Single-trade risk cap: the loss at stop-loss must be ≤ maxRiskPerTradePct
+    // of total account balance. Only applies to NEW entries (not closes), and
+    // uses the actual ATR-based stop distance when provided (falls back to the
+    // fixed stopLossPercent). riskAtStop = quantity * stopDist.
+    const isClose = existing && existing.direction !== trade.direction;
+    if (!isClose) {
+      const stopDist =
+        trade.stopDistance ??
+        (trade.entryPrice * this.config.strategy.stopLossPercent) / 100;
+      const riskAtStop = trade.quantity * stopDist;
+      const riskCap =
+        (this.config.risk.availableCapital * this.config.risk.maxRiskPerTradePct) / 100;
+      if (riskAtStop > riskCap) {
+        failures.push(
+          `Risk at stop ${riskAtStop.toFixed(0)} exceeds cap ` +
+            `${riskCap.toFixed(0)} (${this.config.risk.maxRiskPerTradePct}% of balance).`,
+        );
+      }
+    }
+
+    // Capital capacity + mandatory cash reserve: after this trade, free capital
+    // must stay ≥ minCashReservePct of total (preserve liquidity).
     const used = this.ledger.usedCapital();
-    if (used + trade.ticketSize > this.config.risk.availableCapital) {
+    const reserve =
+      (this.config.risk.availableCapital * this.config.risk.minCashReservePct) / 100;
+    const spendable = this.config.risk.availableCapital - reserve;
+    if (used + trade.ticketSize > spendable) {
       failures.push(
         `Insufficient capital: used ${used.toFixed(2)} + ticket ` +
-          `${trade.ticketSize.toFixed(2)} > available ` +
-          `${this.config.risk.availableCapital.toFixed(2)}.`,
+          `${trade.ticketSize.toFixed(2)} > spendable ${spendable.toFixed(2)} ` +
+          `(after ${this.config.risk.minCashReservePct}% cash reserve).`,
       );
     }
 
@@ -82,6 +156,37 @@ export class RiskEngine {
     }
 
     return decision;
+  }
+
+  /**
+   * Deterministic capital snapshot at report time. The LLM advisor consumes
+   * `available` as advisory context; the RiskEngine re-validates against live
+   * capital at execution time.
+   */
+  capitalSnapshot(): CapitalSnapshot {
+    const total = this.config.risk.availableCapital;
+    const used = this.ledger.usedCapital();
+    const pending = this.ledger.pendingOrders();
+    const reserve = (total * this.config.risk.minCashReservePct) / 100;
+    const available = Math.max(0, total - used - pending - reserve);
+    return { total, used, pending, reserve, available };
+  }
+
+  /** Sector mapped to a symbol in the watchlist, or null. */
+  private sectorFor(symbol: string): string | null {
+    const w = this.config.watchlist.find((s) => s.tradingsymbol === symbol);
+    return w?.sector ?? null;
+  }
+
+  /** Total notional currently deployed in a sector (from open positions). */
+  private sectorExposure(sector: string): number {
+    let total = 0;
+    for (const p of this.ledger.getOpenPositions()) {
+      if (this.sectorFor(p.symbol) === sector) {
+        total += p.quantity * p.avgPrice;
+      }
+    }
+    return total;
   }
 
   /** True when the cooldown period since the last trade has elapsed. */

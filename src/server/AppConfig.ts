@@ -27,9 +27,15 @@ export interface LlmConfig {
   baseUrl: string;
   apiKey: string;
   models: string[];
+  /** Subset of `models` used by the multi-model ensemble (≤3). Always ⊆ models. */
+  ensembleModels: string[];
+  /** Fast subset of `models` (≤3) for high-frequency loops (e.g. backtests). */
+  fastEnsembleModels: string[];
   activeModel: string;
   jsonMode: boolean;
   enabled: boolean;
+  /** Per-request timeout (ms) so a hung model can't block the ensemble/run. */
+  timeoutMs: number;
 }
 
 export interface AppConfig {
@@ -40,21 +46,13 @@ export interface AppConfig {
     root: string;
   };
   llm: LlmConfig;
-  tavily: {
-    apiKey: string;
-    enabled: boolean;
-    maxResults: number;
-    searchDepth: 'basic' | 'advanced';
-  };
-  /** Optional free live web-search via TinyFish (Search/Fetch free; Agent/Browser cost credits). */
+  /** Free live web-search via TinyFish (Search/Fetch free; Agent/Browser cost credits). */
   tinyfish: {
     apiKey: string;
     enabled: boolean;
     maxResults: number;
     timeoutMs: number;
   };
-  /** Which live web-search provider feeds the news/sentiment agents. */
-  newsSearchProvider: 'tavily' | 'tinyfish' | 'both' | 'none';
   /** Optional read-only Zerodha Kite MCP server (hosted or self-hosted). */
   mcp: {
     enabled: boolean;
@@ -73,6 +71,8 @@ export interface AppConfig {
     /** Dev: force the strategist to propose a trade for a symbol (test hook). */
     forceSignal: boolean;
     forceSignalSymbol: string;
+    /** Event-driven LLM trigger (breaking-news listener) — deferred, OFF by default. */
+    eventDrivenEnabled: boolean;
   };
   telegram: {
     botToken: string;
@@ -83,7 +83,23 @@ export interface AppConfig {
     availableCapital: number;
     maxDailyDrawdown: number;
     maxTradeAllocation: number;
+    /** Max % of available capital a single position may use (diversification). */
+    maxPositionWeightPct: number;
     autoTradeTicketThreshold: number;
+    /** Max % of total portfolio capital a single stock may use (single-stock cap). */
+    maxSingleStockPct: number;
+    /** Mandatory cash reserve % of total capital kept free for liquidity. */
+    minCashReservePct: number;
+    /** Single-trade risk cap: max % of total account balance at stop-loss. */
+    maxRiskPerTradePct: number;
+    /** Max % of total capital a single sector may use (diversification). */
+    maxSectorWeightPct: number;
+    /** Portfolio-level drawdown guard: halt trading if the book is down this % of capital. */
+    maxPortfolioDrawdownPct: number;
+    /** Monthly drawdown guard: halt trading for the month if monthly P&L is down this % of capital. */
+    maxMonthlyDrawdownPct: number;
+    /** Risk appetite guiding the LLM advisor + algo sizing. */
+    riskAppetite: 'conservative' | 'balanced' | 'aggressive';
   };
   costs: {
     slippageBps: number;
@@ -149,9 +165,26 @@ export interface AppConfig {
     holdingsProfitTargetPct: number;
     /** Holdings review: trim a position above this % of capital (rebalance). */
     holdingsTargetWeightPct: number;
+    /** Opening Range Breakout filter: gate entries on the first-N-min range. */
+    orbEnabled: boolean;
+    /** Length of the opening range window in minutes (15–30). */
+    orbMinutes: number;
+    /** Volume multiple required to confirm an ORB breakout. */
+    orbVolumeMultiplier: number;
+    /** Volatility-adjusted Kelly sizing (bounded by the hard risk caps). */
+    kellyEnabled: boolean;
+    /** Fractional-Kelly scale (0..1) — safer than full Kelly. */
+    kellyScale: number;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
+  /** End-of-day layer config (square-off, overnight matrix). */
+  eod: {
+    squareOffEnabled: boolean;
+    squareOffTime: string;
+    overnightGapRiskThresholdPct: number;
+    overnightEvents: Array<{ date: string; event: string }>;
+  };
 }
 
 function num(key: string, fallback: number): number {
@@ -173,12 +206,6 @@ function csv(value: string): string[] {
     .filter(Boolean);
 }
 
-/** Resolve the news search provider from env (tavily | tinyfish | both | none). */
-function resolveNewsProvider(): 'tavily' | 'tinyfish' | 'both' | 'none' {
-  const v = str('NEWS_SEARCH_PROVIDER', 'tavily').toLowerCase();
-  return v === 'tinyfish' || v === 'both' || v === 'none' ? v : 'tavily';
-}
-
 function loadWatchlist(dataDir: string): WatchSymbol[] {
   // Allow overriding the watchlist file (e.g. a volatile-symbols list).
   const custom = process.env.WATCHLIST_FILE;
@@ -194,6 +221,20 @@ function loadWatchlist(dataDir: string): WatchSymbol[] {
   }
 }
 
+/** Load upcoming overnight events from data/overnight_events.json (best-effort). */
+function loadOvernightEvents(dataDir: string): Array<{ date: string; event: string }> {
+  const file = path.join(dataDir, 'overnight_events.json');
+  try {
+    if (!fs.existsSync(file)) return [];
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
+    const events = parsed.events ?? [];
+    return events.filter((e: any) => e && typeof e.date === 'string' && typeof e.event === 'string');
+  } catch (err) {
+    logger.warn({ file, err }, 'Failed to read overnight events');
+    return [];
+  }
+}
+
 /**
  * Resolve the AI/LLM configuration from environment variables.
  *
@@ -204,6 +245,23 @@ function loadWatchlist(dataDir: string): WatchSymbol[] {
  * When provider=ollama the OpenAI-compatible endpoint defaults to
  * https://ollama.com/v1 and is fully configurable via OLLAMA_BASE_URL.
  */
+/**
+ * Resolve an ensemble model list from an env var, validating it is a subset of
+ * the provider's full model list. Entries not present in `models` are dropped.
+ * If nothing valid is configured, fall back to the first 3 of `models` (active
+ * model first). Always returns 1..3 models ⊆ models.
+ */
+function resolveEnsemble(models: string[], activeModel: string, envKey: string): string[] {
+  const want = csv(str(envKey));
+  const pool = new Set(models);
+  const valid = want.filter((m) => pool.has(m));
+  const base = valid.length > 0 ? valid : models;
+  const ordered = base.includes(activeModel)
+    ? [activeModel, ...base.filter((m) => m !== activeModel)]
+    : base;
+  return ordered.slice(0, 3);
+}
+
 function resolveLlm(): LlmConfig {
   const requested = str('LLM_PROVIDER').toLowerCase();
   const hasOllama =
@@ -224,9 +282,12 @@ function resolveLlm(): LlmConfig {
       baseUrl: '',
       apiKey: '',
       models: [],
+      ensembleModels: [],
+      fastEnsembleModels: [],
       activeModel: '',
       jsonMode: false,
       enabled: false,
+      timeoutMs: 60000,
     };
   }
 
@@ -242,10 +303,13 @@ function resolveLlm(): LlmConfig {
       baseUrl,
       apiKey,
       models,
+      ensembleModels: resolveEnsemble(models, activeModel, 'LLM_ENSEMBLE_MODELS'),
+      fastEnsembleModels: resolveEnsemble(models, activeModel, 'LLM_FAST_ENSEMBLE_MODELS'),
       activeModel,
       jsonMode:
         str('LLM_JSON_MODE') !== '' ? str('LLM_JSON_MODE') === 'true' : false,
       enabled: true,
+      timeoutMs: num('LLM_TIMEOUT_MS', 60000),
     };
   }
 
@@ -261,10 +325,13 @@ function resolveLlm(): LlmConfig {
     baseUrl,
     apiKey,
     models,
+    ensembleModels: resolveEnsemble(models, activeModel, 'LLM_ENSEMBLE_MODELS'),
+    fastEnsembleModels: resolveEnsemble(models, activeModel, 'LLM_FAST_ENSEMBLE_MODELS'),
     activeModel,
     jsonMode:
       str('LLM_JSON_MODE') !== '' ? str('LLM_JSON_MODE') === 'true' : true,
     enabled: true,
+    timeoutMs: num('LLM_TIMEOUT_MS', 60000),
   };
 }
 
@@ -279,19 +346,12 @@ export function loadConfig(): AppConfig {
       root: str('KITE_ROOT', 'https://api.kite.trade'),
     },
     llm: resolveLlm(),
-    tavily: {
-      apiKey: str('TAVILY_API_KEY'),
-      enabled: str('TAVILY_API_KEY').length > 0,
-      maxResults: num('TAVILY_MAX_RESULTS', 5),
-      searchDepth: str('TAVILY_SEARCH_DEPTH', 'basic') === 'advanced' ? 'advanced' : 'basic',
-    },
     tinyfish: {
       apiKey: str('TINYFISH_API_KEY'),
       enabled: str('TINYFISH_API_KEY').length > 0,
       maxResults: num('TINYFISH_MAX_RESULTS', 5),
       timeoutMs: num('TINYFISH_TIMEOUT_MS', 15000),
     },
-    newsSearchProvider: resolveNewsProvider(),
     mcp: {
       enabled: str('KITE_MCP_ENABLED') === 'true',
       url: str('KITE_MCP_URL', 'https://mcp.kite.trade/mcp'),
@@ -301,11 +361,12 @@ export function loadConfig(): AppConfig {
       enabled: str('AGENTS_ENABLED') === 'true',
       intervalMs: num('AGENTS_INTERVAL_MS', 10 * 60 * 1000),
       probePreOpen: str('AGENTS_PROBE_PRE_OPEN', '09:00'),
-      probeMidSession: str('AGENTS_PROBE_MID_SESSION', '12:00'),
-      probePreClose: str('AGENTS_PROBE_PRE_CLOSE', '15:00'),
+      probeMidSession: str('AGENTS_PROBE_MID_SESSION', '11:00'),
+      probePreClose: str('AGENTS_PROBE_PRE_CLOSE', '15:15'),
       probeAlways: str('AGENTS_PROBE_ALWAYS') === 'true',
       forceSignal: str('AGENTS_FORCE_SIGNAL') === 'true',
       forceSignalSymbol: str('AGENTS_FORCE_SIGNAL_SYMBOL', 'ITC'),
+      eventDrivenEnabled: str('AGENTS_EVENT_DRIVEN') === 'true',
     },
     telegram: {
       botToken: str('TELEGRAM_BOT_TOKEN'),
@@ -314,9 +375,20 @@ export function loadConfig(): AppConfig {
     },
     risk: {
       availableCapital: num('AVAILABLE_CAPITAL', 500000),
-      maxDailyDrawdown: num('MAX_DAILY_DRAWDOWN', 5000),
+      maxDailyDrawdown: num('MAX_DAILY_DRAWDOWN', 15000),
       maxTradeAllocation: num('MAX_TRADE_ALLOCATION', 20000),
+      maxPositionWeightPct: num('MAX_POSITION_WEIGHT_PCT', 20),
       autoTradeTicketThreshold: num('AUTO_TRADE_TICKET_THRESHOLD', 5000),
+      maxSingleStockPct: num('MAX_SINGLE_STOCK_PCT', 15),
+      minCashReservePct: num('MIN_CASH_RESERVE_PCT', 20),
+      maxRiskPerTradePct: num('MAX_RISK_PER_TRADE_PCT', 1.5),
+      maxSectorWeightPct: num('MAX_SECTOR_WEIGHT_PCT', 30),
+      maxPortfolioDrawdownPct: num('MAX_PORTFOLIO_DRAWDOWN_PCT', 10),
+      maxMonthlyDrawdownPct: num('MAX_MONTHLY_DRAWDOWN_PCT', 2),
+      riskAppetite: (() => {
+        const v = str('RISK_APPETITE', 'balanced').toLowerCase();
+        return v === 'conservative' || v === 'aggressive' ? v : 'balanced';
+      })(),
     },
     costs: {
       slippageBps: num('PAPER_SLIPPAGE_BPS', 2),
@@ -370,9 +442,20 @@ export function loadConfig(): AppConfig {
       bollingerRsiEntry: num('BOLLINGER_RSI_ENTRY', 30),
       holdingsProfitTargetPct: num('HOLDINGS_PROFIT_TARGET_PCT', 8),
       holdingsTargetWeightPct: num('HOLDINGS_TARGET_WEIGHT_PCT', 10),
+      orbEnabled: str('ORB_ENABLED') !== 'false',
+      orbMinutes: num('ORB_MINUTES', 15),
+      orbVolumeMultiplier: num('ORB_VOLUME_MULTIPLIER', 1.5),
+      kellyEnabled: str('KELLY_ENABLED') === 'true',
+      kellyScale: num('KELLY_SCALE', 0.5),
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,
+    eod: {
+      squareOffEnabled: str('EOD_SQUARE_OFF_ENABLED') !== 'false',
+      squareOffTime: str('EOD_SQUARE_OFF_TIME', '15:15'),
+      overnightGapRiskThresholdPct: num('EOD_OVERNIGHT_GAP_RISK_PCT', 2),
+      overnightEvents: loadOvernightEvents(dataDir),
+    },
   };
 
   // Telegram is enabled only when both token and chat id are present.

@@ -316,27 +316,25 @@ from the reply (including markdown fences).
 - Keep the LLM out of the live tick loop — it runs only on the async 10-min
   analysis cadence, so it never adds latency to trade execution.
 
-### 2.8 Tavily (live web search) — optional
+### 2.8 TinyFish (live web search) — free
 
-Tavily gives the AI **live web access** so sentiment isn't limited to the curated
-RSS feeds. It is **fully optional** — leave `TAVILY_API_KEY` empty to keep
-RSS-only with zero behavior change.
+TinyFish gives the AI **live web access** so sentiment isn't limited to Google
+News RSS. **Search and Fetch are always free** (no credits). Google News RSS is
+always on; TinyFish adds depth and date-scoped backfill.
 
 | Variable | Meaning | Default |
 | -------- | ------- | ------- |
-| `TAVILY_API_KEY` | Tavily key (free tier ~1000 credits/mo). Empty = disabled. | — |
-| `TAVILY_MAX_RESULTS` | Max results per search | `5` |
-| `TAVILY_SEARCH_DEPTH` | `basic` or `advanced` | `basic` |
+| `TINYFISH_API_KEY` | TinyFish key. Empty = TinyFish disabled (Google RSS only). | — |
+| `TINYFISH_MAX_RESULTS` | Max results per search | `5` |
+| `TINYFISH_TIMEOUT_MS` | HTTP timeout per TinyFish call | `15000` |
 
 **How it's used:**
-- **Sentiment (10-min loop):** `fetchArticles` merges **RSS + Tavily** headlines
-  before the LLM scores them — fresher, broader sentiment.
-- **Details (5-min loop):** `runTavilyDetailLoop` pulls deeper Tavily results
-  (with an AI answer) for each symbol and notifies.
-
-> ⚠️ **Credit budget:** the free tier is ~1000 credits/month. Each search costs
-> credits, so keep `TAVILY_MAX_RESULTS` modest and be mindful of the 5-min loop
-> across a large watchlist. Get a key at <https://tavily.com>.
+- **Sentiment (10-min loop):** `fetchArticles` merges **Google RSS + TinyFish**
+  headlines before the LLM scores them.
+- **Details (5-min loop):** `runNewsDetailLoop` pulls fresh TinyFish sources for
+  each symbol and notifies.
+- **Backfill:** `fetchArticlesForDate` searches TinyFish for a specific date when
+  the news corpus has a gap for that day.
 
 ---
 

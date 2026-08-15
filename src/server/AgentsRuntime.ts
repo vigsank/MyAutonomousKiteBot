@@ -4,6 +4,8 @@ import { Ledger } from "./Ledger";
 import { NewsSentimentEngine } from "./NewsSentimentEngine";
 import { RiskEngine } from "./RiskEngine";
 import { PaperTrader } from "./PaperTrader";
+import { DailyReportEngine } from "./DailyReportEngine";
+import { EodEngine } from "./EodEngine";
 import { logger } from "./Logger";
 import { scheduleLoop, ScheduleLoopHandle } from "../agents/orchestrator";
 import { runProbe, ProbeRunType } from "../agents/probe";
@@ -23,6 +25,8 @@ interface AgentsRuntimeOptions {
   news: NewsSentimentEngine;
   risk: RiskEngine;
   trader: PaperTrader;
+  report: DailyReportEngine;
+  eod: EodEngine;
   symbols: string[];
 }
 
@@ -189,6 +193,31 @@ export class AgentsRuntime {
       .catch((err: any) => {
         logger.error({ runType, err: err?.message }, "holdings review failed");
       });
+
+    // Daily report cycle (Reasoning Layer): one comprehensive report per window.
+    this.opts.report
+      .generate(runType, this.opts.symbols, new Date())
+      .then((report) => {
+        logger.info(
+          { runType, hasReport: !!report, summary: report?.summary },
+          "daily report complete",
+        );
+      })
+      .catch((err: any) => {
+        logger.error({ runType, err: err?.message }, "daily report failed");
+      });
+
+    // End-of-Day layer: square-off, performance logging, overnight matrix.
+    if (runType === "pre_close") {
+      const now = new Date();
+      const sq = this.opts.eod.squareOffIntraday(now);
+      this.opts.eod.logEodPerformance(now);
+      this.opts.eod.overnightMatrix(now);
+      logger.info(
+        { closed: sq.closed.length, skipped: sq.skipped.length },
+        "EOD square-off complete",
+      );
+    }
   }
 
   /** Dev helper: fire all three probe types once, regardless of IST time. */

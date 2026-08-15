@@ -1,84 +1,117 @@
 ## Executive Summary
-- [FAIL] The bot's daily drawdown calculation is blind to unrealized losses because it queries a `ticks` table that is never populated by the live tick loop, risking unbounded capital exposure.
-- [FAIL] The breakout strategy incorrectly excludes the most recent closed bar when calculating the prior high, causing it to miss or delay valid breakout signals.
-- [WARN] There is a critical mismatch between the stop-loss distance used for position sizing/R:R filtering and the actual stop-loss enforced by the `RiskEngine`, leading to undersized positions and inaccurate risk-reward calculations.
-- [WARN] The strategy calculates a target distance (`targetAtrMultiplier`) to validate the reward:risk ratio but never actually uses it as a take-profit exit, causing winning trades to give back profits.
-- [PASS] The core architecture, paper trading cost simulation, and risk gating (capital allocation, circuit breakers) are robust and well-structured.
+- [FAIL] **Volume Sensing is Broken:** `MarketAgent.ts` sums cumulative tick volume per bar, destroying volume confirmation and ORB validity.
+- [FAIL] **Mode-Specific Exits are Dead Code:** `checkExit` uses the static `cfg.mode` instead of the active regime-adaptive mode, disabling trailing stops and trend-break exits.
+- [FAIL] **ORB Range Leaks Across Days:** Opening range high/low are never reset daily, making breakout detection impossible after day 1.
+- [WARN] **Kelly Sizing Misapplied:** Kelly fraction is applied to notional deployment instead of risk budget, leading to incorrect position sizing.
+- [WARN] **Daily Metrics Incorrect:** `DailyReportEngine` calculates pivots and previous-day changes using raw intraday candles, feeding garbage data to the LLM.
 
 ## Strategy Grade Card
-
-| Dimension | Grade | Score (1-10) | Justification |
-| :--- | :---: | :---: | :--- |
-| Strategy Soundness | C | 5 | Core logic is standard, but lacks profit targets and has a breakout lookback bug. |
-| Market Sensing | D | 4 | Misreads breakout levels and is blind to live unrealized PnL for drawdown. |
-| Risk Management | C | 5 | Hard gates exist, but the stop distance mismatch and blind drawdown undermine safety. |
-| Execution | B | 8 | Paper trading simulation with slippage and costs is realistic and well-implemented. |
-| Profitability | D | 4 | Undersized positions and lack of profit-taking will severely drag down expectancy. |
+| Dimension | Grade | Score | Justification |
+|---|---|---|---|
+| Strategy Soundness | C | 5/10 | Good regime-adaptive framework, but Bollinger entries bypass key safety filters. |
+| Market Sensing | D | 4/10 | Volume sensing is broken; ORB range leaks across days; pivots use incomplete daily data. |
+| Reasoning Layer | B | 8/10 | Well-structured LLM prompt and JSON schema, but feeds it incorrect daily change/pivot data. |
+| Risk Management | A | 9/10 | Hard caps are robust and correctly enforced; Kelly sizing is mathematically flawed but safely capped. |
+| Execution | C | 5/10 | Synchronous execution is fine, but mode-specific exits are dead code. |
+| Profitability | D | 4/10 | Broken volume and exits will lead to false entries and missed trend exits, hurting expectancy. |
 
 ## Findings
 
 - **Severity:** CRITICAL
-- **File:** Ledger.ts:233
-- **Issue:** Unrealized PnL in drawdown calculation always returns 0 because the `ticks` table is never populated.
-- **Evidence:** `(SELECT last_price FROM ticks t WHERE t.instrument_id = p.instrument_id ORDER BY t.timestamp DESC LIMIT 1) AS last_price` ... `const last = p.last_price ?? p.avg_price;`
-- **Impact:** The bot thinks open positions have 0 unrealized loss. The daily drawdown limit (`maxDailyDrawdown`) will only trigger on *realized* losses, allowing massive open losses to accumulate without halting trading.
-- **Recommendation:** Update the `last_price` in the `instruments` table or a dedicated in-memory cache on every tick, and use that in `currentDrawdown`, or write ticks to the DB.
+  **File:** MarketAgent.ts: `accumulateBar`
+  **Issue:** Cumulative tick volume is summed per bar, destroying volume metrics.
+  **Evidence:** `bar.volume += volume;` (where `volume` is `tick.volume_traded`)
+  **Impact:** `hasVolumeConfirmation` uses these inflated, increasing values, making the volume filter useless. This allows low-volume fakeouts to trigger entries.
+  **Recommendation:** Replace with `bar.volume = volume;` (to capture the last cumulative volume of the bar) or calculate the delta from the previous bar's volume.
+
+- **Severity:** CRITICAL
+  **File:** MarketAgent.ts: `checkExit`
+  **Issue:** Mode-specific exits (trend break, trailing stop) are never triggered in regime-adaptive mode.
+  **Evidence:** `else if (cfg.mode === 'pullback_trend' ...)` and `else if (cfg.mode === 'breakout' ...)`
+  **Impact:** If `regimeAdaptive` is true (default), `cfg.mode` remains the static default (`mean_reversion`). Positions opened in `pullback_trend` or `breakout` modes will never trigger their specific exit logic, holding losing positions longer than intended.
+  **Recommendation:** Store the entry mode on the `Position` object (e.g., `position.entryMode`) and check that instead of `cfg.mode`.
+
+- **Severity:** CRITICAL
+  **File:** MarketAgent.ts: `updateOrb`
+  **Issue:** Opening range high/low are never reset at the start of a new day.
+  **Evidence:** `this.orbHigh.set(symbol, Math.max(high, price));` without any daily reset logic.
+  **Impact:** On day 2, the ORB range includes day 1's high/low, making the breakout threshold artificially high and unbreakable.
+  **Recommendation:** Add a daily reset: if `now` is a new day, clear `orbHigh`, `orbLow`, and `orbEstablished` for all symbols.
 
 - **Severity:** HIGH
-- **File:** MarketAgent.ts:318
-- **Issue:** Breakout high calculation incorrectly excludes the most recent closed bar.
-- **Evidence:** `const priorHigh = Math.max(...highs.slice(0, -1));`
-- **Impact:** The breakout level is based on N-1 bars instead of N. If the highest high in the lookback period occurred on the most recently closed bar, the bot will ignore it and set the breakout threshold artificially low, leading to false breakouts.
-- **Recommendation:** Change to `const priorHigh = Math.max(...highs);`. The current forming bar is not in the `highs` array yet, so no exclusion is needed.
+  **File:** MarketAgent.ts: `sizedQuantity`
+  **Issue:** Kelly criterion is applied to notional deployment instead of risk budget.
+  **Evidence:** `kellySized = Math.floor(kellyBudget / price);`
+  **Impact:** Kelly formula outputs the fraction of capital to *risk*, not to *deploy*. Using it as notional drastically undersizes positions for tight stops and oversizes for wide stops.
+  **Recommendation:** Change to `kellySized = Math.floor(kellyBudget / stopDist);` to size based on risk.
 
 - **Severity:** HIGH
-- **File:** MarketAgent.ts:410, RiskEngine.ts:73
-- **Issue:** Stop distance mismatch between sizing/R:R and actual execution.
-- **Evidence:** `MarketAgent.ts:410`: `return Math.max(atr * cfg.atrStopMultiplier, price * (cfg.stopLossPercent / 100) * 0.5);` vs `RiskEngine.ts:73`: `dist = Math.min(atrDist, maxDist);`
-- **Impact:** `MarketAgent` uses the *larger* of ATR stop and half the fixed stop, while `RiskEngine` enforces the *smaller* of ATR stop and the full fixed stop. This leads to undersized positions (lower profitability) and inaccurate R:R filtering (passing trades that don't actually meet the R:R criteria).
-- **Recommendation:** Unify the stop distance logic. Use `RiskEngine.stopLossPrice` logic for both sizing and R:R calculation.
+  **File:** DailyReportEngine.ts: `previousDayChange` & `pivotsFor`
+  **Issue:** Daily metrics are calculated from raw intraday candles without proper day aggregation.
+  **Evidence:** `ORDER BY c.timestamp DESC LIMIT 2` for previousDayChange; `dailyCandles(symbol, 1)` for pivots uses the current incomplete day.
+  **Impact:** The LLM is fed 1-minute price changes instead of previous-day changes, and pivots are calculated on incomplete OHLC, leading to hallucinated or incorrect advisory suggestions.
+  **Recommendation:** Aggregate intraday candles into daily OHLC *first*, then compute changes/pivots from completed daily bars.
+
+- **Severity:** HIGH
+  **File:** MarketAgent.ts: `checkEntry`
+  **Issue:** Bollinger band entries bypass ADX trend and volume confirmation filters.
+  **Evidence:** `if (!cfg.bollingerEntry && adx !== undefined ...)` and `if (!cfg.bollingerEntry && !this.hasVolumeConfirmation...)`
+  **Impact:** Mean-reversion buys in strong trends (catching falling knives) and on low volume, increasing false signals.
+  **Recommendation:** Apply a relaxed ADX filter (e.g., ADX < 30) and volume confirmation to Bollinger entries.
 
 - **Severity:** MEDIUM
-- **File:** MarketAgent.ts:355
-- **Issue:** Strategy calculates a target distance to validate R:R but never uses it as a take-profit exit.
-- **Evidence:** `const targetDist = atr * this.config.strategy.targetAtrMultiplier;` (used only for R:R check). In `checkExit`, only RSI >= 70 or stop loss triggers an exit.
-- **Impact:** Winning trades in mean-reversion or pullback modes may give back profits waiting for RSI to hit 70, significantly reducing the win rate and overall expectancy.
-- **Recommendation:** Add an ATR-based take-profit check in `checkExit` (e.g., `if (price >= position.avgPrice + targetDist) exitReason = 'Target hit'`).
+  **File:** MarketAgent.ts: `checkExit`
+  **Issue:** Breakeven stop is not persistent; it reverts to the original stop if price pulls back.
+  **Evidence:** `if (favorable >= atr * cfg.breakevenAtrMult) { effectiveStop = position.avgPrice; }` (no persistence)
+  **Impact:** A winner can turn into a loser if the price triggers breakeven, pulls back, and then hits the original stop.
+  **Recommendation:** Persist the breakeven state on the position (e.g., `position.breakevenTriggered = true`) so `effectiveStop` stays at `avgPrice`.
 
-- **Severity:** LOW
-- **File:** MarketAgent.ts:395
-- **Issue:** Volume confirmation uses lagging data.
-- **Evidence:** `const current = samples[samples.length - 1];`
-- **Impact:** `samples` is updated on bar finalization. `current` is the *previous* bar's volume, not the current forming bar. Breakout signals triggered during the current bar won't reflect current bar volume, causing delayed or missed entries.
-- **Recommendation:** Compare the current forming bar's accumulated volume (from `this.bars`) against the average, or accept the 1-bar lag as a design choice.
+- **Severity:** MEDIUM
+  **File:** MarketAgent.ts: `loadReportBias`
+  **Issue:** LLM report bias is loaded only once per runtime and never updated.
+  **Evidence:** `if (this.reportBiasLoaded) return;`
+  **Impact:** The 11:00 and 15:15 reports are ignored for entry vetoes; the bot is stuck with the 09:00 bias all day.
+  **Recommendation:** Check the report timestamp and reload if a newer report is available.
+
+- **Severity:** MEDIUM
+  **File:** MarketAgent.ts: `isTradingWindowOpen`
+  **Issue:** `skipFirstMinutes` is bypassed for all modes if ORB is enabled.
+  **Evidence:** `if (!cfg.orbEnabled && minutes < open + cfg.skipFirstMinutes) return false;`
+  **Impact:** Mean-reversion and pullback entries can trigger in the volatile opening minutes, which ORB is supposed to protect against.
+  **Recommendation:** Apply `skipFirstMinutes` to non-breakout modes regardless of `orbEnabled`.
 
 ## Market-Sensing Gaps
+- **Volume Sensing:** Completely broken due to summing cumulative tick volume. The bot is blind to volume confirmation.
+- **ORB Range:** Leaks across days, making breakout detection impossible after day 1.
+- **Daily Metrics:** Pivots and previous-day changes are calculated on intraday/incomplete data, feeding garbage to the LLM.
+- **Regime Classification:** The `volatile` threshold (`volRatio > 0.002`) is too sensitive, causing most stocks to be classified as volatile, defaulting to mean-reversion even in clear trends.
 
-1. **Blindness to Live Drawdown:** The bot's risk engine queries a database table for the latest tick price to calculate unrealized PnL, but the live tick processing loop (`onTicks`) never writes to this table. The bot is effectively sensing its open risk as zero until a position is closed.
-2. **Phantom Breakout Levels:** By slicing off the last element of the `highs` array, the bot misreads the current market structure. If a stock just made a 20-day high on the last closed bar, the bot will look at the 19 bars prior to that, setting an incorrect breakout threshold.
-3. **Inconsistent Volatility Sensing:** The bot senses volatility via ATR to size positions and check R:R, but it uses a different formula (`Math.max` with a halved fixed stop) than the risk engine (`Math.min` with the full fixed stop). The bot's "sense" of risk is disconnected from the actual risk enforced.
+## Reasoning Layer Review
+- **Prompt Quality:** Excellent. Clearly defines the LLM's role, provides deterministic capital and symbol context, and enforces a strict JSON schema.
+- **Advisory-Only:** Correctly clamps suggestions to available capital and relies on RiskEngine for final enforcement.
+- **Data Quality:** The major flaw is feeding incorrect `previousDayChange` and `pivots` to the LLM. If the input data is wrong, the LLM's advisory output will be wrong.
+
+## Execution Layer Review
+- **Indicator Math:** RSI, ADX, ATR, Bollinger are correctly computed on bar close.
+- **Kelly Sizing:** Mathematically misapplied (notional instead of risk).
+- **Exit Logic:** The biggest flaw is the dead code for mode-specific exits. The bot cannot properly manage pullback or breakout trades.
+
+## Risk & Capital Guardrails Review
+- **Hard Caps:** Single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, drawdown 10% are all correctly enforced in `RiskEngine.evaluate`.
+- **Position Sizing:** The risk-parity sizing (`budget / stopDist`) is correct and capped by `maxTradeAllocation`. The Kelly sizing is flawed but safely capped by the risk sizing.
 
 ## Profitability Improvement Plan
-
-1. **Fix Breakout High Calculation** (Expected Effect: Higher win rate on breakout mode)
-   - File: `MarketAgent.ts:318`
-   - Change `Math.max(...highs.slice(0, -1))` to `Math.max(...highs)`. This ensures the bot correctly identifies the true N-bar high.
-
-2. **Implement ATR-Based Profit Targets** (Expected Effect: Significantly higher expectancy and win rate)
-   - File: `MarketAgent.ts:355`
-   - In `checkExit`, add a condition: `const target = position.avgPrice + (atr * cfg.targetAtrMultiplier); if (price >= target) exitReason = 'Target hit';`. This locks in gains instead of waiting for RSI to reverse.
-
-3. **Unify Stop Distance Logic** (Expected Effect: Correct position sizing and accurate R:R filtering)
-   - File: `MarketAgent.ts:410`
-   - Replace the `stopDistance` method body to mirror `RiskEngine.stopLossPrice` logic: `const maxDist = price * (cfg.stopLossPercent / 100); const atrDist = (atr ?? 0) * cfg.atrStopMultiplier; return Math.min(atrDist, maxDist);`. This ensures the bot sizes positions based on the actual stop that will be enforced.
-
-4. **Fix Unrealized PnL Tracking for Drawdown** (Expected Effect: Prevent catastrophic capital loss)
-   - File: `Ledger.ts:233` / `MarketAgent.ts:120`
-   - In `MarketAgent.onTicks`, update the `last_price` of the instrument in the database or an in-memory cache that `Ledger.currentDrawdown` can access. This ensures the circuit breaker and daily drawdown limits actually function during open trades.
+1. **Fix Volume Calculation:** Change `bar.volume += volume` to `bar.volume = volume`. This instantly restores volume confirmation and ORB validity.
+2. **Fix Mode-Specific Exits:** Add `entryMode` to `Position` and use it in `checkExit` to enable trend-break and trailing stops.
+3. **Fix ORB Daily Reset:** Clear ORB state at the start of each day to ensure accurate breakout detection.
+4. **Fix Kelly Sizing:** Change `kellyBudget / price` to `kellyBudget / stopDist` to correctly size based on risk.
+5. **Fix Daily Metrics:** Aggregate intraday candles to daily OHLC before calculating pivots and previous-day change for the LLM.
+6. **Fix Breakeven Persistence:** Store breakeven state on the position to prevent winners from turning into losers.
+7. **Fix Report Bias Reload:** Check report timestamp to load the latest bias.
+8. **Apply Safety Filters to Bollinger:** Re-enable ADX and volume filters for Bollinger entries to avoid catching falling knives.
 
 ## Positive Observations
-
-- The paper trading engine (`PaperTrader.ts`) realistically simulates adverse slippage and NSE-style brokerage/statutory charges, preventing the overly optimistic P&L common in paper bots.
-- The `RiskEngine` acts as an immutable hard gate that the AI/strategy cannot override, which is a best practice for autonomous trading systems.
-- The architecture cleanly separates historical data providers (Yahoo, OpenBB) from the live data provider (Kite), making the bot highly testable.
-- The inclusion of a circuit breaker that halts trading after N consecutive trades within a window is a strong defense against algorithmic runaway loops.
+- The division of responsibility between LLM (advisory) and RiskEngine (hard gate) is architecturally sound.
+- The regime-adaptive mode selection is a sophisticated approach to multi-regime trading.
+- The hard risk caps (single-stock, sector, drawdown, risk-at-stop) are robust and well-implemented.
+- The JSON schema validation and ensemble merging for LLM reports are resilient.

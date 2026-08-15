@@ -27,7 +27,7 @@ built to be validated on paper before any real money is involved.
 - 🎯 **Trade-quality gates:** optional **regime gating** (trade only in a
   compatible market regime), **evidence-based signal confidence** floor, and a
   **minimum reward:risk** (target vs stop) requirement.
-- 🧠 **AI/LLM:** news sentiment every 10 min (RSS-first + optional Tavily), plus
+- 🧠 **AI/LLM:** news sentiment every 10 min (Google News RSS + free TinyFish web search), plus
   a **final analyst verdict** (AGREE/CAUTION/AVOID + risk score) on candidate
   trades — always subordinate to the immutable `RiskEngine`.
 - 💰 **Realistic paper fills:** adverse **slippage** + NSE-style **brokerage /

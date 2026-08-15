@@ -52,9 +52,9 @@ simulations before ever considering real money.
 - **Cooldown**: minimum time between trades (immutable gate).
 
 ### 2.3 AI / sentiment
-- **RSS-first news** from curated Indian financial feeds.
-- **Tavily live web search** (optional): adds fresh, off-feed headlines and a
-  5-min detail loop with an AI answer.
+- **Google News RSS** — always-on, keyless headline source.
+- **TinyFish web search** (free Search/Fetch): adds fresh, off-feed headlines, a
+  5-min detail loop, and date-scoped backfill for missing historical news.
 - **LLM scoring** (OpenAI or Ollama Cloud) turns headlines into a structured
   sentiment score (`-1` bearish … `+1` bullish).
 - Sentiment is used as a **confirmation filter** (avoid entries into strongly

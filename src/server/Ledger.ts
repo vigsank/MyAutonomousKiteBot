@@ -176,21 +176,23 @@ export class Ledger {
       this.db
         .prepare(
           `UPDATE positions SET quantity=@qty, avg_price=@avg, direction=@dir,
-            entry_time=@entry WHERE position_id=@id`,
+            entry_time=@entry, product=@product, entry_mode=@entryMode WHERE position_id=@id`,
         )
         .run({
           qty: p.quantity,
           avg: p.avgPrice,
           dir: p.direction,
           entry: p.entryTime.toISOString(),
+          product: p.product ?? 'CNC',
+          entryMode: p.entryMode ?? null,
           id: existing.position_id,
         });
     } else {
       this.db
         .prepare(
           `INSERT INTO positions
-             (instrument_id, quantity, avg_price, direction, entry_time, status)
-           VALUES (@instId, @qty, @avg, @dir, @entry, 'OPEN')`,
+             (instrument_id, quantity, avg_price, direction, entry_time, status, product, entry_mode)
+           VALUES (@instId, @qty, @avg, @dir, @entry, 'OPEN', @product, @entryMode)`,
         )
         .run({
           instId,
@@ -198,6 +200,8 @@ export class Ledger {
           avg: p.avgPrice,
           dir: p.direction,
           entry: p.entryTime.toISOString(),
+          product: p.product ?? 'CNC',
+          entryMode: p.entryMode ?? null,
         });
     }
   }
@@ -239,6 +243,8 @@ export class Ledger {
       avgPrice: row.avg_price,
       entryTime: new Date(row.entry_time),
       direction: row.direction,
+      product: row.product ?? 'CNC',
+      entryMode: row.entry_mode ?? undefined,
     };
   }
 
@@ -258,6 +264,8 @@ export class Ledger {
       avgPrice: r.avg_price,
       entryTime: new Date(r.entry_time),
       direction: r.direction,
+      product: r.product ?? 'CNC',
+      entryMode: r.entry_mode ?? undefined,
     }));
   }
 
@@ -369,6 +377,41 @@ export class Ledger {
       )
       .all() as Array<{ quantity: number; avg_price: number }>;
     return rows.reduce((sum, r) => sum + r.quantity * r.avg_price, 0);
+  }
+
+  /** Cumulative realized PnL across all closed trades (portfolio drawdown). */
+  cumulativeRealizedPnl(): number {
+    const row = this.db
+      .prepare(
+        `SELECT COALESCE(SUM(pnl), 0) AS pnl FROM trades WHERE status = 'FILLED'`,
+      )
+      .get() as { pnl: number };
+    return row.pnl;
+  }
+
+  /** Realized PnL since the 1st of the current month (monthly drawdown guard). */
+  monthlyRealizedPnl(): number {
+    const today = todayIST(); // YYYY-MM-DD
+    const monthStart = new Date(`${today.slice(0, 7)}-01T00:00:00+05:30`).toISOString();
+    const row = this.db
+      .prepare(
+        `SELECT COALESCE(SUM(pnl), 0) AS pnl FROM trades
+          WHERE status = 'FILLED' AND created_at >= ?`,
+      )
+      .get(monthStart) as { pnl: number };
+    return row.pnl;
+  }
+
+  /** Capital reserved by pending (unfilled) orders. */
+  pendingOrders(): number {
+    const row = this.db
+      .prepare(
+        `SELECT COALESCE(SUM(ticket_size), 0) AS pending
+           FROM orders
+          WHERE status = 'PENDING'`,
+      )
+      .get() as { pending: number };
+    return row.pending;
   }
 
   lastTradeTime(): Date | null {
@@ -529,6 +572,86 @@ export class Ledger {
         winRate,
         maxDd,
       );
+  }
+
+  /* ================================================================ */
+  /* End-of-day layer (square-off, performance, overnight matrix)      */
+  /* ================================================================ */
+
+  /** Today's realized PnL + trade stats (for EOD performance logging). */
+  eodStats(): {
+    realizedPnl: number;
+    totalTrades: number;
+    winning: number;
+    losing: number;
+    winRate: number;
+  } {
+    const today = todayIST();
+    const startUTC = new Date(`${today}T00:00:00+05:30`).toISOString();
+    const rows = this.db
+      .prepare(
+        `SELECT pnl FROM trades WHERE status = 'FILLED' AND created_at >= ?`,
+      )
+      .all(startUTC) as Array<{ pnl: number | null }>;
+    let realizedPnl = 0;
+    let winning = 0;
+    let losing = 0;
+    for (const r of rows) {
+      const p = r.pnl ?? 0;
+      realizedPnl += p;
+      if (p > 0) winning++;
+      else if (p < 0) losing++;
+    }
+    const totalTrades = rows.length;
+    return { realizedPnl, totalTrades, winning, losing, winRate: totalTrades ? winning / totalTrades : 0 };
+  }
+
+  /** Persist an EOD performance record. */
+  recordEodPerformance(p: {
+    reportDate: string;
+    realizedPnl: number;
+    totalTrades: number;
+    winning: number;
+    losing: number;
+    winRate: number;
+    slippageTotal: number;
+    executionAccuracy: number;
+    summary: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO eod_performance
+           (report_date, realized_pnl, total_trades, winning_trades, losing_trades,
+            win_rate, slippage_total, execution_accuracy, summary)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        p.reportDate,
+        p.realizedPnl,
+        p.totalTrades,
+        p.winning,
+        p.losing,
+        p.winRate,
+        p.slippageTotal,
+        p.executionAccuracy,
+        p.summary,
+      );
+  }
+
+  /** Persist one row of the overnight holding matrix. */
+  recordOvernightMatrix(m: {
+    reportDate: string;
+    symbol: string;
+    gapRiskPct: number | null;
+    flagged: boolean;
+    events: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO overnight_matrix (report_date, symbol, gap_risk_pct, flagged, events)
+         VALUES (?, ?, ?, ?, ?)`,
+      )
+      .run(m.reportDate, m.symbol, m.gapRiskPct, m.flagged ? 1 : 0, m.events);
   }
 
   /* ================================================================ */
@@ -896,6 +1019,73 @@ export class Ledger {
            FROM probe_runs WHERE symbol = ? ORDER BY run_at DESC LIMIT ?`,
       )
       .all(symbol, limit) as any[];
+  }
+
+  /* ---- daily report cycle (Reasoning Layer) ---- */
+
+  /** Persist a 3-stage daily report (pre-open / mid-session / pre-close). */
+  recordDailyReport(r: {
+    reportType: 'pre_open' | 'mid_session' | 'pre_close';
+    reportDate: string;
+    reportJson: string;
+    summary?: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO daily_reports (report_type, report_date, report_json, summary)
+         VALUES (?, ?, ?, ?)`,
+      )
+      .run(r.reportType, r.reportDate, r.reportJson, r.summary ?? null);
+  }
+
+  /** Read the latest daily reports, optionally filtered by type. */
+  getDailyReports(
+    reportType?: 'pre_open' | 'mid_session' | 'pre_close',
+    limit = 20,
+  ): Array<{
+    reportId: number;
+    reportType: string;
+    reportDate: string;
+    reportJson: string;
+    summary: string | null;
+    createdAt: string;
+  }> {
+    if (reportType) {
+      return this.db
+        .prepare(
+          `SELECT report_id AS reportId, report_type AS reportType,
+                  report_date AS reportDate, report_json AS reportJson,
+                  summary, created_at AS createdAt
+             FROM daily_reports WHERE report_type = ?
+             ORDER BY created_at DESC LIMIT ?`,
+        )
+        .all(reportType, limit) as any[];
+    }
+    return this.db
+      .prepare(
+        `SELECT report_id AS reportId, report_type AS reportType,
+                report_date AS reportDate, report_json AS reportJson,
+                summary, created_at AS createdAt
+           FROM daily_reports ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
+  /** The most recent daily report (any stage), or null. */
+  getLatestReport(): {
+    reportType: string;
+    reportDate: string;
+    reportJson: string;
+    createdAt: string;
+  } | null {
+    const row = this.db
+      .prepare(
+        `SELECT report_type AS reportType, report_date AS reportDate,
+                report_json AS reportJson, created_at AS createdAt
+           FROM daily_reports ORDER BY created_at DESC LIMIT 1`,
+      )
+      .get() as any;
+    return row ?? null;
   }
 
   /** Record that a (symbol, date) news gap was backfilled. */

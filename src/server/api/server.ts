@@ -115,6 +115,19 @@ export function startUiServer(
     res.json({ signals: queries.agentSignals(symbol || undefined, limit) });
   });
 
+  app.get('/api/fleet/reports', (req, res) => {
+    const reportType = String(req.query.type ?? '');
+    const limit = Number(req.query.limit ?? 20);
+    res.json({ reports: queries.dailyReports(reportType || undefined, limit) });
+  });
+
+  app.get('/api/eod/performance', (_req, res) => {
+    res.json({ performance: queries.eodPerformance() });
+  });
+  app.get('/api/eod/overnight-matrix', (_req, res) => {
+    res.json({ matrix: queries.overnightMatrix() });
+  });
+
   app.get('/api/healthz', (_req, res) => res.json({ ok: true }));
 
   /* ------------------- Static client (built) -------------------------- */

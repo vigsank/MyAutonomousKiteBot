@@ -1,5 +1,5 @@
 /**
- * Test the live AI pipeline: Ollama LLM + Tavily search + RSS sentiment.
+ * Test the live AI pipeline: Ollama LLM + TinyFish search + Google-RSS sentiment.
  * Usage: npx ts-node test/backtest/test_live_pipeline.ts
  */
 import { loadConfig } from '../../src/server/AppConfig';
@@ -12,7 +12,7 @@ async function main() {
   console.log('=== CONFIG ===');
   console.log(`LLM provider: ${config.llm.provider} | model: ${config.llm.activeModel}`);
   console.log(`LLM configured: ${config.llm.enabled}`);
-  console.log(`Tavily configured: ${config.tavily.enabled}`);
+  console.log(`TinyFish configured: ${config.tinyfish.enabled}`);
   console.log(`Backtest provider: ${process.env.BACKTEST_PROVIDER || 'yahoo'}`);
 
   const llm = new LlmManager(config.llm);
@@ -30,20 +30,20 @@ async function main() {
 
   const news = new NewsSentimentEngine(config, llm, ledger);
 
-  // 2. Test Tavily search.
-  console.log('\n=== 2. TAVILY SEARCH TEST ===');
+  // 2. Test TinyFish search.
+  console.log('\n=== 2. TINYFISH SEARCH TEST ===');
   try {
-    const articles = await news.fetchTavilyArticles('INFY');
-    console.log(`Tavily returned ${articles.length} articles for INFY:`);
+    const articles = await news.fetchTinyFishArticles('INFY');
+    console.log(`TinyFish returned ${articles.length} articles for INFY:`);
     for (const a of articles.slice(0, 3)) {
       console.log(`  - ${a.title} (${a.source})`);
     }
   } catch (e: any) {
-    console.error('Tavily FAILED:', e?.message ?? e);
+    console.error('TinyFish FAILED:', e?.message ?? e);
   }
 
-  // 3. Test full sentiment (RSS + Tavily + Ollama).
-  console.log('\n=== 3. FULL SENTIMENT (RSS + Tavily + Ollama) ===');
+  // 3. Test full sentiment (Google RSS + TinyFish + Ollama).
+  console.log('\n=== 3. FULL SENTIMENT (Google RSS + TinyFish + Ollama) ===');
   try {
     const res = await news.sentimentFor('INFY');
     console.log(`Symbol: ${res?.symbol}`);

@@ -14,8 +14,10 @@ import { startUiServer } from './api/server';
 import { logger } from './Logger';
 import { Tick } from './types';
 import { AgentsRuntime } from './AgentsRuntime';
+import { DailyReportEngine } from './DailyReportEngine';
+import { EodEngine } from './EodEngine';
 
-const NEWS_LOOP_MS = 10 * 60 * 1000;
+const NEWS_LOOP_MS = Number(process.env.NEWS_LOOP_MS) || 30 * 60 * 1000;
 
 /**
  * Main entrypoint. Wires all components together and starts the two loops.
@@ -76,6 +78,8 @@ async function main(): Promise<void> {
   const news = new NewsSentimentEngine(config, llm, ledger);
   const options = new OptionsEngine(config);
   const optionsTrader = new OptionsTrader(config, options, ledger, risk);
+  const report = new DailyReportEngine(config, ledger, news, risk, llm);
+  const eod = new EodEngine(config, ledger, risk, trader, news);
 
   // --- Strategy brain ------------------------------------------------------
   const agent = new MarketAgent(
@@ -178,13 +182,13 @@ async function main(): Promise<void> {
   // Kick off the first news pass after a short delay.
   setTimeout(() => agent.runNewsLoop().catch(() => undefined), 30_000);
 
-  // --- Tavily detail loop (5 min) ------------------------------------------
-  const TAVILY_LOOP_MS = 5 * 60 * 1000;
-  const tavilyTimer = setInterval(() => {
-    agent.runTavilyDetailLoop().catch((err) => {
-      logger.error({ err: err?.message }, 'Tavily loop error');
+  // --- TinyFish news detail loop (5 min) -----------------------------------
+  const NEWS_DETAIL_LOOP_MS = 5 * 60 * 1000;
+  const newsDetailTimer = setInterval(() => {
+    agent.runNewsDetailLoop().catch((err) => {
+      logger.error({ err: err?.message }, 'News detail loop error');
     });
-  }, TAVILY_LOOP_MS);
+  }, NEWS_DETAIL_LOOP_MS);
 
   // --- Shutdown handling ---------------------------------------------------
   let shuttingDown = false;
@@ -195,7 +199,7 @@ async function main(): Promise<void> {
 
     clearInterval(healthTimer);
     clearInterval(newsTimer);
-    clearInterval(tavilyTimer);
+    clearInterval(newsDetailTimer);
 
     // Compute and persist the daily summary.
     try {
@@ -225,7 +229,7 @@ async function main(): Promise<void> {
 
   // --- Agent runtime (probe schedule + cadence) ----------------------------
   const agentsRuntime = new AgentsRuntime({
-    config, ledger, news, risk, trader,
+    config, ledger, news, risk, trader, report, eod,
     symbols: config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol),
   });
   try {

@@ -133,7 +133,7 @@ export function buildDomainAgents(): AgentDef[] {
             articles = await withTimeout(
               (async () => {
                 let found = await ctx.news.fetchTinyFishArticles(symbol);
-                if (found.length === 0 && !ctx.news.tavilyConfigured) {
+                if (found.length === 0) {
                   found = await ctx.news.fetchGoogleNewsArticles(symbol);
                 }
                 return found;
