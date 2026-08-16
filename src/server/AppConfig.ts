@@ -18,8 +18,8 @@ dotenv.config({ path: envFile });
  * degraded "dry" mode even before credentials are configured.
  */
 
-/** Supported LLM providers. Both expose an OpenAI-compatible API. */
-export type LlmProvider = 'openai' | 'ollama' | 'none';
+/** Supported LLM providers. All expose an OpenAI-compatible API. */
+export type LlmProvider = 'openai' | 'ollama' | 'litellm' | 'none';
 
 /** Configuration for the AI/LLM layer used for sentiment analysis. */
 export interface LlmConfig {
@@ -239,11 +239,13 @@ function loadOvernightEvents(dataDir: string): Array<{ date: string; event: stri
  * Resolve the AI/LLM configuration from environment variables.
  *
  * Provider selection:
- *   - LLM_PROVIDER=ollama | openai  -> explicit
- *   - LLM_PROVIDER unset            -> auto-detect from which keys exist
+ *   - LLM_PROVIDER=ollama    -> Ollama Cloud (OLLAMA_* vars)
+ *   - LLM_PROVIDER=litellm  -> LiteLLM proxy / SAP AI Core (LITELLM_* vars)
+ *   - LLM_PROVIDER=openai   -> OpenAI direct (OPENAI_* vars)
+ *   - LLM_PROVIDER unset    -> auto-detect from which keys are present
  *
- * When provider=ollama the OpenAI-compatible endpoint defaults to
- * https://ollama.com/v1 and is fully configurable via OLLAMA_BASE_URL.
+ * Setting LLM_PROVIDER=litellm fully disables the Ollama path and routes
+ * all LLM calls through the LiteLLM endpoint — no automatic fallback.
  */
 /**
  * Resolve an ensemble model list from an env var, validating it is a subset of
@@ -270,10 +272,15 @@ function resolveLlm(): LlmConfig {
     str('OLLAMA_MODEL').length > 0;
   const hasOpenai = str('OPENAI_API_KEY').length > 0;
 
+  const hasLitellm =
+    str('LITELLM_BASE_URL').length > 0 && str('LITELLM_API_KEY').length > 0;
+
   let provider: LlmProvider = 'none';
   if (requested === 'openai') provider = 'openai';
   else if (requested === 'ollama') provider = 'ollama';
+  else if (requested === 'litellm') provider = 'litellm';
   else if (hasOllama) provider = 'ollama';
+  else if (hasLitellm) provider = 'litellm';
   else if (hasOpenai) provider = 'openai';
 
   if (provider === 'none') {
@@ -313,6 +320,27 @@ function resolveLlm(): LlmConfig {
     };
   }
 
+  if (provider === 'litellm') {
+    const baseUrl = str('LITELLM_BASE_URL');
+    const apiKey = str('LITELLM_API_KEY');
+    let models = csv(str('LITELLM_MODELS'));
+    const activeModel = str('LITELLM_MODEL', models[0] ?? 'anthropic--claude-sonnet-latest');
+    if (models.length === 0) models = [activeModel];
+    if (!models.includes(activeModel)) models = [activeModel, ...models];
+    return {
+      provider,
+      baseUrl,
+      apiKey,
+      models,
+      ensembleModels: resolveEnsemble(models, activeModel, 'LITELLM_ENSEMBLE_MODELS'),
+      fastEnsembleModels: resolveEnsemble(models, activeModel, 'LITELLM_FAST_ENSEMBLE_MODELS'),
+      activeModel,
+      jsonMode: str('LLM_JSON_MODE') !== '' ? str('LLM_JSON_MODE') === 'true' : true,
+      enabled: true,
+      timeoutMs: num('LLM_TIMEOUT_MS', 60000),
+    };
+  }
+
   // provider === 'openai'
   const baseUrl = str('OPENAI_BASE_URL', 'https://api.openai.com/v1');
   const apiKey = str('OPENAI_API_KEY');
@@ -328,8 +356,7 @@ function resolveLlm(): LlmConfig {
     ensembleModels: resolveEnsemble(models, activeModel, 'LLM_ENSEMBLE_MODELS'),
     fastEnsembleModels: resolveEnsemble(models, activeModel, 'LLM_FAST_ENSEMBLE_MODELS'),
     activeModel,
-    jsonMode:
-      str('LLM_JSON_MODE') !== '' ? str('LLM_JSON_MODE') === 'true' : true,
+    jsonMode: str('LLM_JSON_MODE') !== '' ? str('LLM_JSON_MODE') === 'true' : true,
     enabled: true,
     timeoutMs: num('LLM_TIMEOUT_MS', 60000),
   };

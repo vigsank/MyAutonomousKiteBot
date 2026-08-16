@@ -41,7 +41,7 @@ git-ignored.
 | `LIVE_PROVIDER` | Real-time source: `kite` | `kite` |
 | `OPENBB_BASE_URL` | OpenBB local REST API base (when `BACKTEST_PROVIDER=openbb`) | `http://127.0.0.1:6900` |
 | `LOG_LEVEL` | Pino log level: trace/debug/info/warn/error/fatal | `info` |
-| `LLM_PROVIDER` | LLM provider: `openai` or `ollama` (auto-detect if unset) | `auto` |
+| `LLM_PROVIDER` | LLM provider: `ollama`, `litellm`, or `openai` (auto-detect if unset) | `auto` |
 | `OLLAMA_API_KEY` | Ollama Cloud API key | — |
 | `OLLAMA_BASE_URL` | Ollama OpenAI-compatible endpoint | `https://ollama.com/v1` |
 | `OLLAMA_MODEL` | Active Ollama model | `llama3.3` |
@@ -213,11 +213,15 @@ provider-agnostic: you only change the **base URL**, **API key**, and **model**.
 Set `LLM_PROVIDER` explicitly, or let the bot auto-detect:
 
 ```dotenv
-LLM_PROVIDER=ollama   # or: openai
+# ollama  -> Ollama Cloud (default); LiteLLM acts as fallback on 429/quota
+# litellm -> LiteLLM is the sole provider; Ollama is not used at all
+# openai  -> OpenAI direct; no fallback
+LLM_PROVIDER=ollama
 ```
 
 If `LLM_PROVIDER` is unset, the bot auto-detects: if any `OLLAMA_*` variable is
-set it picks `ollama`; otherwise if `OPENAI_API_KEY` is set it picks `openai`.
+set it picks `ollama`; if `LITELLM_BASE_URL` + `LITELLM_API_KEY` are set it
+picks `litellm`; otherwise if `OPENAI_API_KEY` is set it picks `openai`.
 
 ### 2.2 Option A — Ollama Cloud (recommended)
 
@@ -254,7 +258,31 @@ OLLAMA_MODELS=llama3.3,qwen2.5,mistral,gemma3
 > `OLLAMA_BASE_URL=http://localhost:11434/v1` and you can use a dummy
 > `OLLAMA_API_KEY` (e.g. `ollama`).
 
-### 2.3 Option B — OpenAI
+### 2.3 Option B — LiteLLM (SAP AI Core / any OpenAI-compatible proxy)
+
+LiteLLM is a proxy that fronts multiple LLM providers under one OpenAI-compatible
+endpoint. Use this when you have a corporate LiteLLM deployment (e.g. SAP AI Core)
+or want to route through a self-hosted gateway.
+
+**Two modes:**
+
+| Mode | When to use |
+|------|-------------|
+| `LLM_PROVIDER=litellm` | LiteLLM is your **only** provider — Ollama is not used at all. Fail hard if LiteLLM is unreachable. |
+| `LLM_PROVIDER=ollama` + LiteLLM vars set | Ollama is primary; LiteLLM activates **automatically** as a fallback on 429 / quota errors. |
+
+```dotenv
+# Sole provider
+LLM_PROVIDER=litellm
+LITELLM_BASE_URL=http://localhost:6655/litellm/v1
+LITELLM_API_KEY=your_litellm_key
+LITELLM_MODEL=anthropic--claude-sonnet-latest
+LITELLM_MODELS=anthropic--claude-sonnet-latest,gemini-2.5-pro,gpt-5.5
+LITELLM_ENSEMBLE_MODELS=anthropic--claude-sonnet-latest,gemini-2.5-pro,gpt-5.5
+LITELLM_FAST_ENSEMBLE_MODELS=anthropic--claude-haiku-latest,anthropic--claude-sonnet-latest
+```
+
+### 2.4 Option C — OpenAI
 
 1. Go to **<https://platform.openai.com/api-keys>**.
 2. Create a key (e.g. `sk-...`).
@@ -267,11 +295,11 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_MODELS=gpt-4o-mini,gpt-4o
 ```
 
-### 2.4 Switching models
+### 2.5 Switching models
 
 There are **two ways** to switch models:
 
-- **At startup (static):** set `OLLAMA_MODEL` / `OPENAI_MODEL` and restart.
+- **At startup (static):** set `OLLAMA_MODEL` / `LITELLM_MODEL` / `OPENAI_MODEL` and restart.
 - **Live via Telegram (no restart):**
   - `/models` — list all available models and highlight the active one.
   - `/model <name>` — switch the active model immediately, e.g. `/model qwen2.5`.
@@ -279,9 +307,9 @@ There are **two ways** to switch models:
     reply, so you can sanity-check any model before letting it score sentiment.
 
 > Model switches are **in-memory** — they last until the bot restarts. To make a
-> switch permanent, update `OLLAMA_MODEL` / `OPENAI_MODEL` in `.env`.
+> switch permanent, update `OLLAMA_MODEL` / `LITELLM_MODEL` / `OPENAI_MODEL` in `.env`.
 
-### 2.5 How sentiment is computed
+### 2.6 How sentiment is computed
 
 1. **RSS-first** — the bot pulls recent headlines for each watchlist symbol from
    curated Indian financial feeds (see next section). No API keys, deterministic.
@@ -297,7 +325,7 @@ There are **two ways** to switch models:
 The score is cached per symbol and refreshed on a **10-minute cadence**
 (`NEWS_INTERVAL_MS` in `src/server/MarketAgent.ts`).
 
-### 2.6 JSON mode (`LLM_JSON_MODE`)
+### 2.7 JSON mode (`LLM_JSON_MODE`)
 
 The bot asks for strict JSON using the `response_format` parameter. OpenAI and
 most cloud models support it. **Some Ollama models reject `response_format`** —
@@ -307,7 +335,7 @@ from the reply (including markdown fences).
 - OpenAI defaults to `jsonMode = true`; Ollama defaults to `false`.
 - Force either way with `LLM_JSON_MODE=true` / `LLM_JSON_MODE=false`.
 
-### 2.7 Cost / privacy notes
+### 2.8 Cost / privacy notes
 
 - Each 10-min cycle sends ~1 short prompt per watchlist symbol. With a small
   watchlist this is cheap on either provider.
