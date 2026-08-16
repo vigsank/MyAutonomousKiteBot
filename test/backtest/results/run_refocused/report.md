@@ -1,0 +1,3316 @@
+# Mock-Data Backtest — 10 Cases (run_refocused, 1x capital, Re-focused Strategy, real NSE data)
+
+> Tiers: **all** · Ensemble mode: **fast** · Strategy: regime-adaptive (mean-reversion / pullback / breakout) with re-focused risk caps (single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, drawdown). Paper-only, net of costs. 5-min bars from real historical CSVs.
+
+## Summary
+
+| Case | Holdings | New Cap | Total Cap | Picks | Days | Rebal | Trades | Win% | PF | Net P&L | Return | MaxDD | Final |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| case1 | 0 | ₹20,000 | ₹20,000 | 20 | 30 | 1d | 42 | 38.1% | 0.18 | ₹-397 | -1.99% | ₹417 (2.1%) | ₹19,603 |
+| case2 | 2 | ₹20,000 | ₹35,000 | 18 | 30 | 1d | 46 | 32.6% | 0.24 | ₹-551 | -1.57% | ₹568 (1.6%) | ₹34,449 |
+| case3 | 10 | ₹30,000 | ₹90,000 | 10 | 30 | 1d | 46 | 34.8% | 0.77 | ₹-265 | -0.29% | ₹630 (0.7%) | ₹89,735 |
+| case4 | 0 | ₹10,000 | ₹10,000 | 10 | 30 | 1d | 29 | 51.7% | 0.53 | ₹-44 | -0.44% | ₹71 (0.7%) | ₹9,956 |
+| case5 | 1 | ₹10,000 | ₹40,000 | 5 | 30 | 1d | 1 | 100.0% | inf | ₹3,005 | 7.51% | ₹0 (0.0%) | ₹43,005 |
+| case6 | 5 | ₹50,000 | ₹1,00,000 | 15 | 30 | 1d | 49 | 42.9% | 0.46 | ₹-1,327 | -1.33% | ₹1,636 (1.6%) | ₹98,673 |
+| case7 | 20 | ₹1,00,000 | ₹3,00,000 | 20 | 30 | 1d | 71 | 40.8% | 0.50 | ₹-3,772 | -1.26% | ₹4,783 (1.6%) | ₹2,96,228 |
+| case8 | 0 | ₹50,000 | ₹50,000 | 20 | 60 | 1d | 62 | 29.0% | 0.31 | ₹-779 | -1.56% | ₹889 (1.8%) | ₹49,221 |
+| case9 | 10 | ₹30,000 | ₹90,000 | 10 | 30 | 5d | 46 | 30.4% | 0.72 | ₹-512 | -0.57% | ₹977 (1.1%) | ₹89,488 |
+| case10 | 0 | ₹5,00,000 | ₹5,00,000 | 40 | 30 | 1d | 68 | 27.9% | 0.40 | ₹-8,563 | -1.71% | ₹9,188 (1.8%) | ₹4,91,437 |
+
+## case1
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹20,000 new capital = **₹20,000** total. Picked 20 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** CONCOR, INDHOTEL, PFC, IOC, DELHIVERY, BANDHANBNK, TATAMOTORS, NMDC, IRB
+- **Result:** 42 round trips, win rate 38.1%, profit factor 0.18, net P&L **₹-397** (-1.99%), max drawdown ₹417 (2.1%), final equity **₹19,603**.
+
+| Symbol | P&L |
+|---|---|
+| DELHIVERY | ₹32 |
+| NMDC | ₹5 |
+| BANDHANBNK | ₹-4 |
+| IOC | ₹-15 |
+| INDHOTEL | ₹-23 |
+| IRB | ₹-52 |
+| CONCOR | ₹-85 |
+| TATAMOTORS | ₹-102 |
+| PFC | ₹-153 |
+
+**Top trades:**
+- PFC SHORT 7 @ 385.07 → ₹-146 (Closed LONG position. rebalance EXIT)
+- TATAMOTORS SHORT 8 @ 336.43 → ₹-66 (Closed LONG position. Bollinger target hit (price 336.50 >= middle band 335.91))
+- IRB SHORT 150 @ 19.77 → ₹-26 (Closed LONG position. Bollinger target hit (price 19.77 >= middle band 19.77))
+- CONCOR SHORT 6 @ 481.10 → ₹-25 (Closed LONG position. Bollinger target hit (price 481.20 >= middle band 480.80))
+- TATAMOTORS SHORT 8 @ 332.58 → ₹-23 (Closed LONG position. Bollinger target hit (price 332.65 >= middle band 332.43))
+- CONCOR SHORT 5 @ 511.90 → ₹-22 (Closed LONG position. Bollinger target hit (price 512.00 >= middle band 511.74))
+- IOC SHORT 10 @ 142.63 → ₹-21 (Closed LONG position. rebalance TRIM)
+- INDHOTEL SHORT 4 @ 739.65 → ₹-20 (Closed LONG position. Bollinger target hit (price 739.80 >= middle band 739.46))
+
+**Gate counters (why signals died):**
+- total_evaluations: 14581
+- rsi_not_oversold: 7615
+- no_mode: 3054
+- executed: 74
+- volume: 45
+- proposed: 42
+- circuit_breaker: 38
+- bollinger_band: 9
+- cooldown: 7
+- risk_blocked: 6
+- concentration_cap: 2
+
+**RiskEngine block reasons:**
+- Ticket size 3002.3999633789062 exceeds single-stock cap 3000 (15% of capital).: 1
+- Ticket size 3001.7999267578125 exceeds single-stock cap 3000 (15% of capital).: 1
+- Ticket size 3009 exceeds single-stock cap 3000 (15% of capital).: 1
+- Ticket size 3009.6000366210938 exceeds single-stock cap 3000 (15% of capital).: 1
+- Ticket size 3006.8999633789062 exceeds single-stock cap 3000 (15% of capital).: 1
+- Ticket size 3011.3999633789062 exceeds single-stock cap 3000 (15% of capital).: 1
+
+## case2
+
+- **Setup:** 2 existing holding(s) worth ₹15,000 + ₹20,000 new capital = **₹35,000** total. Picked 18 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** LICI, NATCOPHARM, COALINDIA, TATASTEEL, AXISBANK, ICICIBANK, INFY, HINDALCO, DRREDDY, MOTHERSON, ADANIGREEN, IDFCFIRSTB
+- **Result:** 46 round trips, win rate 32.6%, profit factor 0.24, net P&L **₹-551** (-1.57%), max drawdown ₹568 (1.6%), final equity **₹34,449**.
+
+| Symbol | P&L |
+|---|---|
+| AXISBANK | ₹38 |
+| DRREDDY | ₹27 |
+| HINDALCO | ₹15 |
+| MOTHERSON | ₹-7 |
+| ICICIBANK | ₹-16 |
+| ADANIGREEN | ₹-26 |
+| INFY | ₹-45 |
+| COALINDIA | ₹-71 |
+| TATASTEEL | ₹-122 |
+| NATCOPHARM | ₹-139 |
+| LICI | ₹-205 |
+
+**Top trades:**
+- TATASTEEL SHORT 14 @ 185.20 → ₹-73 (Closed LONG position. rebalance TRIM)
+- LICI SHORT 11 @ 435.31 → ₹-66 (Closed LONG position. Bollinger target hit (price 435.40 >= middle band 435.28))
+- LICI SHORT 8 @ 432.91 → ₹-61 (Closed LONG position. rebalance TRIM)
+- TATASTEEL SHORT 28 @ 184.63 → ₹-56 (Closed LONG position. Bollinger target hit (price 184.67 >= middle band 184.42))
+- NATCOPHARM SHORT 5 @ 936.11 → ₹-52 (Closed LONG position. Bollinger target hit (price 936.30 >= middle band 935.61))
+- ADANIGREEN SHORT 1 @ 1514.70 → ₹-40 (Closed LONG position. rebalance TRIM)
+- INFY SHORT 2 @ 1156.47 → ₹-39 (Closed LONG position. rebalance TRIM)
+- AXISBANK SHORT 4 @ 1260.55 → ₹38 (Closed LONG position. Bollinger target hit (price 1260.80 >= middle band 1255.21))
+
+**Gate counters (why signals died):**
+- total_evaluations: 19453
+- rsi_not_oversold: 10051
+- no_mode: 4251
+- executed: 75
+- circuit_breaker: 54
+- proposed: 44
+- volume: 40
+- risk_blocked: 36
+- bollinger_band: 30
+- cooldown: 6
+- concentration_cap: 3
+
+**RiskEngine block reasons:**
+- Ticket size 6804 exceeds single-stock cap 5250 (15% of capital).: 3
+- Ticket size 6806.099914550781 exceeds single-stock cap 5250 (15% of capital).: 2
+- Ticket size 6804.6998291015625 exceeds single-stock cap 5250 (15% of capital).: 2
+- Ticket size 6807.150085449219 exceeds single-stock cap 5250 (15% of capital).: 2
+- Ticket size 6784.0501708984375 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6782.3001708984375 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6783.6998291015625 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6795.599914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6794.900085449219 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6790.349914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6807.5 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6797 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6799.099914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6798.75 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6816.599914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6818.6998291015625 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6828.849914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6812.400085449219 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6817.3001708984375 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6814.150085449219 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6805.400085449219 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6805.75 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6800.849914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6806.8001708984375 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 6809.9498291015625 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5263.439880371094 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5259.240051269531 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5266.8001708984375 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5262.599914550781 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5261.1998291015625 exceeds single-stock cap 5250 (15% of capital).: 1
+- Ticket size 5260.35986328125 exceeds single-stock cap 5250 (15% of capital).: 1
+
+## case3
+
+- **Setup:** 10 existing holding(s) worth ₹60,000 + ₹30,000 new capital = **₹90,000** total. Picked 10 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** KEC, SBILIFE, GAIL, LICI, NAUKRI, MUTHOOTFIN, GMRINFRA, AUBANK, AUROPHARMA
+- **Result:** 46 round trips, win rate 34.8%, profit factor 0.77, net P&L **₹-265** (-0.29%), max drawdown ₹630 (0.7%), final equity **₹89,735**.
+
+| Symbol | P&L |
+|---|---|
+| NAUKRI | ₹110 |
+| KEC | ₹89 |
+| SBILIFE | ₹34 |
+| GAIL | ₹-32 |
+| AUBANK | ₹-36 |
+| LICI | ₹-49 |
+| AUROPHARMA | ₹-53 |
+| MUTHOOTFIN | ₹-159 |
+| GMRINFRA | ₹-169 |
+
+**Top trades:**
+- KEC SHORT 14 @ 476.30 → ₹282 (Closed LONG position. rebalance TRIM)
+- MUTHOOTFIN SHORT 4 @ 2874.92 → ₹-143 (Closed LONG position. Bollinger target hit (price 2875.50 >= middle band 2874.76))
+- LICI SHORT 15 @ 444.61 → ₹121 (Closed LONG position. RSI 70.6 overbought (>70))
+- GMRINFRA SHORT 58 @ 112.05 → ₹-97 (Closed LONG position. Bollinger target hit (price 112.07 >= middle band 111.97))
+- AUBANK SHORT 6 @ 1068.29 → ₹-83 (Closed LONG position. rebalance TRIM)
+- SBILIFE SHORT 3 @ 1874.23 → ₹80 (Closed LONG position. RSI 80.8 overbought (>70))
+- LICI SHORT 17 @ 392.92 → ₹-69 (Closed LONG position. rebalance TRIM)
+- GAIL SHORT 39 @ 173.60 → ₹68 (Closed LONG position. rebalance TRIM)
+
+**Gate counters (why signals died):**
+- total_evaluations: 14585
+- rsi_not_oversold: 7511
+- no_mode: 2886
+- risk_blocked: 76
+- executed: 67
+- volume: 44
+- proposed: 37
+- circuit_breaker: 33
+- bollinger_band: 12
+- cooldown: 4
+
+**RiskEngine block reasons:**
+- Ticket size 13605.349822998047 exceeds single-stock cap 13500 (15% of capital).: 3
+- Ticket size 13746 exceeds single-stock cap 13500 (15% of capital).: 3
+- Ticket size 13586.5 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13583.599822998047 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13640.150177001953 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13659 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13751.800354003906 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13891 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13830.099822998047 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13531.2001953125 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13527 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13510.799835205078 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13545.900177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13554.599822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13570.550354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13598.099822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13599.550354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13592.300354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13579.25 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13624.199645996094 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13582.150177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13596.650177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13601 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13590.849822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13595.199645996094 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13593.75 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13576.349822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13641.599822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13693.800354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13663.349822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13661.900177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13673.5 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13653.199645996094 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13650.300354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13637.25 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13647.400177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13680.75 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13683.650177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13699.599822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13677.849822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13738.75 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13743.099822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13767.75 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13777.900177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13786.599822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13789.5 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13808.349822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13824.300354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13847.5 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13862 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13850.400177001953 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13870.699645996094 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13892.449645996094 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13888.099822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13831.550354003906 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13815.599822998047 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13532.7998046875 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13528 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13529.599609375 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13540.7998046875 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13544 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13507.83984375 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13505.2802734375 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13543.140380859375 exceeds single-stock cap 13500 (15% of capital).: 1
+
+## case4
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹10,000 new capital = **₹10,000** total. Picked 10 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** MOTILALOFS, SYNGENE, POONAWALLA, WHIRLPOOL, MARICO, INDUSINDBK
+- **Result:** 29 round trips, win rate 51.7%, profit factor 0.53, net P&L **₹-44** (-0.44%), max drawdown ₹71 (0.7%), final equity **₹9,956**.
+
+| Symbol | P&L |
+|---|---|
+| SYNGENE | ₹16 |
+| MARICO | ₹1 |
+| POONAWALLA | ₹1 |
+| WHIRLPOOL | ₹-3 |
+| INDUSINDBK | ₹-8 |
+| MOTILALOFS | ₹-51 |
+
+**Top trades:**
+- MOTILALOFS SHORT 1 @ 863.03 → ₹-58 (Closed LONG position. Bollinger target hit (price 863.20 >= middle band 862.58))
+- POONAWALLA SHORT 3 @ 463.46 → ₹11 (Closed LONG position. Bollinger target hit (price 463.55 >= middle band 462.35))
+- SYNGENE SHORT 3 @ 408.17 → ₹9 (Closed LONG position. Bollinger target hit (price 408.25 >= middle band 406.12))
+- SYNGENE SHORT 3 @ 403.82 → ₹7 (Closed LONG position. Bollinger target hit (price 403.90 >= middle band 403.68))
+- MOTILALOFS SHORT 1 @ 873.83 → ₹6 (Closed LONG position. Bollinger target hit (price 874.00 >= middle band 868.87))
+- POONAWALLA SHORT 3 @ 468.91 → ₹-6 (Closed LONG position. Bollinger target hit (price 469.00 >= middle band 468.46))
+- INDUSINDBK SHORT 1 @ 1024.99 → ₹-5 (Closed LONG position. Bollinger target hit (price 1025.20 >= middle band 1024.78))
+- WHIRLPOOL SHORT 1 @ 801.24 → ₹4 (Closed LONG position. Bollinger target hit (price 801.40 >= middle band 801.29))
+
+**Gate counters (why signals died):**
+- total_evaluations: 9764
+- rsi_not_oversold: 5006
+- no_mode: 1823
+- executed: 56
+- volume: 29
+- proposed: 29
+- circuit_breaker: 7
+- cooldown: 1
+- concentration_cap: 1
+
+**RiskEngine block reasons:**
+
+## case5
+
+- **Setup:** 1 existing holding(s) worth ₹30,000 + ₹10,000 new capital = **₹40,000** total. Picked 5 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** TECHM, COFORGE, HAVELLS, JIOFIN
+- **Result:** 1 round trips, win rate 100.0%, profit factor inf, net P&L **₹3,005** (7.51%), max drawdown ₹0 (0.0%), final equity **₹43,005**.
+
+| Symbol | P&L |
+|---|---|
+| TECHM | ₹3,005 |
+
+**Top trades:**
+- TECHM SHORT 20 @ 1638.67 → ₹3,005 (Closed LONG position. Backtest end — force close)
+
+**Gate counters (why signals died):**
+- total_evaluations: 6482
+- rsi_not_oversold: 2400
+- risk_blocked: 1619
+- no_mode: 915
+- volume: 18
+- proposed: 17
+
+**RiskEngine block reasons:**
+- Ticket size 33000 exceeds max trade allocation 8000.: 20
+- Ticket size 33000 exceeds single-stock cap 6000 (15% of capital).: 20
+- Insufficient capital: used 29683.94 + ticket 33000.00 > spendable 32000.00 (after 20% cash reserve).: 20
+- Ticket size 32800 exceeds max trade allocation 8000.: 16
+- Ticket size 32800 exceeds single-stock cap 6000 (15% of capital).: 16
+- Insufficient capital: used 29683.94 + ticket 32800.00 > spendable 32000.00 (after 20% cash reserve).: 16
+- Ticket size 32900 exceeds max trade allocation 8000.: 15
+- Ticket size 32900 exceeds single-stock cap 6000 (15% of capital).: 15
+- Insufficient capital: used 29683.94 + ticket 32900.00 > spendable 32000.00 (after 20% cash reserve).: 15
+- Ticket size 32940 exceeds max trade allocation 8000.: 14
+- Ticket size 32940 exceeds single-stock cap 6000 (15% of capital).: 14
+- Insufficient capital: used 29683.94 + ticket 32940.00 > spendable 32000.00 (after 20% cash reserve).: 14
+- Ticket size 32860 exceeds max trade allocation 8000.: 11
+- Ticket size 32860 exceeds single-stock cap 6000 (15% of capital).: 11
+- Insufficient capital: used 29683.94 + ticket 32860.00 > spendable 32000.00 (after 20% cash reserve).: 11
+- Ticket size 32880 exceeds max trade allocation 8000.: 11
+- Ticket size 32880 exceeds single-stock cap 6000 (15% of capital).: 11
+- Insufficient capital: used 29683.94 + ticket 32880.00 > spendable 32000.00 (after 20% cash reserve).: 11
+- Ticket size 32978.00048828125 exceeds max trade allocation 8000.: 9
+- Ticket size 32978.00048828125 exceeds single-stock cap 6000 (15% of capital).: 9
+- Insufficient capital: used 29683.94 + ticket 32978.00 > spendable 32000.00 (after 20% cash reserve).: 9
+- Ticket size 32960 exceeds max trade allocation 8000.: 9
+- Ticket size 32960 exceeds single-stock cap 6000 (15% of capital).: 9
+- Insufficient capital: used 29683.94 + ticket 32960.00 > spendable 32000.00 (after 20% cash reserve).: 9
+- Ticket size 32958.00048828125 exceeds max trade allocation 8000.: 9
+- Ticket size 32958.00048828125 exceeds single-stock cap 6000 (15% of capital).: 9
+- Insufficient capital: used 29683.94 + ticket 32958.00 > spendable 32000.00 (after 20% cash reserve).: 9
+- Ticket size 32996.0009765625 exceeds max trade allocation 8000.: 9
+- Ticket size 32996.0009765625 exceeds single-stock cap 6000 (15% of capital).: 9
+- Insufficient capital: used 29683.94 + ticket 32996.00 > spendable 32000.00 (after 20% cash reserve).: 9
+- Ticket size 32700 exceeds max trade allocation 8000.: 8
+- Ticket size 32700 exceeds single-stock cap 6000 (15% of capital).: 8
+- Insufficient capital: used 29683.94 + ticket 32700.00 > spendable 32000.00 (after 20% cash reserve).: 8
+- Ticket size 33140 exceeds max trade allocation 8000.: 8
+- Ticket size 33140 exceeds single-stock cap 6000 (15% of capital).: 8
+- Insufficient capital: used 29683.94 + ticket 33140.00 > spendable 32000.00 (after 20% cash reserve).: 8
+- Ticket size 32980 exceeds max trade allocation 8000.: 8
+- Ticket size 32980 exceeds single-stock cap 6000 (15% of capital).: 8
+- Insufficient capital: used 29683.94 + ticket 32980.00 > spendable 32000.00 (after 20% cash reserve).: 8
+- Ticket size 31180 exceeds max trade allocation 8000.: 7
+- Ticket size 31180 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 31180.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 33010 exceeds max trade allocation 8000.: 7
+- Ticket size 33010 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 33010.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 32968.00048828125 exceeds max trade allocation 8000.: 7
+- Ticket size 32968.00048828125 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 32968.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 32850 exceeds max trade allocation 8000.: 7
+- Ticket size 32850 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 32850.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 33003.9990234375 exceeds max trade allocation 8000.: 7
+- Ticket size 33003.9990234375 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 33004.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 32798.00048828125 exceeds max trade allocation 8000.: 7
+- Ticket size 32798.00048828125 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 32798.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 32780 exceeds max trade allocation 8000.: 7
+- Ticket size 32780 exceeds single-stock cap 6000 (15% of capital).: 7
+- Insufficient capital: used 29683.94 + ticket 32780.00 > spendable 32000.00 (after 20% cash reserve).: 7
+- Ticket size 31236.0009765625 exceeds max trade allocation 8000.: 6
+- Ticket size 31236.0009765625 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 31236.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 31526.0009765625 exceeds max trade allocation 8000.: 6
+- Ticket size 31526.0009765625 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 31526.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 31661.99951171875 exceeds max trade allocation 8000.: 6
+- Ticket size 31661.99951171875 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 31662.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 31198.00048828125 exceeds max trade allocation 8000.: 6
+- Ticket size 31198.00048828125 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 31198.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 31188.00048828125 exceeds max trade allocation 8000.: 6
+- Ticket size 31188.00048828125 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 31188.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32783.9990234375 exceeds max trade allocation 8000.: 6
+- Ticket size 32783.9990234375 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32784.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32981.99951171875 exceeds max trade allocation 8000.: 6
+- Ticket size 32981.99951171875 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32982.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 33131.99951171875 exceeds max trade allocation 8000.: 6
+- Ticket size 33131.99951171875 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 33132.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32976.0009765625 exceeds max trade allocation 8000.: 6
+- Ticket size 32976.0009765625 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32976.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32920 exceeds max trade allocation 8000.: 6
+- Ticket size 32920 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32920.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32876.0009765625 exceeds max trade allocation 8000.: 6
+- Ticket size 32876.0009765625 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32876.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32998.00048828125 exceeds max trade allocation 8000.: 6
+- Ticket size 32998.00048828125 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32998.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32878.00048828125 exceeds max trade allocation 8000.: 6
+- Ticket size 32878.00048828125 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32878.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 32938.00048828125 exceeds max trade allocation 8000.: 6
+- Ticket size 32938.00048828125 exceeds single-stock cap 6000 (15% of capital).: 6
+- Insufficient capital: used 29683.94 + ticket 32938.00 > spendable 32000.00 (after 20% cash reserve).: 6
+- Ticket size 31040 exceeds max trade allocation 8000.: 5
+- Ticket size 31040 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31040.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31126.0009765625 exceeds max trade allocation 8000.: 5
+- Ticket size 31126.0009765625 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31126.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31488.00048828125 exceeds max trade allocation 8000.: 5
+- Ticket size 31488.00048828125 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31488.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31640 exceeds max trade allocation 8000.: 5
+- Ticket size 31640 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31640.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31540 exceeds max trade allocation 8000.: 5
+- Ticket size 31540 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31540.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31240 exceeds max trade allocation 8000.: 5
+- Ticket size 31240 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31240.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31203.9990234375 exceeds max trade allocation 8000.: 5
+- Ticket size 31203.9990234375 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 31204.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32590 exceeds max trade allocation 8000.: 5
+- Ticket size 32590 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32590.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 33036.0009765625 exceeds max trade allocation 8000.: 5
+- Ticket size 33036.0009765625 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 33036.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 33081.99951171875 exceeds max trade allocation 8000.: 5
+- Ticket size 33081.99951171875 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 33082.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32973.9990234375 exceeds max trade allocation 8000.: 5
+- Ticket size 32973.9990234375 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32974.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32970 exceeds max trade allocation 8000.: 5
+- Ticket size 32970 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32970.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32928.00048828125 exceeds max trade allocation 8000.: 5
+- Ticket size 32928.00048828125 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32928.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32961.99951171875 exceeds max trade allocation 8000.: 5
+- Ticket size 32961.99951171875 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32962.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32903.9990234375 exceeds max trade allocation 8000.: 5
+- Ticket size 32903.9990234375 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32904.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 33053.9990234375 exceeds max trade allocation 8000.: 5
+- Ticket size 33053.9990234375 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 33054.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32863.9990234375 exceeds max trade allocation 8000.: 5
+- Ticket size 32863.9990234375 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32864.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32986.0009765625 exceeds max trade allocation 8000.: 5
+- Ticket size 32986.0009765625 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32986.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 32906.0009765625 exceeds max trade allocation 8000.: 5
+- Ticket size 32906.0009765625 exceeds single-stock cap 6000 (15% of capital).: 5
+- Insufficient capital: used 29683.94 + ticket 32906.00 > spendable 32000.00 (after 20% cash reserve).: 5
+- Ticket size 31103.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 31103.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31104.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31620 exceeds max trade allocation 8000.: 4
+- Ticket size 31620 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31620.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31651.99951171875 exceeds max trade allocation 8000.: 4
+- Ticket size 31651.99951171875 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31652.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31788.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 31788.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31788.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31561.99951171875 exceeds max trade allocation 8000.: 4
+- Ticket size 31561.99951171875 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31562.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31806.0009765625 exceeds max trade allocation 8000.: 4
+- Ticket size 31806.0009765625 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31806.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 31090 exceeds max trade allocation 8000.: 4
+- Ticket size 31090 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 31090.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32423.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 32423.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32424.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32766.0009765625 exceeds max trade allocation 8000.: 4
+- Ticket size 32766.0009765625 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32766.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33170 exceeds max trade allocation 8000.: 4
+- Ticket size 33170 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33170.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33078.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 33078.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33078.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33058.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 33058.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33058.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32971.99951171875 exceeds max trade allocation 8000.: 4
+- Ticket size 32971.99951171875 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32972.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32921.99951171875 exceeds max trade allocation 8000.: 4
+- Ticket size 32921.99951171875 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32922.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32983.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 32983.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32984.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32950 exceeds max trade allocation 8000.: 4
+- Ticket size 32950 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32950.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32948.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 32948.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32948.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32843.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 32843.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32844.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32923.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 32923.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32924.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33578.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 33578.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33578.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33001.99951171875 exceeds max trade allocation 8000.: 4
+- Ticket size 33001.99951171875 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33002.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33090 exceeds max trade allocation 8000.: 4
+- Ticket size 33090 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33090.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33138.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 33138.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33138.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33173.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 33173.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33174.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32988.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 32988.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32988.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32890 exceeds max trade allocation 8000.: 4
+- Ticket size 32890 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32890.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32840 exceeds max trade allocation 8000.: 4
+- Ticket size 32840 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32840.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32883.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 32883.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32884.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32778.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 32778.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32778.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32886.0009765625 exceeds max trade allocation 8000.: 4
+- Ticket size 32886.0009765625 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32886.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32910 exceeds max trade allocation 8000.: 4
+- Ticket size 32910 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32910.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32966.0009765625 exceeds max trade allocation 8000.: 4
+- Ticket size 32966.0009765625 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32966.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33056.0009765625 exceeds max trade allocation 8000.: 4
+- Ticket size 33056.0009765625 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33056.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 33193.9990234375 exceeds max trade allocation 8000.: 4
+- Ticket size 33193.9990234375 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 33194.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 32838.00048828125 exceeds max trade allocation 8000.: 4
+- Ticket size 32838.00048828125 exceeds single-stock cap 6000 (15% of capital).: 4
+- Insufficient capital: used 29683.94 + ticket 32838.00 > spendable 32000.00 (after 20% cash reserve).: 4
+- Ticket size 30493.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 30493.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30494.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30288.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 30288.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30288.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30880 exceeds max trade allocation 8000.: 3
+- Ticket size 30880 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30880.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30923.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 30923.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30924.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30776.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 30776.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30776.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31171.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31171.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31172.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31200 exceeds max trade allocation 8000.: 3
+- Ticket size 31200 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31200.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31530 exceeds max trade allocation 8000.: 3
+- Ticket size 31530 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31530.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31493.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 31493.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31494.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31611.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31611.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31612.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31300 exceeds max trade allocation 8000.: 3
+- Ticket size 31300 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31300.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31778.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 31778.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31778.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31746.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 31746.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31746.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31740 exceeds max trade allocation 8000.: 3
+- Ticket size 31740 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31740.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31736.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 31736.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31736.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31541.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31541.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31542.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31800 exceeds max trade allocation 8000.: 3
+- Ticket size 31800 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31800.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31548.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 31548.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31548.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31543.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 31543.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31544.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31213.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 31213.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31214.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31201.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31201.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31202.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31246.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 31246.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31246.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31190 exceeds max trade allocation 8000.: 3
+- Ticket size 31190 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31190.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31250 exceeds max trade allocation 8000.: 3
+- Ticket size 31250 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31250.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31251.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31251.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31252.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31196.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 31196.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31196.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31220 exceeds max trade allocation 8000.: 3
+- Ticket size 31220 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31220.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31191.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 31191.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31192.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31078.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 31078.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31078.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 31053.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 31053.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 31054.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30866.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 30866.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30866.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 30771.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 30771.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 30772.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32603.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32603.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32604.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32600 exceeds max trade allocation 8000.: 3
+- Ticket size 32600 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32600.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32643.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32643.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32644.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33160 exceeds max trade allocation 8000.: 3
+- Ticket size 33160 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33160.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33158.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 33158.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33158.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33210 exceeds max trade allocation 8000.: 3
+- Ticket size 33210 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33210.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33070 exceeds max trade allocation 8000.: 3
+- Ticket size 33070 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33070.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33148.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 33148.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33148.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33143.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 33143.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33144.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33026.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 33026.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33026.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33021.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 33021.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33022.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32990 exceeds max trade allocation 8000.: 3
+- Ticket size 32990 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32990.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32951.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32951.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32952.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32953.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32953.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32954.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32901.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32901.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32902.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32891.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32891.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32892.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33613.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 33613.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33614.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33618.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 33618.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33618.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33060 exceeds max trade allocation 8000.: 3
+- Ticket size 33060 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33060.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33136.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 33136.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33136.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32991.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32991.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32992.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33041.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 33041.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33042.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32993.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32993.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32994.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33018.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 33018.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33018.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32913.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32913.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32914.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33043.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 33043.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33044.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33163.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 33163.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33164.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33156.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 33156.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33156.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33061.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 33061.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33062.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33093.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 33093.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33094.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33116.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 33116.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33116.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33068.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 33068.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33068.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32898.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 32898.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32898.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32763.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32763.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32764.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32893.9990234375 exceeds max trade allocation 8000.: 3
+- Ticket size 32893.9990234375 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32894.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32826.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 32826.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32826.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32788.00048828125 exceeds max trade allocation 8000.: 3
+- Ticket size 32788.00048828125 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32788.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32811.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32811.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32812.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32851.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32851.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32852.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32930 exceeds max trade allocation 8000.: 3
+- Ticket size 32930 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32930.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32941.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32941.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32942.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32916.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 32916.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32916.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33076.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 33076.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33076.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33200 exceeds max trade allocation 8000.: 3
+- Ticket size 33200 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33200.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32936.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 32936.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32936.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32756.0009765625 exceeds max trade allocation 8000.: 3
+- Ticket size 32756.0009765625 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32756.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 33180 exceeds max trade allocation 8000.: 3
+- Ticket size 33180 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 33180.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32710 exceeds max trade allocation 8000.: 3
+- Ticket size 32710 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32710.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32911.99951171875 exceeds max trade allocation 8000.: 3
+- Ticket size 32911.99951171875 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32912.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 32500 exceeds max trade allocation 8000.: 3
+- Ticket size 32500 exceeds single-stock cap 6000 (15% of capital).: 3
+- Insufficient capital: used 29683.94 + ticket 32500.00 > spendable 32000.00 (after 20% cash reserve).: 3
+- Ticket size 29910 exceeds max trade allocation 8000.: 2
+- Ticket size 29910 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 29910.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 29920 exceeds max trade allocation 8000.: 2
+- Ticket size 29920 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 29920.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 29900 exceeds max trade allocation 8000.: 2
+- Ticket size 29900 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 29900.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 29926.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 29926.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 29926.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30380 exceeds max trade allocation 8000.: 2
+- Ticket size 30380 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30380.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30273.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 30273.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30274.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30320 exceeds max trade allocation 8000.: 2
+- Ticket size 30320 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30320.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30428.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30428.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30428.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30481.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 30481.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30482.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30528.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30528.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30528.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30688.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30688.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30688.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30618.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30618.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30618.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30580 exceeds max trade allocation 8000.: 2
+- Ticket size 30580 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30580.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30498.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30498.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30498.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30400 exceeds max trade allocation 8000.: 2
+- Ticket size 30400 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30400.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30298.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 30298.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30298.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30291.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 30291.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30292.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30920 exceeds max trade allocation 8000.: 2
+- Ticket size 30920 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30920.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30760 exceeds max trade allocation 8000.: 2
+- Ticket size 30760 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30760.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30740 exceeds max trade allocation 8000.: 2
+- Ticket size 30740 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30740.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30766.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 30766.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30766.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31133.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31133.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31134.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31556.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31556.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31556.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31538.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31538.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31538.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31690 exceeds max trade allocation 8000.: 2
+- Ticket size 31690 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31690.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31660 exceeds max trade allocation 8000.: 2
+- Ticket size 31660 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31660.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31650 exceeds max trade allocation 8000.: 2
+- Ticket size 31650 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31650.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31666.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31666.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31666.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31773.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31773.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31774.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31716.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31716.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31716.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31731.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 31731.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31732.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31630 exceeds max trade allocation 8000.: 2
+- Ticket size 31630 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31630.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31680 exceeds max trade allocation 8000.: 2
+- Ticket size 31680 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31680.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31621.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 31621.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31622.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31720 exceeds max trade allocation 8000.: 2
+- Ticket size 31720 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31720.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31653.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31653.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31654.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31616.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31616.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31616.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31600 exceeds max trade allocation 8000.: 2
+- Ticket size 31600 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31600.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31618.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31618.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31618.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31628.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31628.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31628.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31560 exceeds max trade allocation 8000.: 2
+- Ticket size 31560 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31560.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31546.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31546.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31546.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31508.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31508.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31508.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31758.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31758.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31758.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31781.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 31781.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31782.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31760 exceeds max trade allocation 8000.: 2
+- Ticket size 31760 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31760.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31776.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31776.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31776.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31728.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31728.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31728.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31573.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31573.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31574.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31578.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31578.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31578.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31468.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31468.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31468.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31491.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 31491.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31492.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31536.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31536.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31536.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31313.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31313.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31314.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31303.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31303.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31304.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31228.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31228.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31228.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31296.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31296.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31296.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31310 exceeds max trade allocation 8000.: 2
+- Ticket size 31310 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31310.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31233.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31233.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31234.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31230 exceeds max trade allocation 8000.: 2
+- Ticket size 31230 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31230.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31226.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31226.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31226.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31168.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31168.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31168.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31058.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31058.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31058.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31130 exceeds max trade allocation 8000.: 2
+- Ticket size 31130 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31130.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31176.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31176.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31176.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31080 exceeds max trade allocation 8000.: 2
+- Ticket size 31080 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31080.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30950 exceeds max trade allocation 8000.: 2
+- Ticket size 30950 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30950.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31523.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31523.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31524.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30800 exceeds max trade allocation 8000.: 2
+- Ticket size 30800 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30800.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30720 exceeds max trade allocation 8000.: 2
+- Ticket size 30720 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30720.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 30956.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 30956.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 30956.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31926.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31926.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31926.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31756.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31756.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31756.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31798.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 31798.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31798.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31723.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31723.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31724.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31726.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 31726.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31726.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31513.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 31513.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31514.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31510 exceeds max trade allocation 8000.: 2
+- Ticket size 31510 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31510.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 31531.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 31531.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 31532.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32378.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32378.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32378.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32556.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32556.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32556.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32650 exceeds max trade allocation 8000.: 2
+- Ticket size 32650 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32650.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32616.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32616.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32616.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32583.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32583.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32584.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32618.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32618.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32618.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32606.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32606.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32606.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32701.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32701.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32702.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32558.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32558.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32558.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32546.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32546.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32546.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32541.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32541.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32542.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32563.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32563.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32564.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32536.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32536.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32536.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32568.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32568.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32568.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32601.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32601.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32602.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32750 exceeds max trade allocation 8000.: 2
+- Ticket size 32750 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32750.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32758.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32758.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32758.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32861.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32861.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32862.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32781.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32781.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32782.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32703.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32703.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32704.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32731.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32731.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32732.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33121.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33121.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33122.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33111.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33111.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33112.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33171.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33171.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33172.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33063.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33063.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33064.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33091.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33091.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33092.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33083.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33083.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33084.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32931.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32931.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32932.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32888.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32888.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32888.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33240 exceeds max trade allocation 8000.: 2
+- Ticket size 33240 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33240.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33300 exceeds max trade allocation 8000.: 2
+- Ticket size 33300 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33300.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33463.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33463.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33464.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33471.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33471.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33472.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33588.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33588.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33588.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33606.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33606.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33606.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33603.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33603.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33604.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33638.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33638.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33638.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33640 exceeds max trade allocation 8000.: 2
+- Ticket size 33640 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33640.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33488.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33488.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33488.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33598.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33598.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33598.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33636.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33636.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33636.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33576.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33576.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33576.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33530 exceeds max trade allocation 8000.: 2
+- Ticket size 33530 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33530.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33400 exceeds max trade allocation 8000.: 2
+- Ticket size 33400 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33400.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33411.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33411.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33412.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33350 exceeds max trade allocation 8000.: 2
+- Ticket size 33350 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33350.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33313.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33313.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33314.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32573.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32573.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32574.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32740 exceeds max trade allocation 8000.: 2
+- Ticket size 32740 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32740.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33050 exceeds max trade allocation 8000.: 2
+- Ticket size 33050 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33050.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32926.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32926.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32926.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32963.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32963.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32964.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33020 exceeds max trade allocation 8000.: 2
+- Ticket size 33020 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33020.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33031.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33031.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33032.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33100 exceeds max trade allocation 8000.: 2
+- Ticket size 33100 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33100.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33196.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33196.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33196.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33176.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33176.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33176.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33133.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33133.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33134.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33013.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33013.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33014.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33128.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33128.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33128.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33166.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33166.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33166.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33150 exceeds max trade allocation 8000.: 2
+- Ticket size 33150 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33150.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32943.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32943.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32944.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32870 exceeds max trade allocation 8000.: 2
+- Ticket size 32870 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32870.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32793.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32793.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32794.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32736.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32736.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32736.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32770 exceeds max trade allocation 8000.: 2
+- Ticket size 32770 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32770.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32866.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32866.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32866.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32828.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32828.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32828.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32856.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32856.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32856.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32848.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32848.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32848.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32858.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32858.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32858.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32873.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32873.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32874.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33006.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33006.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33006.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32946.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32946.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32946.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32918.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32918.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32918.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33101.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33101.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33102.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33030 exceeds max trade allocation 8000.: 2
+- Ticket size 33030 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33030.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33098.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33098.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33098.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33113.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 33113.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33114.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33198.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33198.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33198.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33251.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33251.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33252.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33258.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33258.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33258.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33208.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33208.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33208.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33211.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33211.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33212.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33118.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33118.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33118.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32821.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32821.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32822.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32868.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32868.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32868.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33168.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 33168.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33168.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33046.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33046.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33046.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33080 exceeds max trade allocation 8000.: 2
+- Ticket size 33080 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33080.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33071.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33071.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33072.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32833.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32833.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32834.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32790 exceeds max trade allocation 8000.: 2
+- Ticket size 32790 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32790.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32786.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32786.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32786.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32760 exceeds max trade allocation 8000.: 2
+- Ticket size 32760 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32760.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32741.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32741.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32742.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32738.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32738.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32738.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33181.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 33181.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33182.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32813.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32813.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32814.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32796.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32796.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32796.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32711.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32711.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32712.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32836.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32836.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32836.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Insufficient capital: used 29683.94 + ticket 5120.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 33106.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 33106.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 33106.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32853.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32853.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32854.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32690 exceeds max trade allocation 8000.: 2
+- Ticket size 32690 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32690.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32683.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32683.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32684.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32666.0009765625 exceeds max trade allocation 8000.: 2
+- Ticket size 32666.0009765625 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32666.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32908.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32908.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32908.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32550 exceeds max trade allocation 8000.: 2
+- Ticket size 32550 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32550.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32521.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32521.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32522.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32578.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32578.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32578.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32580 exceeds max trade allocation 8000.: 2
+- Ticket size 32580 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32580.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32540 exceeds max trade allocation 8000.: 2
+- Ticket size 32540 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32540.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32498.00048828125 exceeds max trade allocation 8000.: 2
+- Ticket size 32498.00048828125 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32498.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32523.9990234375 exceeds max trade allocation 8000.: 2
+- Ticket size 32523.9990234375 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32524.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 32501.99951171875 exceeds max trade allocation 8000.: 2
+- Ticket size 32501.99951171875 exceeds single-stock cap 6000 (15% of capital).: 2
+- Insufficient capital: used 29683.94 + ticket 32502.00 > spendable 32000.00 (after 20% cash reserve).: 2
+- Ticket size 14840 exceeds max trade allocation 8000.: 1
+- Ticket size 14840 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 14840.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29651.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29651.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29652.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29693.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 29693.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29694.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29656.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29656.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29656.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29600 exceeds max trade allocation 8000.: 1
+- Ticket size 29600 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29600.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29591.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29591.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29592.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29598.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 29598.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29598.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29646.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29646.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29646.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29746.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29746.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29746.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29730 exceeds max trade allocation 8000.: 1
+- Ticket size 29730 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29730.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29946.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29946.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29946.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29876.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29876.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29876.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29861.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29861.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29862.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29880 exceeds max trade allocation 8000.: 1
+- Ticket size 29880 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29880.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29928.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 29928.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29928.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29976.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29976.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29976.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29961.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29961.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29962.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29906.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29906.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29906.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29851.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29851.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29852.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29866.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 29866.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29866.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29843.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 29843.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29844.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29901.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29901.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29902.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29970 exceeds max trade allocation 8000.: 1
+- Ticket size 29970 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29970.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29911.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29911.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29912.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30000 exceeds max trade allocation 8000.: 1
+- Ticket size 30000 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30000.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30076.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30076.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30076.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30098.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30098.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30098.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30040 exceeds max trade allocation 8000.: 1
+- Ticket size 30040 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30040.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30020 exceeds max trade allocation 8000.: 1
+- Ticket size 30020 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30020.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30003.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30003.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30004.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30018.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30018.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30018.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30023.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30023.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30024.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29958.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 29958.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29958.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29951.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29951.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29952.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29931.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29931.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29932.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29908.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 29908.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29908.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29991.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 29991.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29992.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30053.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30053.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30054.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 29973.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 29973.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 29974.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 4593.30 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5893.50 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5898.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 14986.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 14986.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 14987.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30416.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30416.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30416.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30351.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30351.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30352.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30408.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30408.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30408.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30383.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30383.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30384.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30461.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30461.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30462.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30553.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30553.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30554.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30663.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30663.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30664.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30603.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30603.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30604.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30520 exceeds max trade allocation 8000.: 1
+- Ticket size 30520 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30520.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30556.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30556.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30556.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30450 exceeds max trade allocation 8000.: 1
+- Ticket size 30450 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30450.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30536.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30536.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30536.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30606.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30606.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30606.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30561.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30561.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30562.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30541.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30541.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30542.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30500 exceeds max trade allocation 8000.: 1
+- Ticket size 30500 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30500.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30491.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30491.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30492.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30480 exceeds max trade allocation 8000.: 1
+- Ticket size 30480 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30480.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30388.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30388.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30388.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30391.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30391.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30392.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30460 exceeds max trade allocation 8000.: 1
+- Ticket size 30460 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30460.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30238.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30238.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30238.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30263.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30263.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30264.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30353.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30353.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30354.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30321.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30321.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30322.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30316.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30316.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30316.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30306.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30306.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30306.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30311.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30311.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30312.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30281.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30281.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30282.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30271.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30271.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30272.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30308.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30308.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30308.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30300 exceeds max trade allocation 8000.: 1
+- Ticket size 30300 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30300.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30200 exceeds max trade allocation 8000.: 1
+- Ticket size 30200 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30200.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30361.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30361.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30362.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30331.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30331.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30332.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30310 exceeds max trade allocation 8000.: 1
+- Ticket size 30310 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30310.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30280 exceeds max trade allocation 8000.: 1
+- Ticket size 30280 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30280.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30283.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30283.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30284.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30231.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30231.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30232.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30266.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30266.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30266.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30218.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30218.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30218.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30201.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30201.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30202.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30148.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30148.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30148.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30260 exceeds max trade allocation 8000.: 1
+- Ticket size 30260 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30260.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5856.50 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15130 exceeds max trade allocation 8000.: 1
+- Ticket size 15130 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15130.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30968.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30968.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30968.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31030 exceeds max trade allocation 8000.: 1
+- Ticket size 31030 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31030.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30736.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30736.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30736.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30870 exceeds max trade allocation 8000.: 1
+- Ticket size 30870 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30870.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31000 exceeds max trade allocation 8000.: 1
+- Ticket size 31000 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31000.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31091.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31091.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31092.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31048.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31048.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31048.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30980 exceeds max trade allocation 8000.: 1
+- Ticket size 30980 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30980.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30708.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30708.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30708.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30700 exceeds max trade allocation 8000.: 1
+- Ticket size 30700 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30700.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30683.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30683.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30684.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30698.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30698.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30698.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30696.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30696.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30696.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30676.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30676.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30676.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30658.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30658.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30658.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30711.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30711.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30712.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30608.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30608.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30608.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30761.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30761.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30762.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30823.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30823.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30824.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30801.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30801.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30802.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30750 exceeds max trade allocation 8000.: 1
+- Ticket size 30750 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30750.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30843.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30843.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30844.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30836.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30836.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30836.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31038.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31038.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31038.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31081.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31081.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31082.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31141.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31141.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31142.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31261.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31261.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31262.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31211.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31211.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31212.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31268.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31268.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31268.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31263.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31263.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31264.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31383.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31383.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31384.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31411.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31411.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31412.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31368.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31368.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31368.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31433.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31433.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31434.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31496.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31496.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31496.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31430 exceeds max trade allocation 8000.: 1
+- Ticket size 31430 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31430.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31501.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31501.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31502.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31566.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31566.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31566.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31601.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31601.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31602.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31668.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31668.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31668.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31656.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31656.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31656.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31396.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31396.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31396.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31420 exceeds max trade allocation 8000.: 1
+- Ticket size 31420 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31420.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5761.50 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15710 exceeds max trade allocation 8000.: 1
+- Ticket size 15710 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15710.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32030 exceeds max trade allocation 8000.: 1
+- Ticket size 32030 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32030.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31916.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31916.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31916.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31766.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31766.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31766.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31741.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31741.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31742.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31700 exceeds max trade allocation 8000.: 1
+- Ticket size 31700 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31700.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31733.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31733.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31734.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31718.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31718.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31718.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31580 exceeds max trade allocation 8000.: 1
+- Ticket size 31580 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31580.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31710 exceeds max trade allocation 8000.: 1
+- Ticket size 31710 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31710.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31750 exceeds max trade allocation 8000.: 1
+- Ticket size 31750 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31750.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31713.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31713.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31714.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31711.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31711.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31712.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31633.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31633.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31634.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31590 exceeds max trade allocation 8000.: 1
+- Ticket size 31590 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31590.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31643.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31643.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31644.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31670 exceeds max trade allocation 8000.: 1
+- Ticket size 31670 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31670.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31663.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31663.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31664.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31683.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31683.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31684.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31693.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31693.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31694.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31623.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31623.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31624.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31603.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31603.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31604.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31613.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31613.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31614.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31646.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31646.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31646.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31593.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31593.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31594.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31591.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31591.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31592.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15754.000244140625 exceeds max trade allocation 8000.: 1
+- Ticket size 15754.000244140625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15754.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32050 exceeds max trade allocation 8000.: 1
+- Ticket size 32050 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32050.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32150 exceeds max trade allocation 8000.: 1
+- Ticket size 32150 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32150.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32243.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32243.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32244.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32040 exceeds max trade allocation 8000.: 1
+- Ticket size 32040 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32040.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32028.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32028.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32028.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31958.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31958.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31958.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31980 exceeds max trade allocation 8000.: 1
+- Ticket size 31980 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31980.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31990 exceeds max trade allocation 8000.: 1
+- Ticket size 31990 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31990.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32031.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32031.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32032.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32056.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32056.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32056.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32071.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32071.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32072.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32010 exceeds max trade allocation 8000.: 1
+- Ticket size 32010 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32010.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31910 exceeds max trade allocation 8000.: 1
+- Ticket size 31910 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31910.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31793.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31793.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31794.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31791.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31791.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31792.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31768.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31768.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31768.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31721.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31721.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31722.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31751.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31751.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31752.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31770 exceeds max trade allocation 8000.: 1
+- Ticket size 31770 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31770.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31686.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31686.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31686.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31658.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31658.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31658.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31571.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31571.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31572.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31570 exceeds max trade allocation 8000.: 1
+- Ticket size 31570 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31570.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31503.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31503.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31504.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31521.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31521.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31522.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31533.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31533.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31534.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15774.000244140625 exceeds max trade allocation 8000.: 1
+- Ticket size 15774.000244140625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15774.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31271.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31271.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31272.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31258.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31258.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31258.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31320 exceeds max trade allocation 8000.: 1
+- Ticket size 31320 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31320.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31166.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31166.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31166.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31266.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31266.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31266.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31326.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31326.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31326.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31333.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31333.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31334.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31340 exceeds max trade allocation 8000.: 1
+- Ticket size 31340 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31340.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31360 exceeds max trade allocation 8000.: 1
+- Ticket size 31360 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31360.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31353.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31353.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31354.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31348.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31348.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31348.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31273.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31273.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31274.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31193.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31193.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31194.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31163.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31163.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31164.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31238.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31238.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31238.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31218.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31218.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31218.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31210 exceeds max trade allocation 8000.: 1
+- Ticket size 31210 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31210.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31216.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31216.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31216.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31253.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31253.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31254.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31181.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31181.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31182.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5998.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15584.000244140625 exceeds max trade allocation 8000.: 1
+- Ticket size 15584.000244140625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15584.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31138.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31138.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31138.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31121.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31121.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31122.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31270 exceeds max trade allocation 8000.: 1
+- Ticket size 31270 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31270.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31160 exceeds max trade allocation 8000.: 1
+- Ticket size 31160 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31160.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31156.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31156.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31156.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31106.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31106.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31106.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31206.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31206.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31206.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31170 exceeds max trade allocation 8000.: 1
+- Ticket size 31170 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31170.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31301.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31301.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31302.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31221.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31221.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31222.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31150 exceeds max trade allocation 8000.: 1
+- Ticket size 31150 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31150.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31021.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31021.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31022.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30998.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30998.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30998.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30963.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30963.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30964.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30936.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30936.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30936.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30960 exceeds max trade allocation 8000.: 1
+- Ticket size 30960 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30960.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30971.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30971.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30972.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30990 exceeds max trade allocation 8000.: 1
+- Ticket size 30990 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30990.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31098.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31098.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31098.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31113.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31113.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31114.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31153.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31153.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31154.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31096.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31096.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31096.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31041.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31041.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31042.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31083.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31083.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31084.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31110 exceeds max trade allocation 8000.: 1
+- Ticket size 31110 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31110.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31068.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31068.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31068.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31116.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31116.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31116.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15558.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 15558.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15558.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31381.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31381.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31382.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31278.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31278.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31278.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31011.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31011.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31012.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31043.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31043.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31044.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31088.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31088.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31088.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30926.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30926.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30926.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30831.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30831.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30832.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30790 exceeds max trade allocation 8000.: 1
+- Ticket size 30790 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30790.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30716.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30716.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30716.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30781.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30781.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30782.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30841.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30841.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30842.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30756.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30756.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30756.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30751.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30751.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30752.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30778.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30778.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30778.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30680 exceeds max trade allocation 8000.: 1
+- Ticket size 30680 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30680.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30806.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30806.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30806.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30816.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30816.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30816.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30838.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30838.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30838.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30768.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30768.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30768.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30743.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30743.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30744.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30786.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30786.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30786.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30856.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30856.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30856.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30833.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30833.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30834.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30860 exceeds max trade allocation 8000.: 1
+- Ticket size 30860 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30860.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30940 exceeds max trade allocation 8000.: 1
+- Ticket size 30940 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30940.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30878.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30878.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30878.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30901.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 30901.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30902.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30943.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 30943.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30944.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30958.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30958.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30958.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30966.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30966.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30966.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31036.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31036.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31036.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31060 exceeds max trade allocation 8000.: 1
+- Ticket size 31060 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31060.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30976.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 30976.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30976.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 30988.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 30988.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 30988.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31128.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31128.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31128.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31183.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31183.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31184.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31186.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31186.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31186.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31146.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31146.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31146.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31148.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31148.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31148.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31208.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31208.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31208.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31173.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31173.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31174.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31151.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31151.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31152.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31120 exceeds max trade allocation 8000.: 1
+- Ticket size 31120 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31120.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15560 exceeds max trade allocation 8000.: 1
+- Ticket size 15560 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15560.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31701.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31701.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31702.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31841.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31841.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31842.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31868.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31868.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31868.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31956.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31956.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31956.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31950 exceeds max trade allocation 8000.: 1
+- Ticket size 31950 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31950.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31931.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31931.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31932.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31891.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31891.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31892.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31903.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31903.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31904.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31856.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31856.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31856.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31850 exceeds max trade allocation 8000.: 1
+- Ticket size 31850 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31850.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31818.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31818.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31818.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31830 exceeds max trade allocation 8000.: 1
+- Ticket size 31830 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31830.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31748.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31748.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31748.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31761.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31761.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31762.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31786.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31786.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31786.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31743.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31743.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31744.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31753.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31753.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31754.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31691.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 31691.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31692.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31703.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31703.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31704.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31673.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 31673.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31674.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31528.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31528.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31528.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31516.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 31516.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31516.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31558.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31558.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31558.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31568.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31568.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31568.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31518.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 31518.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31518.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 31470 exceeds max trade allocation 8000.: 1
+- Ticket size 31470 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 31470.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 15770 exceeds max trade allocation 8000.: 1
+- Ticket size 15770 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 15770.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32320 exceeds max trade allocation 8000.: 1
+- Ticket size 32320 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32320.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32480 exceeds max trade allocation 8000.: 1
+- Ticket size 32480 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32480.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32400 exceeds max trade allocation 8000.: 1
+- Ticket size 32400 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32400.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32440 exceeds max trade allocation 8000.: 1
+- Ticket size 32440 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32440.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32463.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32463.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32464.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32286.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32286.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32286.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32436.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32436.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32436.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32398.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32398.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32398.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32413.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32413.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32414.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32453.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32453.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32454.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32346.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32346.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32346.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32341.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32341.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32342.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32483.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32483.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32484.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32570 exceeds max trade allocation 8000.: 1
+- Ticket size 32570 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32570.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32630 exceeds max trade allocation 8000.: 1
+- Ticket size 32630 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32630.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32648.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32648.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32648.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32610 exceeds max trade allocation 8000.: 1
+- Ticket size 32610 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32610.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32613.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32613.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32614.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32743.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32743.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32744.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32596.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32596.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32596.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32591.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32591.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32592.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32576.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32576.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32576.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32543.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32543.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32544.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32553.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32553.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32554.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32588.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32588.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32588.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32668.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32668.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32668.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32686.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32686.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32686.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32681.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32681.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32682.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32720 exceeds max trade allocation 8000.: 1
+- Ticket size 32720 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32720.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32688.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32688.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32688.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32708.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32708.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32708.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 4902.80 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16351.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 16351.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16352.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33280 exceeds max trade allocation 8000.: 1
+- Ticket size 33280 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33280.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33321.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33321.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33322.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33161.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33161.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33162.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33103.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33103.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33104.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33110 exceeds max trade allocation 8000.: 1
+- Ticket size 33110 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33110.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33086.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33086.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33086.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32896.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32896.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32896.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32871.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32871.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32872.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32881.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32881.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32882.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16444.000244140625 exceeds max trade allocation 8000.: 1
+- Ticket size 16444.000244140625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16444.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33503.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33503.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33504.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33296.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33296.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33296.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33346.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33346.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33346.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33470 exceeds max trade allocation 8000.: 1
+- Ticket size 33470 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33470.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33490 exceeds max trade allocation 8000.: 1
+- Ticket size 33490 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33490.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33596.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33596.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33596.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33580 exceeds max trade allocation 8000.: 1
+- Ticket size 33580 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33580.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33558.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33558.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33558.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33516.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33516.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33516.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33393.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33393.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33394.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33420 exceeds max trade allocation 8000.: 1
+- Ticket size 33420 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33420.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33403.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33403.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33404.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33438.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33438.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33438.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33526.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33526.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33526.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33590 exceeds max trade allocation 8000.: 1
+- Ticket size 33590 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33590.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33586.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33586.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33586.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33600 exceeds max trade allocation 8000.: 1
+- Ticket size 33600 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33600.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33628.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33628.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33628.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33686.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33686.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33686.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33666.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33666.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33666.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33660 exceeds max trade allocation 8000.: 1
+- Ticket size 33660 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33660.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33540 exceeds max trade allocation 8000.: 1
+- Ticket size 33540 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33540.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33581.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33581.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33582.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33541.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33541.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33542.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33518.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33518.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33518.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33500 exceeds max trade allocation 8000.: 1
+- Ticket size 33500 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33500.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33450 exceeds max trade allocation 8000.: 1
+- Ticket size 33450 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33450.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33388.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33388.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33388.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33413.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33413.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33414.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33330 exceeds max trade allocation 8000.: 1
+- Ticket size 33330 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33330.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33363.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33363.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33364.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33373.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33373.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33374.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33380 exceeds max trade allocation 8000.: 1
+- Ticket size 33380 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33380.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16690 exceeds max trade allocation 8000.: 1
+- Ticket size 16690 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16690.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33016.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33016.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33016.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33051.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33051.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33052.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5751.84 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16513.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 16513.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16513.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32823.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32823.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32824.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32841.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32841.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32842.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32773.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32773.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32774.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32831.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32831.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32832.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16490 exceeds max trade allocation 8000.: 1
+- Ticket size 16490 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16490.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16485 exceeds max trade allocation 8000.: 1
+- Ticket size 16485 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16485.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33260 exceeds max trade allocation 8000.: 1
+- Ticket size 33260 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33260.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33261.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33261.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33262.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33226.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33226.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33226.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33190 exceeds max trade allocation 8000.: 1
+- Ticket size 33190 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33190.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33203.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33203.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33204.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33241.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33241.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33242.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33183.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33183.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33184.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33126.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33126.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33126.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33151.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33151.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33152.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32956.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32956.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32956.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32801.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32801.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32802.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16500 exceeds max trade allocation 8000.: 1
+- Ticket size 16500 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16500.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33220 exceeds max trade allocation 8000.: 1
+- Ticket size 33220 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33220.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33088.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33088.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33088.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33023.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33023.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33024.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33040 exceeds max trade allocation 8000.: 1
+- Ticket size 33040 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33040.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33073.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33073.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33074.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32768.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32768.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32768.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32696.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32696.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32696.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16321.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 16321.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16322.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33281.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33281.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33282.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33553.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33553.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33554.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33560 exceeds max trade allocation 8000.: 1
+- Ticket size 33560 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33560.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33583.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33583.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33584.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33551.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33551.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33552.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33303.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33303.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33304.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33243.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33243.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33244.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33266.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33266.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33266.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33120 exceeds max trade allocation 8000.: 1
+- Ticket size 33120 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33120.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32818.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32818.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32818.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32753.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32753.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32754.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32698.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32698.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32698.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32816.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32816.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32816.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32803.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32803.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32804.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32791.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32791.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32792.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32776.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32776.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32776.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5128.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5755.20 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5999.55 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5990.35 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5931.70 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16350 exceeds max trade allocation 8000.: 1
+- Ticket size 16350 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16350.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33108.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33108.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33108.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33188.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33188.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33188.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33146.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33146.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33146.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33141.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33141.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33142.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33223.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33223.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33224.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33250 exceeds max trade allocation 8000.: 1
+- Ticket size 33250 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33250.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33231.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 33231.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33232.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33130 exceeds max trade allocation 8000.: 1
+- Ticket size 33130 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33130.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32761.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32761.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32762.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32726.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32726.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32726.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32723.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32723.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32724.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32751.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32751.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32752.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32733.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32733.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32734.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32706.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32706.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32706.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32671.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32671.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32672.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32626.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32626.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32626.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32660 exceeds max trade allocation 8000.: 1
+- Ticket size 32660 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32660.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32641.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32641.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32642.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5401.50 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16400 exceeds max trade allocation 8000.: 1
+- Ticket size 16400 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16400.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33066.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 33066.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33066.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33033.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 33033.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33034.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32846.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32846.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32846.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32933.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32933.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32934.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32830 exceeds max trade allocation 8000.: 1
+- Ticket size 32830 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32830.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16430 exceeds max trade allocation 8000.: 1
+- Ticket size 16430 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16430.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 33028.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 33028.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 33028.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32663.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32663.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32664.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32633.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32633.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32634.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32653.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32653.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32654.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32676.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32676.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32676.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32593.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32593.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32594.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32506.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32506.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32506.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32520 exceeds max trade allocation 8000.: 1
+- Ticket size 32520 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32520.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32548.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32548.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32548.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32538.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32538.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32538.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32516.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32516.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32516.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32513.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32513.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32514.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32493.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32493.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32494.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32511.99951171875 exceeds max trade allocation 8000.: 1
+- Ticket size 32511.99951171875 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32512.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32530 exceeds max trade allocation 8000.: 1
+- Ticket size 32530 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32530.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32528.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32528.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32528.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32518.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32518.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32518.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32526.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32526.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32526.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32503.9990234375 exceeds max trade allocation 8000.: 1
+- Ticket size 32503.9990234375 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32504.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16250 exceeds max trade allocation 8000.: 1
+- Ticket size 16250 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16250.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32718.00048828125 exceeds max trade allocation 8000.: 1
+- Ticket size 32718.00048828125 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32718.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 32806.0009765625 exceeds max trade allocation 8000.: 1
+- Ticket size 32806.0009765625 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 32806.00 > spendable 32000.00 (after 20% cash reserve).: 1
+- Insufficient capital: used 29683.94 + ticket 5900.65 > spendable 32000.00 (after 20% cash reserve).: 1
+- Ticket size 16390 exceeds max trade allocation 8000.: 1
+- Ticket size 16390 exceeds single-stock cap 6000 (15% of capital).: 1
+- Insufficient capital: used 29683.94 + ticket 16390.00 > spendable 32000.00 (after 20% cash reserve).: 1
+
+## case6
+
+- **Setup:** 5 existing holding(s) worth ₹50,000 + ₹50,000 new capital = **₹1,00,000** total. Picked 15 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** AUBANK, OIL, HINDCOPPER, DMART, FORTIS, ASTRAL, BLUESTARCO, DELHIVERY, GODREJCP, FEDERALBNK, J&KBANK, HCLTECH, BIOCON, ACC
+- **Result:** 49 round trips, win rate 42.9%, profit factor 0.46, net P&L **₹-1,327** (-1.33%), max drawdown ₹1,636 (1.6%), final equity **₹98,673**.
+
+| Symbol | P&L |
+|---|---|
+| DELHIVERY | ₹114 |
+| ACC | ₹114 |
+| BIOCON | ₹25 |
+| FEDERALBNK | ₹-13 |
+| ASTRAL | ₹-14 |
+| AUBANK | ₹-19 |
+| HCLTECH | ₹-63 |
+| GODREJCP | ₹-123 |
+| DMART | ₹-126 |
+| OIL | ₹-169 |
+| FORTIS | ₹-171 |
+| HINDCOPPER | ₹-174 |
+| J&KBANK | ₹-269 |
+| BLUESTARCO | ₹-439 |
+
+**Top trades:**
+- BLUESTARCO SHORT 4 @ 1570.69 → ₹-505 (Closed LONG position. rebalance TRIM)
+- J&KBANK SHORT 41 @ 177.91 → ₹-206 (Closed LONG position. rebalance TRIM)
+- HINDCOPPER SHORT 31 @ 475.90 → ₹-190 (Closed LONG position. Bollinger target hit (price 476.00 >= middle band 475.86))
+- OIL SHORT 22 @ 434.01 → ₹-168 (Closed LONG position. Bollinger target hit (price 434.10 >= middle band 431.95))
+- BLUESTARCO SHORT 8 @ 1693.06 → ₹153 (Closed LONG position. Bollinger target hit (price 1693.40 >= middle band 1690.93))
+- BLUESTARCO SHORT 4 @ 1675.76 → ₹-146 (Closed LONG position. rebalance TRIM)
+- BLUESTARCO SHORT 9 @ 1664.67 → ₹134 (Closed LONG position. Bollinger target hit (price 1665.00 >= middle band 1661.37))
+- DMART SHORT 1 @ 3945.21 → ₹-132 (Closed LONG position. rebalance TRIM)
+
+**Gate counters (why signals died):**
+- total_evaluations: 22703
+- rsi_not_oversold: 12251
+- no_mode: 4311
+- executed: 80
+- volume: 66
+- proposed: 44
+- circuit_breaker: 41
+- bollinger_band: 11
+- risk_blocked: 6
+- concentration_cap: 6
+- cooldown: 4
+
+**RiskEngine block reasons:**
+- Ticket size 15046.699584960938 exceeds single-stock cap 15000 (15% of capital).: 1
+- Ticket size 15014.400207519531 exceeds single-stock cap 15000 (15% of capital).: 1
+- Ticket size 15011 exceeds single-stock cap 15000 (15% of capital).: 1
+- Ticket size 15044.399658203125 exceeds single-stock cap 15000 (15% of capital).: 1
+- Ticket size 15023.399658203125 exceeds single-stock cap 15000 (15% of capital).: 1
+- Ticket size 15050 exceeds single-stock cap 15000 (15% of capital).: 1
+
+## case7
+
+- **Setup:** 20 existing holding(s) worth ₹2,00,000 + ₹1,00,000 new capital = **₹3,00,000** total. Picked 20 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** CIPLA, ZYDUSLIFE, ICICIPRULI, HINDALCO, MAXHEALTH, TATACONSUM, ADANIPORTS, HINDPETRO, ADANIENSOL, TATATECH, TATAMOTORS, BSE, HCLTECH, M&M, IOC, GICRE, JKCEMENT, CUMMINSIND, ASTRAL
+- **Result:** 71 round trips, win rate 40.8%, profit factor 0.50, net P&L **₹-3,772** (-1.26%), max drawdown ₹4,783 (1.6%), final equity **₹2,96,228**.
+
+| Symbol | P&L |
+|---|---|
+| HINDPETRO | ₹946 |
+| ICICIPRULI | ₹900 |
+| JKCEMENT | ₹83 |
+| HCLTECH | ₹30 |
+| M&M | ₹18 |
+| ASTRAL | ₹6 |
+| IOC | ₹-35 |
+| ADANIENSOL | ₹-72 |
+| CUMMINSIND | ₹-100 |
+| CIPLA | ₹-238 |
+| ZYDUSLIFE | ₹-260 |
+| ADANIPORTS | ₹-321 |
+| GICRE | ₹-339 |
+| HINDALCO | ₹-386 |
+| TATAMOTORS | ₹-548 |
+| TATACONSUM | ₹-637 |
+| BSE | ₹-691 |
+| TATATECH | ₹-1,035 |
+| MAXHEALTH | ₹-1,094 |
+
+**Top trades:**
+- MAXHEALTH SHORT 43 @ 1006.00 → ₹-1,039 (Closed LONG position. Bollinger target hit (price 1006.20 >= middle band 1006.06))
+- HINDPETRO SHORT 57 @ 400.87 → ₹931 (Closed LONG position. rebalance TRIM)
+- ICICIPRULI SHORT 45 @ 501.40 → ₹715 (Closed LONG position. rebalance TRIM)
+- MAXHEALTH SHORT 44 @ 1019.70 → ₹605 (Closed LONG position. Bollinger target hit (price 1019.90 >= middle band 1017.14))
+- TATAMOTORS SHORT 134 @ 332.58 → ₹-380 (Closed LONG position. Bollinger target hit (price 332.65 >= middle band 332.43))
+- BSE SHORT 12 @ 3506.80 → ₹-368 (Closed LONG position. Bollinger target hit (price 3507.50 >= middle band 3506.80))
+- GICRE SHORT 64 @ 348.13 → ₹-356 (Closed LONG position. rebalance TRIM)
+- MAXHEALTH SHORT 41 @ 1088.78 → ₹-352 (Closed LONG position. Bollinger target hit (price 1089.00 >= middle band 1088.42))
+
+**Gate counters (why signals died):**
+- total_evaluations: 30812
+- rsi_not_oversold: 15767
+- no_mode: 6662
+- risk_blocked: 129
+- executed: 99
+- volume: 86
+- circuit_breaker: 63
+- proposed: 53
+- concentration_cap: 35
+- cooldown: 13
+- bollinger_band: 10
+
+**RiskEngine block reasons:**
+- Ticket size 45326.40069580078 exceeds single-stock cap 45000 (15% of capital).: 4
+- Ticket size 45600 exceeds single-stock cap 45000 (15% of capital).: 4
+- Ticket size 45098.40069580078 exceeds single-stock cap 45000 (15% of capital).: 3
+- Ticket size 45591 exceeds single-stock cap 45000 (15% of capital).: 3
+- Ticket size 45454.5 exceeds single-stock cap 45000 (15% of capital).: 3
+- Ticket size 45258 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45172.5 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45104.09930419922 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45058.5 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45349.19860839844 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45434.69860839844 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45440.40069580078 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45383.40069580078 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45372 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45136 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45172.39944458008 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45163.298889160156 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45176.951110839844 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45286.14944458008 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45413.548889160156 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45581.89944458008 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45563.701110839844 exceeds single-stock cap 45000 (15% of capital).: 2
+- Ticket size 45027.598083496094 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45018.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45126.90069580078 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45109.80139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45075.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45081.30139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45121.19860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45092.69860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45052.80139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45183.90069580078 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45087 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45064.19860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45115.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45132.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45229.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45303.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45280.80139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45292.19860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45360.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45297.90069580078 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45332.09930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45411.90069580078 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45400.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45463.19860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45423.30139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45366.30139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45377.69860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45389.09930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45343.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45417.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45429 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45605.69860839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45611.40069580078 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45645.59930419922 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45708.30139160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45027.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45046.09924316406 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45030 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45034.40100097656 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45046.697998046875 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45053.39794921875 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45190.60055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45140.548889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45058.64944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45072.298889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45104.14944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45186.048889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45272.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45331.64944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45318 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45336.201110839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45254.298889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45299.798889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45304.35055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45258.85055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45249.75 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45340.75 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45386.25 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45395.35055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45372.60055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45381.701110839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45445.39944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45472.701110839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45609.201110839844 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45613.75 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45550.048889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45545.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45559.14944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45572.798889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45554.60055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45527.298889160156 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45477.25 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45463.60055541992 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45468.14944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45422.64944458008 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45636.5 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45179.2021484375 exceeds single-stock cap 45000 (15% of capital).: 1
+- Ticket size 45262.7978515625 exceeds single-stock cap 45000 (15% of capital).: 1
+
+## case8
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹50,000 new capital = **₹50,000** total. Picked 20 symbols, 60 days, rebalance every 1 day(s).
+- **Symbols:** KEC, HAVELLS, INDUSINDBK, COLPAL, ICICIPRULI, PIDILITIND, HINDALCO, JINDALSAW, INFOSYS, UNITDSPR, FORTIS, RBLBANK, COALINDIA, CONCOR, NESTLEIND, AUROPHARMA, BERGERPAINT, BANDHANBNK
+- **Result:** 62 round trips, win rate 29.0%, profit factor 0.31, net P&L **₹-779** (-1.56%), max drawdown ₹889 (1.8%), final equity **₹49,221**.
+
+| Symbol | P&L |
+|---|---|
+| HAVELLS | ₹130 |
+| ICICIPRULI | ₹60 |
+| HINDALCO | ₹27 |
+| PIDILITIND | ₹-2 |
+| COALINDIA | ₹-11 |
+| UNITDSPR | ₹-19 |
+| CONCOR | ₹-21 |
+| FORTIS | ₹-30 |
+| RBLBANK | ₹-61 |
+| INFOSYS | ₹-62 |
+| AUROPHARMA | ₹-74 |
+| COLPAL | ₹-81 |
+| BANDHANBNK | ₹-81 |
+| KEC | ₹-96 |
+| BERGERPAINT | ₹-99 |
+| JINDALSAW | ₹-116 |
+| INDUSINDBK | ₹-245 |
+
+**Top trades:**
+- HAVELLS SHORT 6 @ 1182.66 → ₹162 (Closed LONG position. Bollinger target hit (price 1182.90 >= middle band 1173.30))
+- INDUSINDBK SHORT 7 @ 1015.15 → ₹-105 (Closed LONG position. Bollinger target hit (price 1015.35 >= middle band 1014.40))
+- JINDALSAW SHORT 28 @ 265.35 → ₹-75 (Closed LONG position. Bollinger target hit (price 265.40 >= middle band 265.37))
+- BANDHANBNK SHORT 22 @ 165.81 → ₹-61 (Closed LONG position. rebalance TRIM)
+- INFOSYS SHORT 3 @ 1156.47 → ₹-59 (Closed LONG position. rebalance TRIM)
+- COLPAL SHORT 3 @ 2085.18 → ₹-48 (Closed LONG position. Bollinger target hit (price 2085.60 >= middle band 2084.04))
+- INDUSINDBK SHORT 3 @ 990.20 → ₹-47 (Closed LONG position. rebalance TRIM)
+- BERGERPAINT SHORT 15 @ 493.30 → ₹-47 (Closed LONG position. Bollinger target hit (price 493.40 >= middle band 493.22))
+
+**Gate counters (why signals died):**
+- total_evaluations: 29188
+- rsi_not_oversold: 15796
+- no_mode: 5519
+- circuit_breaker: 128
+- executed: 101
+- proposed: 62
+- volume: 52
+- bollinger_band: 18
+- risk_blocked: 12
+- cooldown: 11
+- concentration_cap: 1
+
+**RiskEngine block reasons:**
+- Ticket size 7505.999908447266 exceeds single-stock cap 7500 (15% of capital).: 3
+- Ticket size 7522.5 exceeds single-stock cap 7500 (15% of capital).: 2
+- Ticket size 7515 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7513.499908447266 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7502.249908447266 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7504.499816894531 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7524.000091552734 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7517.249908447266 exceeds single-stock cap 7500 (15% of capital).: 1
+- Ticket size 7528.499908447266 exceeds single-stock cap 7500 (15% of capital).: 1
+
+## case9
+
+- **Setup:** 10 existing holding(s) worth ₹60,000 + ₹30,000 new capital = **₹90,000** total. Picked 10 symbols, 30 days, rebalance every 5 day(s).
+- **Symbols:** IRCTC, IRFC, SBILIFE, CHAMBLFERT, CUMMINSIND, INFOSYS, BSE, HINDALCO, ZYDUSLIFE
+- **Result:** 46 round trips, win rate 30.4%, profit factor 0.72, net P&L **₹-512** (-0.57%), max drawdown ₹977 (1.1%), final equity **₹89,488**.
+
+| Symbol | P&L |
+|---|---|
+| INFOSYS | ₹330 |
+| SBILIFE | ₹70 |
+| ZYDUSLIFE | ₹3 |
+| CUMMINSIND | ₹-22 |
+| HINDALCO | ₹-54 |
+| BSE | ₹-81 |
+| IRFC | ₹-103 |
+| CHAMBLFERT | ₹-310 |
+| IRCTC | ₹-346 |
+
+**Top trades:**
+- HINDALCO SHORT 12 @ 1086.88 → ₹416 (Closed LONG position. RSI 79.3 overbought (>70))
+- INFOSYS SHORT 12 @ 1110.68 → ₹304 (Closed LONG position. RSI 80.0 overbought (>70))
+- HINDALCO SHORT 12 @ 1053.99 → ₹-245 (Closed LONG position. Bollinger target hit (price 1054.20 >= middle band 1053.51))
+- BSE SHORT 3 @ 3524.10 → ₹163 (Closed LONG position. RSI 72.0 overbought (>70))
+- CHAMBLFERT SHORT 30 @ 440.46 → ₹-161 (Closed LONG position. Bollinger target hit (price 440.55 >= middle band 439.64))
+- IRCTC SHORT 27 @ 492.70 → ₹-127 (Closed LONG position. Bollinger target hit (price 492.80 >= middle band 492.73))
+- IRCTC SHORT 27 @ 497.05 → ₹118 (Closed LONG position. RSI 71.8 overbought (>70))
+- IRCTC SHORT 27 @ 490.60 → ₹-117 (Closed LONG position. Bollinger target hit (price 490.70 >= middle band 490.70))
+
+**Gate counters (why signals died):**
+- total_evaluations: 14604
+- rsi_not_oversold: 7438
+- no_mode: 3103
+- executed: 82
+- volume: 40
+- proposed: 38
+- risk_blocked: 37
+- circuit_breaker: 28
+- concentration_cap: 8
+- cooldown: 1
+
+**RiskEngine block reasons:**
+- Ticket size 13508.370140075684 exceeds single-stock cap 13500 (15% of capital).: 3
+- Ticket size 13577.219673156738 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13583.339813232422 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13623.120140075684 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13594.049766540527 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13519.080093383789 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13522.13957977295 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13516.019439697266 exceeds single-stock cap 13500 (15% of capital).: 2
+- Ticket size 13564.980560302734 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13612.410186767578 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13600.169906616211 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13598.63957977295 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13584.870140075684 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13581.80948638916 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13563.450233459473 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13561.919906616211 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13558.86042022705 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13548.150466918945 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13543.55948638916 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13540.5 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13535.910186767578 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13517.549766540527 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13514.490280151367 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13500.719673156738 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13560 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13534.80029296875 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13502.3994140625 exceeds single-stock cap 13500 (15% of capital).: 1
+- Ticket size 13509.900466918945 exceeds single-stock cap 13500 (15% of capital).: 1
+
+## case10
+
+- **Setup:** 0 existing holding(s) worth ₹0 + ₹5,00,000 new capital = **₹5,00,000** total. Picked 40 symbols, 30 days, rebalance every 1 day(s).
+- **Symbols:** TATAELXSI, CUMMINSIND, IDFCFIRSTB, ITC, HDFCBANK, COALINDIA, SHRIRAMFIN, SBICARD, INFOSYS, ATGL, CONCOR, AMBUJACEM, SBILIFE, IRFC, SIEMENS, BHARTIARTL, WIPRO, ABB, TRENT, HAVELLS, HINDPETRO, INDHOTEL, MARICO, ICICIBANK, KOTAKBANK, HINDALCO, HEROMOTOCO, CGPOWER, RELIANCE, HINDUNILVR, HAL, TATAMOTORS, PFC, DRREDDY, BHARATFORG, BAJFINANCE
+- **Result:** 68 round trips, win rate 27.9%, profit factor 0.40, net P&L **₹-8,563** (-1.71%), max drawdown ₹9,188 (1.8%), final equity **₹4,91,437**.
+
+| Symbol | P&L |
+|---|---|
+| IDFCFIRSTB | ₹2,303 |
+| HINDALCO | ₹276 |
+| TATAELXSI | ₹254 |
+| ABB | ₹3 |
+| SIEMENS | ₹-75 |
+| HINDPETRO | ₹-80 |
+| SHRIRAMFIN | ₹-127 |
+| MARICO | ₹-227 |
+| TRENT | ₹-283 |
+| SBICARD | ₹-322 |
+| CUMMINSIND | ₹-342 |
+| IRFC | ₹-457 |
+| BAJFINANCE | ₹-487 |
+| COALINDIA | ₹-602 |
+| TATAMOTORS | ₹-630 |
+| INFOSYS | ₹-647 |
+| WIPRO | ₹-674 |
+| AMBUJACEM | ₹-701 |
+| CONCOR | ₹-1,008 |
+| ITC | ₹-1,092 |
+| ATGL | ₹-1,581 |
+| HDFCBANK | ₹-2,062 |
+
+**Top trades:**
+- IDFCFIRSTB SHORT 474 @ 80.88 → ₹1,487 (Closed LONG position. rebalance TRIM)
+- HDFCBANK SHORT 100 @ 739.25 → ₹-1,036 (Closed LONG position. Bollinger target hit (price 739.40 >= middle band 739.26))
+- IDFCFIRSTB SHORT 474 @ 80.33 → ₹1,004 (Closed LONG position. rebalance TRIM)
+- CONCOR SHORT 145 @ 511.90 → ₹-639 (Closed LONG position. Bollinger target hit (price 512.00 >= middle band 511.74))
+- TATAMOTORS SHORT 224 @ 332.58 → ₹-630 (Closed LONG position. Bollinger target hit (price 332.65 >= middle band 332.43))
+- INFOSYS SHORT 32 @ 1156.47 → ₹-622 (Closed LONG position. rebalance TRIM)
+- TATAELXSI SHORT 20 @ 3636.47 → ₹603 (Closed LONG position. Bollinger target hit (price 3637.20 >= middle band 3631.67))
+- ITC SHORT 266 @ 279.74 → ₹-599 (Closed LONG position. Bollinger target hit (price 279.80 >= middle band 279.72))
+
+**Gate counters (why signals died):**
+- total_evaluations: 58300
+- rsi_not_oversold: 31298
+- no_mode: 11662
+- circuit_breaker: 299
+- risk_blocked: 116
+- executed: 105
+- volume: 93
+- proposed: 68
+- bollinger_band: 64
+- concentration_cap: 29
+- cooldown: 15
+
+**RiskEngine block reasons:**
+- Ticket size 75325 exceeds single-stock cap 75000 (15% of capital).: 7
+- Ticket size 76257.12231445312 exceeds single-stock cap 75000 (15% of capital).: 3
+- Ticket size 76295.04318237305 exceeds single-stock cap 75000 (15% of capital).: 3
+- Ticket size 76408.7985534668 exceeds single-stock cap 75000 (15% of capital).: 3
+- Ticket size 76541.51797485352 exceeds single-stock cap 75000 (15% of capital).: 3
+- Ticket size 75330.7485961914 exceeds single-stock cap 75000 (15% of capital).: 3
+- Ticket size 76332.95681762695 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76029.5971069336 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76171.7985534668 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75100.56115722656 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75612.48202514648 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76219.2014465332 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76314 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76152.84173583984 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76380.35971069336 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76446.71942138672 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 76693.2014465332 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75141.00280761719 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75146.7514038086 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75348.0014038086 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75440 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75353.75 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75336.49719238281 exceeds single-stock cap 75000 (15% of capital).: 2
+- Ticket size 75039.80224609375 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75016.80224609375 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75337.56115722656 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75318.5971069336 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75716.76260375977 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75944.28057861328 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76010.64028930664 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76228.68347167969 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76503.5971069336 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76190.76260375977 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75030 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75002.55111694336 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75220 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75053.15826416016 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75147.95681762695 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75024.71942138672 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75072.12231445312 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75204.84173583984 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75441.84173583984 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75422.87768554688 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75460.7985534668 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75640.92086791992 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75650.4028930664 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75830.51797485352 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75972.71942138672 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76001.15826416016 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76105.43884277344 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76067.51797485352 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76389.84173583984 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76721.64028930664 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76636.31652832031 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76551 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76522.56115722656 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76475.15826416016 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76484.64028930664 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76532.04318237305 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76579.43884277344 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 76683.71942138672 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75110.40234375 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75139.201171875 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75050 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75261.7514038086 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75169.75280761719 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75163.99719238281 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75175.5014038086 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75198.50280761719 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75474.4985961914 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75422.74719238281 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75399.75280761719 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75342.25280761719 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75290.5014038086 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75059.99908447266 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75044.99816894531 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75225 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75240.00091552734 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75172.49908447266 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75284.99908447266 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75036.1517944336 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75028.7991027832 exceeds single-stock cap 75000 (15% of capital).: 1
+- Ticket size 75264 exceeds single-stock cap 75000 (15% of capital).: 1

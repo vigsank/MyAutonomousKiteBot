@@ -1,0 +1,234 @@
+{
+  "name": "case3",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 90,
+  "rebalanceDays": 1,
+  "seed": 9,
+  "symbols": [
+    "KEC",
+    "SBILIFE",
+    "GAIL",
+    "LICI",
+    "NAUKRI",
+    "MUTHOOTFIN",
+    "GMRINFRA",
+    "AUBANK",
+    "AUROPHARMA"
+  ],
+  "roundTrips": 9,
+  "winRate": 44.44444444444444,
+  "profitFactor": 1.0986601720152729,
+  "netPnl": 127.10236175964654,
+  "returnPct": 0.14122484639960728,
+  "maxDrawdown": 953.3441066289379,
+  "maxDrawdownPct": 1.0592712295877087,
+  "finalEquity": 90127.10236175965,
+  "equityCurve": [
+    90000,
+    33495.16173367766,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    38515.9654983261,
+    51613.99404219359,
+    58271.57529219359,
+    58271.57529219359,
+    71258.17209219359,
+    71258.17209219359,
+    71258.17209219359,
+    71258.17209219359,
+    71258.17209219359,
+    71258.17209219359,
+    71258.17209219359,
+    84477.99567348632,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "KEC",
+      "pnl": 533.8275790270014
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "pnl": 478.62936625303166
+    },
+    {
+      "symbol": "NAUKRI",
+      "pnl": 209.03815590460542
+    },
+    {
+      "symbol": "GAIL",
+      "pnl": 193.89167325544287
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": -47.41217217406971
+    },
+    {
+      "symbol": "LICI",
+      "pnl": -285.40050972487796
+    },
+    {
+      "symbol": "AUBANK",
+      "pnl": -287.5281338774234
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": -331.0218563894618
+    },
+    {
+      "symbol": "GMRINFRA",
+      "pnl": -336.921740514602
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 861.8775777954102,
+      "pnl": 533.8275790270014,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 2756.8484223632813,
+      "pnl": 478.62936625303166,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 73,
+      "price": 86.41271430511475,
+      "pnl": -336.921740514602,
+      "reason": "Closed LONG position. rebalance EXIT"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1026.0947888183593,
+      "pnl": -331.0218563894618,
+      "reason": "Closed LONG position. rebalance EXIT"
+    },
+    {
+      "symbol": "AUBANK",
+      "direction": "SHORT",
+      "quantity": 9,
+      "price": 708.1583277954102,
+      "pnl": -287.5281338774234,
+      "reason": "Closed LONG position. rebalance EXIT"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 15,
+      "price": 425.9897972045898,
+      "pnl": -285.40050972487796,
+      "reason": "Closed LONG position. rebalance EXIT"
+    },
+    {
+      "symbol": "NAUKRI",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 1371.6256444091796,
+      "pnl": 209.03815590460542,
+      "reason": "Closed LONG position. Bollinger target hit (price 1371.90 >= middle band 1369.31)"
+    },
+    {
+      "symbol": "GAIL",
+      "direction": "SHORT",
+      "quantity": 38,
+      "price": 178.97419250793456,
+      "pnl": 193.89167325544287,
+      "reason": "Closed LONG position. Bollinger target hit (price 179.01 >= middle band 175.02)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 683,
+    "executed": 3,
+    "rsi_not_oversold": 72,
+    "no_mode": 49
+  },
+  "riskReasons": {}
+}

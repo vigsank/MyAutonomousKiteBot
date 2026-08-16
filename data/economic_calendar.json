@@ -1,0 +1,374 @@
+{
+  "events": [
+    {
+      "date": "2026-04-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-04-03",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-04-05",
+      "event": "RBI monetary policy decision",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-04-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-04-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-04-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-05-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-05-01",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-05-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-05-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-05-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-05-28",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-05-30",
+      "event": "India GDP (quarterly)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-06-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-06-05",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-06-07",
+      "event": "RBI monetary policy decision",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-06-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-06-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-06-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-07-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-07-03",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-07-09",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-07-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-07-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-07-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-08-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-08-07",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-08-09",
+      "event": "RBI monetary policy decision",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-08-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-08-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-08-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-08-21",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-08-31",
+      "event": "India GDP (quarterly)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-09-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-09-04",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-09-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-09-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-09-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-10-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-10-01",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-10-02",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-10-11",
+      "event": "RBI monetary policy decision",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-10-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-11-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-11-06",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-11-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-11-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-11-13",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-11-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-12-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-12-01",
+      "event": "India GDP (quarterly)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-12-04",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-12-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-12-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2026-12-13",
+      "event": "RBI monetary policy decision",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2026-12-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2026-12-24",
+      "event": "US FOMC meeting",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-01-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-01-01",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-01-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-01-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-01-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2027-02-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-02-05",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-02-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-02-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-02-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    },
+    {
+      "date": "2027-03-01",
+      "event": "US ISM Manufacturing PMI",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-03-05",
+      "event": "US Non-farm payrolls",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-03-10",
+      "event": "US CPI (inflation)",
+      "impact": "HIGH"
+    },
+    {
+      "date": "2027-03-12",
+      "event": "India CPI (inflation)",
+      "impact": "MEDIUM"
+    },
+    {
+      "date": "2027-03-15",
+      "event": "India WPI (inflation)",
+      "impact": "LOW"
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "name": "case8",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 50000,
+  "totalCapital": 50000,
+  "pickSymbols": 20,
+  "days": 60,
+  "rebalanceDays": 1,
+  "seed": 14,
+  "symbols": [
+    "KEC",
+    "HAVELLS",
+    "INDUSINDBK",
+    "COLPAL",
+    "ICICIPRULI",
+    "PIDILITIND",
+    "HINDALCO",
+    "JINDALSAW",
+    "INFOSYS",
+    "UNITDSPR",
+    "FORTIS",
+    "RBLBANK",
+    "COALINDIA",
+    "CONCOR",
+    "NESTLEIND",
+    "AUROPHARMA",
+    "BERGERPAINT",
+    "BANDHANBNK"
+  ],
+  "roundTrips": 16,
+  "winRate": 37.5,
+  "profitFactor": 0.5131274667403302,
+  "netPnl": -213.56493807782545,
+  "returnPct": -0.42712987615565084,
+  "maxDrawdown": 360.2349380400119,
+  "maxDrawdownPct": 0.7204698760800239,
+  "finalEquity": 49786.43506192217,
+  "equityCurve": [
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "COLPAL",
+      "pnl": 35.934473634604025
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "pnl": 27.32987459707134
+    },
+    {
+      "symbol": "RBLBANK",
+      "pnl": -2.6573145839990318
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -11.525603151181123
+    },
+    {
+      "symbol": "JINDALSAW",
+      "pnl": -19.273032820051725
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -35.60044212510285
+    },
+    {
+      "symbol": "NESTLEIND",
+      "pnl": -39.691959438084744
+    },
+    {
+      "symbol": "CONCOR",
+      "pnl": -56.94819760189979
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -111.13273658918152
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 452.1095722045898,
+      "pnl": -139.4683454204032,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "direction": "SHORT",
+      "quantity": 14,
+      "price": 264.34711389770507,
+      "pnl": -108.54239328734693,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "direction": "SHORT",
+      "quantity": 28,
+      "price": 263.14737220458983,
+      "pnl": 89.2693604672952,
+      "reason": "Closed LONG position. Bollinger target hit (price 263.20 >= middle band 263.14)"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 1502.6994,
+      "pnl": -51.13555656588585,
+      "reason": "Closed LONG position. Bollinger target hit (price 1503.00 >= middle band 1501.46)"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "direction": "SHORT",
+      "quantity": 35,
+      "price": 212.79742833862304,
+      "pnl": 50.11083173433916,
+      "reason": "Closed LONG position. Bollinger target hit (price 212.84 >= middle band 212.77)"
+    },
+    {
+      "symbol": "CONCOR",
+      "direction": "SHORT",
+      "quantity": 7,
+      "price": 514.897,
+      "pnl": -49.7512827568994,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "COLPAL",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 2074.984822363281,
+      "pnl": 35.934473634604025,
+      "reason": "Closed LONG position. Bollinger target hit (price 2075.40 >= middle band 2075.34)"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 953.3093,
+      "pnl": -35.46702261670022,
+      "reason": "Closed LONG position. rebalance TRIM"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 9631,
+    "rsi_not_oversold": 5213,
+    "bollinger_band": 26,
+    "volume": 43,
+    "proposed": 16,
+    "executed": 23,
+    "no_mode": 1532,
+    "risk_blocked": 2,
+    "cooldown": 2
+  },
+  "riskReasons": {
+    "Ticket size 7564.39990234375 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7552.7998046875 exceeds single-stock cap 7500 (15% of capital).": 1
+  }
+}

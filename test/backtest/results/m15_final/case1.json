@@ -1,0 +1,173 @@
+{
+  "name": "case1",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 20000,
+  "totalCapital": 20000,
+  "pickSymbols": 20,
+  "days": 30,
+  "rebalanceDays": 10,
+  "seed": 7,
+  "symbols": [
+    "CONCOR",
+    "INDHOTEL",
+    "PFC",
+    "IOC",
+    "DELHIVERY",
+    "BANDHANBNK",
+    "TATAMOTORS",
+    "NMDC",
+    "IRB"
+  ],
+  "roundTrips": 14,
+  "winRate": 64.28571428571429,
+  "profitFactor": 3.1663210245686084,
+  "netPnl": 130.86173550774356,
+  "returnPct": 0.6543086775387178,
+  "maxDrawdown": 21.372290240389702,
+  "maxDrawdownPct": 0.10686145120194851,
+  "finalEquity": 20130.861735507744,
+  "equityCurve": [
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    17000.810423019408,
+    17113.122813256836,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    17051.01039478302,
+    17414.732988952637,
+    17101.60032184143,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000,
+    20000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "BANDHANBNK",
+      "pnl": 111.86079464742879
+    },
+    {
+      "symbol": "CONCOR",
+      "pnl": 36.61390992657719
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "pnl": 21.53319467575792
+    },
+    {
+      "symbol": "INDHOTEL",
+      "pnl": 11.569187786514396
+    },
+    {
+      "symbol": "PFC",
+      "pnl": 6.253867352350103
+    },
+    {
+      "symbol": "NMDC",
+      "pnl": -5.669118342604607
+    },
+    {
+      "symbol": "IOC",
+      "pnl": -6.7200295651002175
+    },
+    {
+      "symbol": "IRB",
+      "pnl": -44.58007097318
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "BANDHANBNK",
+      "direction": "SHORT",
+      "quantity": 17,
+      "price": 176.3647138977051,
+      "pnl": 91.81646195369312,
+      "reason": "Closed LONG position. Bollinger target hit (price 176.40 >= middle band 174.87)"
+    },
+    {
+      "symbol": "CONCOR",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 523.8452222045898,
+      "pnl": 26.912216288302698,
+      "reason": "Closed LONG position. Bollinger target hit (price 523.95 >= middle band 518.65)"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 342.33151389770507,
+      "pnl": 21.53319467575792,
+      "reason": "Closed LONG position. Bollinger target hit (price 342.40 >= middle band 339.61)"
+    },
+    {
+      "symbol": "IRB",
+      "direction": "SHORT",
+      "quantity": 151,
+      "price": 19.75604822883606,
+      "pnl": -21.37229024038841,
+      "reason": "Closed LONG position. Bollinger target hit (price 19.76 >= middle band 19.76)"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "direction": "SHORT",
+      "quantity": 14,
+      "price": 212.79742833862304,
+      "pnl": 20.044332693735665,
+      "reason": "Closed LONG position. Bollinger target hit (price 212.84 >= middle band 212.77)"
+    },
+    {
+      "symbol": "IRB",
+      "direction": "SHORT",
+      "quantity": 154,
+      "price": 19.346130381393433,
+      "pnl": -12.346387141822461,
+      "reason": "Closed LONG position. Bollinger target hit (price 19.35 >= middle band 19.33)"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 728.8542,
+      "pnl": 11.569187786514396,
+      "reason": "Closed LONG position. Bollinger target hit (price 729.00 >= middle band 728.86)"
+    },
+    {
+      "symbol": "IRB",
+      "direction": "SHORT",
+      "quantity": 154,
+      "price": 19.46610531349182,
+      "pnl": -10.861393590969126,
+      "reason": "Closed LONG position. Bollinger target hit (price 19.47 >= middle band 19.45)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 4812,
+    "rsi_not_oversold": 2592,
+    "bollinger_band": 11,
+    "volume": 30,
+    "no_mode": 1015,
+    "proposed": 14,
+    "executed": 28,
+    "risk_blocked": 3,
+    "cooldown": 4
+  },
+  "riskReasons": {
+    "Ticket size 3002.160140991211 exceeds single-stock cap 3000 (15% of capital).": 1,
+    "Ticket size 3002.5799102783203 exceeds single-stock cap 3000 (15% of capital).": 1,
+    "Ticket size 3000.2698974609375 exceeds single-stock cap 3000 (15% of capital).": 1
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "name": "case2",
+  "holdingsCount": 2,
+  "holdingsValue": 15000,
+  "newCapital": 20000,
+  "totalCapital": 35000,
+  "pickSymbols": 18,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 8,
+  "symbols": [
+    "LICI",
+    "NATCOPHARM",
+    "COALINDIA",
+    "TATASTEEL",
+    "AXISBANK",
+    "ICICIBANK",
+    "INFY",
+    "HINDALCO",
+    "DRREDDY",
+    "MOTHERSON",
+    "ADANIGREEN",
+    "IDFCFIRSTB"
+  ],
+  "roundTrips": 46,
+  "winRate": 32.608695652173914,
+  "profitFactor": 0.23830875042187058,
+  "netPnl": -551.1957291218032,
+  "returnPct": -1.5748449403480091,
+  "maxDrawdown": 568.1531518442207,
+  "maxDrawdownPct": 1.623294719554916,
+  "finalEquity": 34448.804270878194,
+  "equityCurve": [
+    35000,
+    28219.84406906738,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "AXISBANK",
+      "pnl": 38.446065011741226
+    },
+    {
+      "symbol": "DRREDDY",
+      "pnl": 26.782541961570075
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": 15.436655382971438
+    },
+    {
+      "symbol": "MOTHERSON",
+      "pnl": -7.299091416714525
+    },
+    {
+      "symbol": "ICICIBANK",
+      "pnl": -16.29779925417754
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "pnl": -25.601333574406258
+    },
+    {
+      "symbol": "INFY",
+      "pnl": -45.4838347670825
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -70.91047588399091
+    },
+    {
+      "symbol": "TATASTEEL",
+      "pnl": -122.38048974222235
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "pnl": -138.69001831601446
+    },
+    {
+      "symbol": "LICI",
+      "pnl": -205.19794852347735
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "TATASTEEL",
+      "direction": "SHORT",
+      "quantity": 14,
+      "price": 185.20295749206542,
+      "pnl": -73.32891790566707,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 11,
+      "price": 435.3129138977051,
+      "pnl": -65.56416833683686,
+      "reason": "Closed LONG position. Bollinger target hit (price 435.40 >= middle band 435.28)"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 432.9134,
+      "pnl": -61.18743885809919,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "direction": "SHORT",
+      "quantity": 28,
+      "price": 184.63306416931152,
+      "pnl": -55.89246837844402,
+      "reason": "Closed LONG position. Bollinger target hit (price 184.67 >= middle band 184.42)"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 936.1127277954101,
+      "pnl": -52.35871440298168,
+      "reason": "Closed LONG position. Bollinger target hit (price 936.30 >= middle band 935.61)"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 1514.697,
+      "pnl": -40.26627975582883,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "INFY",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 1156.4686111816407,
+      "pnl": -39.21893313291104,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "AXISBANK",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 1260.5478888183593,
+      "pnl": 38.40966441616814,
+      "reason": "Closed LONG position. Bollinger target hit (price 1260.80 >= middle band 1255.21)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 19453,
+    "rsi_not_oversold": 10051,
+    "no_mode": 4251,
+    "risk_blocked": 36,
+    "bollinger_band": 30,
+    "proposed": 44,
+    "executed": 75,
+    "circuit_breaker": 54,
+    "cooldown": 6,
+    "volume": 40,
+    "concentration_cap": 3
+  },
+  "riskReasons": {
+    "Ticket size 6784.0501708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6782.3001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6783.6998291015625 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6795.599914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6794.900085449219 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6790.349914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6807.5 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6797 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6799.099914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6798.75 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6806.099914550781 exceeds single-stock cap 5250 (15% of capital).": 2,
+    "Ticket size 6816.599914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6804.6998291015625 exceeds single-stock cap 5250 (15% of capital).": 2,
+    "Ticket size 6804 exceeds single-stock cap 5250 (15% of capital).": 3,
+    "Ticket size 6818.6998291015625 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6828.849914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6812.400085449219 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6817.3001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6814.150085449219 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6805.400085449219 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6807.150085449219 exceeds single-stock cap 5250 (15% of capital).": 2,
+    "Ticket size 6805.75 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6800.849914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6806.8001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6809.9498291015625 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5263.439880371094 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5259.240051269531 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5266.8001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5262.599914550781 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5261.1998291015625 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 5260.35986328125 exceeds single-stock cap 5250 (15% of capital).": 1
+  }
+}

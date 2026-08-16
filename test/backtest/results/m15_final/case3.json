@@ -1,0 +1,176 @@
+{
+  "name": "case3",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 10,
+  "seed": 9,
+  "symbols": [
+    "KEC",
+    "SBILIFE",
+    "GAIL",
+    "LICI",
+    "NAUKRI",
+    "MUTHOOTFIN",
+    "GMRINFRA",
+    "AUBANK",
+    "AUROPHARMA"
+  ],
+  "roundTrips": 23,
+  "winRate": 60.86956521739131,
+  "profitFactor": 0.6709690036858538,
+  "netPnl": -314.4587268389361,
+  "returnPct": -0.3493985853765957,
+  "maxDrawdown": 511.666573205046,
+  "maxDrawdownPct": 0.5685184146722733,
+  "finalEquity": 89685.54127316107,
+  "equityCurve": [
+    90000,
+    33806.53328356017,
+    70979.19621845397,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    76517.30445785522,
+    90000,
+    77609.5224,
+    77449.09090605468,
+    90000,
+    76646.29984100646,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    76671.8349,
+    76671.8349,
+    90000,
+    90000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "LICI",
+      "pnl": 155.35200007341092
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": 117.2067977517705
+    },
+    {
+      "symbol": "GAIL",
+      "pnl": 115.60392781220285
+    },
+    {
+      "symbol": "NAUKRI",
+      "pnl": 113.93495616405971
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": 55.90966780622241
+    },
+    {
+      "symbol": "AUBANK",
+      "pnl": -29.607906896077225
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "pnl": -38.95040514840953
+    },
+    {
+      "symbol": "GMRINFRA",
+      "pnl": -334.80220533623464
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -469.10555906588115
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 29,
+      "price": 445.61087220458984,
+      "pnl": -440.9934981202804,
+      "reason": "Closed LONG position. Bollinger target hit (price 445.70 >= middle band 444.61)"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 125,
+      "price": 106.70865735626221,
+      "pnl": -180.42938263361037,
+      "reason": "Closed LONG position. Bollinger target hit (price 106.73 >= middle band 106.56)"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 58,
+      "price": 111.69765722045898,
+      "pnl": -117.73056017450716,
+      "reason": "Closed LONG position. Bollinger target hit (price 111.72 >= middle band 111.57)"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 15,
+      "price": 441.71162779541015,
+      "pnl": 111.60826492462786,
+      "reason": "Closed LONG position. RSI 73.3 overbought (>70)"
+    },
+    {
+      "symbol": "GAIL",
+      "direction": "SHORT",
+      "quantity": 38,
+      "price": 174.26514305114745,
+      "pnl": 85.59958144150502,
+      "reason": "Closed LONG position. RSI 74.0 overbought (>70)"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 1602.1795,
+      "pnl": 85.14921737977123,
+      "reason": "Closed LONG position. Bollinger target hit (price 1602.50 >= middle band 1600.55)"
+    },
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 507.8984,
+      "pnl": -79.11615684179978,
+      "reason": "Closed LONG position. Bollinger target hit (price 508.00 >= middle band 507.94)"
+    },
+    {
+      "symbol": "NAUKRI",
+      "direction": "SHORT",
+      "quantity": 10,
+      "price": 1241.7516,
+      "pnl": 70.5683000372866,
+      "reason": "Closed LONG position. Bollinger target hit (price 1242.00 >= middle band 1240.35)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 4815,
+    "executed": 37,
+    "rsi_not_oversold": 2175,
+    "concentration_cap": 1,
+    "no_mode": 1073,
+    "volume": 26,
+    "proposed": 14,
+    "risk_blocked": 1,
+    "bollinger_band": 5,
+    "cooldown": 2
+  },
+  "riskReasons": {
+    "Ticket size 13723.750114440918 exceeds single-stock cap 13500 (15% of capital).": 1
+  }
+}

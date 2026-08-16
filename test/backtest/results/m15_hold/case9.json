@@ -1,0 +1,173 @@
+{
+  "name": "case9",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 10,
+  "seed": 15,
+  "symbols": [
+    "IRCTC",
+    "IRFC",
+    "SBILIFE",
+    "CHAMBLFERT",
+    "CUMMINSIND",
+    "INFOSYS",
+    "BSE",
+    "HINDALCO",
+    "ZYDUSLIFE"
+  ],
+  "roundTrips": 42,
+  "winRate": 16.666666666666664,
+  "profitFactor": 0.2244370857414074,
+  "netPnl": -1648.868497166457,
+  "returnPct": -1.83207610796273,
+  "maxDrawdown": 1814.7997207316803,
+  "maxDrawdownPct": 2.0164441341463113,
+  "finalEquity": 88351.13150283354,
+  "equityCurve": [
+    90000,
+    43359.77400924682,
+    67237.59839337158,
+    86199.7401,
+    86199.7401,
+    76585.81806628418,
+    76585.81806628418,
+    90000,
+    76582.06695000001,
+    90000,
+    76762.85328314209,
+    76720.09455,
+    76863.27335703735,
+    90000,
+    90000,
+    90000,
+    90000,
+    76576.43623881684,
+    90000,
+    76883.57688592529,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": 196.4512115010021
+    },
+    {
+      "symbol": "INFOSYS",
+      "pnl": 34.8334505454425
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": -1.6802053426726786
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "pnl": -117.8557052742163
+    },
+    {
+      "symbol": "IRFC",
+      "pnl": -151.12290553175757
+    },
+    {
+      "symbol": "BSE",
+      "pnl": -195.68578859486576
+    },
+    {
+      "symbol": "IRCTC",
+      "pnl": -241.69508998801595
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -403.7690313169992
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "pnl": -768.3444331643745
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "CHAMBLFERT",
+      "direction": "SHORT",
+      "quantity": 30,
+      "price": 436.66265,
+      "pnl": -350.2024728970727,
+      "reason": "Closed LONG position. Bollinger target hit (price 436.75 >= middle band 436.54)"
+    },
+    {
+      "symbol": "BSE",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 3593.2812,
+      "pnl": -216.9895546494001,
+      "reason": "Closed LONG position. Bollinger target hit (price 3594.00 >= middle band 3583.70)"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 5548.89,
+      "pnl": 167.81516270160117,
+      "reason": "Closed LONG position. Bollinger target hit (price 5550.00 >= middle band 5522.70)"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "direction": "SHORT",
+      "quantity": 31,
+      "price": 429.7140277954102,
+      "pnl": -133.00288629466877,
+      "reason": "Closed LONG position. Bollinger target hit (price 429.80 >= middle band 429.73)"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 967.0065722045898,
+      "pnl": -97.66967413501364,
+      "reason": "Closed LONG position. Bollinger target hit (price 967.20 >= middle band 961.26)"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 962.0075722045898,
+      "pnl": -94.86240046905164,
+      "reason": "Closed LONG position. Bollinger target hit (price 962.20 >= middle band 960.67)"
+    },
+    {
+      "symbol": "IRCTC",
+      "direction": "SHORT",
+      "quantity": 26,
+      "price": 506.8986,
+      "pnl": -87.84207799732884,
+      "reason": "Closed LONG position. Bollinger target hit (price 507.00 >= middle band 502.16)"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "direction": "SHORT",
+      "quantity": 30,
+      "price": 439.56206389770506,
+      "pnl": -86.0629076169088,
+      "reason": "Closed LONG position. Bollinger target hit (price 439.65 >= middle band 438.28)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 4819,
+    "executed": 76,
+    "rsi_not_oversold": 1960,
+    "concentration_cap": 2,
+    "no_mode": 1181,
+    "proposed": 34,
+    "volume": 16,
+    "cooldown": 10,
+    "circuit_breaker": 1
+  },
+  "riskReasons": {}
+}

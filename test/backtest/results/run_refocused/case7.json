@@ -1,0 +1,326 @@
+{
+  "name": "case7",
+  "holdingsCount": 20,
+  "holdingsValue": 200000,
+  "newCapital": 100000,
+  "totalCapital": 300000,
+  "pickSymbols": 20,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 13,
+  "symbols": [
+    "CIPLA",
+    "ZYDUSLIFE",
+    "ICICIPRULI",
+    "HINDALCO",
+    "MAXHEALTH",
+    "TATACONSUM",
+    "ADANIPORTS",
+    "HINDPETRO",
+    "ADANIENSOL",
+    "TATATECH",
+    "TATAMOTORS",
+    "BSE",
+    "HCLTECH",
+    "M&M",
+    "IOC",
+    "GICRE",
+    "JKCEMENT",
+    "CUMMINSIND",
+    "ASTRAL"
+  ],
+  "roundTrips": 71,
+  "winRate": 40.845070422535215,
+  "profitFactor": 0.49758534593318726,
+  "netPnl": -3772.2040030893936,
+  "returnPct": -1.2574013343631312,
+  "maxDrawdown": 4782.861522293882,
+  "maxDrawdownPct": 1.594287174097961,
+  "finalEquity": 296227.7959969106,
+  "equityCurve": [
+    300000,
+    131495.79643765866,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "HINDPETRO",
+      "pnl": 945.8608587933143
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "pnl": 899.702564799141
+    },
+    {
+      "symbol": "JKCEMENT",
+      "pnl": 83.15466708000034
+    },
+    {
+      "symbol": "HCLTECH",
+      "pnl": 30.28396654331061
+    },
+    {
+      "symbol": "M&M",
+      "pnl": 18.476179147971806
+    },
+    {
+      "symbol": "ASTRAL",
+      "pnl": 6.243396187870161
+    },
+    {
+      "symbol": "IOC",
+      "pnl": -34.84970230162244
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "pnl": -71.5118883978013
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": -99.79975959540177
+    },
+    {
+      "symbol": "CIPLA",
+      "pnl": -238.3686709443248
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "pnl": -260.4930640140252
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "pnl": -320.591384189892
+    },
+    {
+      "symbol": "GICRE",
+      "pnl": -339.40685632030556
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -385.5611382983563
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "pnl": -547.8791752150948
+    },
+    {
+      "symbol": "TATACONSUM",
+      "pnl": -637.2630957464316
+    },
+    {
+      "symbol": "BSE",
+      "pnl": -691.1080054125565
+    },
+    {
+      "symbol": "TATATECH",
+      "pnl": -1035.0322794788472
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "pnl": -1094.0606157263423
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "MAXHEALTH",
+      "direction": "SHORT",
+      "quantity": 43,
+      "price": 1005.9987722045898,
+      "pnl": -1038.8734723728805,
+      "reason": "Closed LONG position. Bollinger target hit (price 1006.20 >= middle band 1006.06)"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "direction": "SHORT",
+      "quantity": 57,
+      "price": 400.86982220458987,
+      "pnl": 931.2069433931583,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "direction": "SHORT",
+      "quantity": 45,
+      "price": 501.3997,
+      "pnl": 714.890724959126,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "direction": "SHORT",
+      "quantity": 44,
+      "price": 1019.6960444091796,
+      "pnl": 605.2834635165829,
+      "reason": "Closed LONG position. Bollinger target hit (price 1019.90 >= middle band 1017.14)"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "direction": "SHORT",
+      "quantity": 134,
+      "price": 332.5834638977051,
+      "pnl": -380.11675580187875,
+      "reason": "Closed LONG position. Bollinger target hit (price 332.65 >= middle band 332.43)"
+    },
+    {
+      "symbol": "BSE",
+      "direction": "SHORT",
+      "quantity": 12,
+      "price": 3506.7985,
+      "pnl": -367.5825627689172,
+      "reason": "Closed LONG position. Bollinger target hit (price 3507.50 >= middle band 3506.80)"
+    },
+    {
+      "symbol": "GICRE",
+      "direction": "SHORT",
+      "quantity": 64,
+      "price": 348.13037220458983,
+      "pnl": -356.45818358950635,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "direction": "SHORT",
+      "quantity": 41,
+      "price": 1088.7822,
+      "pnl": -352.29845746985046,
+      "reason": "Closed LONG position. Bollinger target hit (price 1089.00 >= middle band 1088.42)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 30812,
+    "executed": 99,
+    "rsi_not_oversold": 15767,
+    "no_mode": 6662,
+    "concentration_cap": 35,
+    "volume": 86,
+    "bollinger_band": 10,
+    "proposed": 53,
+    "circuit_breaker": 63,
+    "risk_blocked": 129,
+    "cooldown": 13
+  },
+  "riskReasons": {
+    "Ticket size 45027.598083496094 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45018.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45326.40069580078 exceeds single-stock cap 45000 (15% of capital).": 4,
+    "Ticket size 45258 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45172.5 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45126.90069580078 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45109.80139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45104.09930419922 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45075.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45098.40069580078 exceeds single-stock cap 45000 (15% of capital).": 3,
+    "Ticket size 45081.30139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45058.5 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45121.19860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45092.69860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45052.80139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45183.90069580078 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45087 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45064.19860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45115.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45132.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45229.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45303.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45349.19860839844 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45280.80139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45292.19860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45360.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45297.90069580078 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45332.09930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45434.69860839844 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45411.90069580078 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45440.40069580078 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45383.40069580078 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45372 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45400.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45463.19860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45423.30139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45366.30139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45377.69860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45389.09930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45343.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45417.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45429 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45605.69860839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45611.40069580078 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45645.59930419922 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45600 exceeds single-stock cap 45000 (15% of capital).": 4,
+    "Ticket size 45708.30139160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45027.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45046.09924316406 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45030 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45034.40100097656 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45046.697998046875 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45053.39794921875 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45136 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45172.39944458008 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45190.60055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45163.298889160156 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45140.548889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45058.64944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45072.298889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45104.14944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45186.048889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45176.951110839844 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45272.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45331.64944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45318 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45336.201110839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45254.298889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45286.14944458008 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45299.798889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45304.35055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45258.85055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45249.75 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45340.75 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45386.25 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45395.35055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45372.60055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45381.701110839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45413.548889160156 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45445.39944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45472.701110839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45591 exceeds single-stock cap 45000 (15% of capital).": 3,
+    "Ticket size 45581.89944458008 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45563.701110839844 exceeds single-stock cap 45000 (15% of capital).": 2,
+    "Ticket size 45609.201110839844 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45613.75 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45550.048889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45545.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45559.14944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45572.798889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45554.60055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45527.298889160156 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45454.5 exceeds single-stock cap 45000 (15% of capital).": 3,
+    "Ticket size 45477.25 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45463.60055541992 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45468.14944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45422.64944458008 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45636.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45179.2021484375 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45262.7978515625 exceeds single-stock cap 45000 (15% of capital).": 1
+  }
+}

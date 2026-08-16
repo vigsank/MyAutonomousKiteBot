@@ -1,0 +1,182 @@
+{
+  "name": "case2",
+  "holdingsCount": 2,
+  "holdingsValue": 15000,
+  "newCapital": 20000,
+  "totalCapital": 35000,
+  "pickSymbols": 18,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 8,
+  "symbols": [
+    "LICI",
+    "NATCOPHARM",
+    "COALINDIA",
+    "TATASTEEL",
+    "AXISBANK",
+    "ICICIBANK",
+    "INFY",
+    "HINDALCO",
+    "DRREDDY",
+    "MOTHERSON",
+    "ADANIGREEN",
+    "IDFCFIRSTB"
+  ],
+  "roundTrips": 18,
+  "winRate": 33.33333333333333,
+  "profitFactor": 0.31970833677540605,
+  "netPnl": -272.5241111316713,
+  "returnPct": -0.7786403175190608,
+  "maxDrawdown": 283.7372926262178,
+  "maxDrawdownPct": 0.810677978932051,
+  "finalEquity": 34727.47588886833,
+  "equityCurve": [
+    35000,
+    28232.446930932616,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000,
+    35000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "HINDALCO",
+      "pnl": 28.122537136375684
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -8.13571987142197
+    },
+    {
+      "symbol": "MOTHERSON",
+      "pnl": -8.357419671902726
+    },
+    {
+      "symbol": "LICI",
+      "pnl": -15.516047351228254
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "pnl": -21.609045202309602
+    },
+    {
+      "symbol": "DRREDDY",
+      "pnl": -35.38076215702853
+    },
+    {
+      "symbol": "AXISBANK",
+      "pnl": -48.46205414097397
+    },
+    {
+      "symbol": "ICICIBANK",
+      "pnl": -58.244503702563016
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "pnl": -104.94109617061898
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "ADANIGREEN",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 1475.3048555908204,
+      "pnl": -87.07234015094872,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 1420.7158,
+      "pnl": -76.3473230603999,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 942.9613944091797,
+      "pnl": -57.22260788839493,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "AXISBANK",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 1256.7486,
+      "pnl": -36.05863331628612,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "DRREDDY",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 1137.7724,
+      "pnl": -35.38076215702853,
+      "reason": "Closed LONG position. Bollinger target hit (price 1138.00 >= middle band 1136.79)"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 1562.4874888183595,
+      "pnl": 33.202664417912615,
+      "reason": "Closed LONG position. Bollinger target hit (price 1562.80 >= middle band 1558.55)"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 1373.5252888183593,
+      "pnl": 32.2606305307265,
+      "reason": "Closed LONG position. Bollinger target hit (price 1373.80 >= middle band 1373.32)"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 919.7160444091796,
+      "pnl": -30.069542754430593,
+      "reason": "Closed LONG position. rebalance TRIM"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 6429,
+    "rsi_not_oversold": 3289,
+    "risk_blocked": 5,
+    "bollinger_band": 32,
+    "proposed": 16,
+    "executed": 25,
+    "concentration_cap": 6,
+    "cooldown": 2,
+    "volume": 24,
+    "no_mode": 1260,
+    "circuit_breaker": 2
+  },
+  "riskReasons": {
+    "Ticket size 6799.8001708984375 exceeds single-stock cap 5250 (15% of capital).": 2,
+    "Ticket size 6806.8001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6792.8001708984375 exceeds single-stock cap 5250 (15% of capital).": 1,
+    "Ticket size 6796.3001708984375 exceeds single-stock cap 5250 (15% of capital).": 1
+  }
+}

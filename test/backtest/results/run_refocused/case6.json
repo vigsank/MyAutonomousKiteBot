@@ -1,0 +1,206 @@
+{
+  "name": "case6",
+  "holdingsCount": 5,
+  "holdingsValue": 50000,
+  "newCapital": 50000,
+  "totalCapital": 100000,
+  "pickSymbols": 15,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 12,
+  "symbols": [
+    "AUBANK",
+    "OIL",
+    "HINDCOPPER",
+    "DMART",
+    "FORTIS",
+    "ASTRAL",
+    "BLUESTARCO",
+    "DELHIVERY",
+    "GODREJCP",
+    "FEDERALBNK",
+    "J&KBANK",
+    "HCLTECH",
+    "BIOCON",
+    "ACC"
+  ],
+  "roundTrips": 49,
+  "winRate": 42.857142857142854,
+  "profitFactor": 0.4599794992385568,
+  "netPnl": -1327.4668053964365,
+  "returnPct": -1.3274668053964365,
+  "maxDrawdown": 1635.7958649398934,
+  "maxDrawdownPct": 1.6357958649398934,
+  "finalEquity": 98672.53319460356,
+  "equityCurve": [
+    100000,
+    53606.3230345337,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "DELHIVERY",
+      "pnl": 114.00420442813548
+    },
+    {
+      "symbol": "ACC",
+      "pnl": 113.96343223272987
+    },
+    {
+      "symbol": "BIOCON",
+      "pnl": 24.817160870315455
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "pnl": -12.81910599329889
+    },
+    {
+      "symbol": "ASTRAL",
+      "pnl": -14.068543179939951
+    },
+    {
+      "symbol": "AUBANK",
+      "pnl": -19.317686412487348
+    },
+    {
+      "symbol": "HCLTECH",
+      "pnl": -62.551718032091685
+    },
+    {
+      "symbol": "GODREJCP",
+      "pnl": -122.9743468949561
+    },
+    {
+      "symbol": "DMART",
+      "pnl": -125.61028166742358
+    },
+    {
+      "symbol": "OIL",
+      "pnl": -169.4566674730414
+    },
+    {
+      "symbol": "FORTIS",
+      "pnl": -171.1293629920579
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "pnl": -174.19972669193538
+    },
+    {
+      "symbol": "J&KBANK",
+      "pnl": -268.6293736519573
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "pnl": -439.49478993842786
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "BLUESTARCO",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 1570.6858,
+      "pnl": -505.4597798484863,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "J&KBANK",
+      "direction": "SHORT",
+      "quantity": 41,
+      "price": 177.91440694885253,
+      "pnl": -206.34433124514112,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "direction": "SHORT",
+      "quantity": 31,
+      "price": 475.9048,
+      "pnl": -190.23550663275313,
+      "reason": "Closed LONG position. Bollinger target hit (price 476.00 >= middle band 475.86)"
+    },
+    {
+      "symbol": "OIL",
+      "direction": "SHORT",
+      "quantity": 22,
+      "price": 434.0131861022949,
+      "pnl": -168.49717497811932,
+      "reason": "Closed LONG position. Bollinger target hit (price 434.10 >= middle band 431.95)"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 1693.0613444091796,
+      "pnl": 152.59784326862476,
+      "reason": "Closed LONG position. Bollinger target hit (price 1693.40 >= middle band 1690.93)"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "direction": "SHORT",
+      "quantity": 4,
+      "price": 1675.7647555908204,
+      "pnl": -145.83619395616736,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "direction": "SHORT",
+      "quantity": 9,
+      "price": 1664.667,
+      "pnl": 133.7063887439997,
+      "reason": "Closed LONG position. Bollinger target hit (price 1665.00 >= middle band 1661.37)"
+    },
+    {
+      "symbol": "DMART",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 3945.2108,
+      "pnl": -131.74014229594272,
+      "reason": "Closed LONG position. rebalance TRIM"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 22703,
+    "executed": 80,
+    "rsi_not_oversold": 12251,
+    "no_mode": 4311,
+    "bollinger_band": 11,
+    "circuit_breaker": 41,
+    "proposed": 44,
+    "volume": 66,
+    "cooldown": 4,
+    "risk_blocked": 6,
+    "concentration_cap": 6
+  },
+  "riskReasons": {
+    "Ticket size 15046.699584960938 exceeds single-stock cap 15000 (15% of capital).": 1,
+    "Ticket size 15014.400207519531 exceeds single-stock cap 15000 (15% of capital).": 1,
+    "Ticket size 15011 exceeds single-stock cap 15000 (15% of capital).": 1,
+    "Ticket size 15044.399658203125 exceeds single-stock cap 15000 (15% of capital).": 1,
+    "Ticket size 15023.399658203125 exceeds single-stock cap 15000 (15% of capital).": 1,
+    "Ticket size 15050 exceeds single-stock cap 15000 (15% of capital).": 1
+  }
+}

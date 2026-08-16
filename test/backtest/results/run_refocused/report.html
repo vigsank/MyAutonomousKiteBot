@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><title>Mock-Data Backtest — 10 Cases (run_refocused)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>body{font-family:system-ui,sans-serif;margin:2rem;background:#0f172a;color:#e2e8f0}.case{border:1px solid #334155;border-radius:8px;padding:1rem;margin-bottom:2rem}.chart{max-width:600px;margin:1rem 0}h1{color:#22c55e}h2{color:#f8fafc}p{color:#cbd5e1}</style>
+</head><body>
+<h1>Mock-Data Backtest — 10 Cases (run_refocused, 1x capital, Re-focused Strategy, real NSE data)</h1>
+<p>Tiers: <b>all</b> · Ensemble mode: <b>fast</b> · Strategy: regime-adaptive (mean-reversion / pullback / breakout) with re-focused risk caps (single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, drawdown). Paper-only, net of costs, 5-min bars from real historical CSVs.</p>
+
+    <div class="case">
+      <h2>case1 — ₹-397 (-1.99%)</h2>
+      <p><b>Setup:</b> 0 holdings (₹0) + ₹20,000 new = ₹20,000 total · 20 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 42 trades · win 38.1% · PF 0.18 · maxDD ₹417 (2.1%) · final ₹19,603</p>
+      <div class="chart"><canvas id="eq0"></canvas></div>
+      <div class="chart"><canvas id="pnl0"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case2 — ₹-551 (-1.57%)</h2>
+      <p><b>Setup:</b> 2 holdings (₹15,000) + ₹20,000 new = ₹35,000 total · 18 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 46 trades · win 32.6% · PF 0.24 · maxDD ₹568 (1.6%) · final ₹34,449</p>
+      <div class="chart"><canvas id="eq1"></canvas></div>
+      <div class="chart"><canvas id="pnl1"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case3 — ₹-265 (-0.29%)</h2>
+      <p><b>Setup:</b> 10 holdings (₹60,000) + ₹30,000 new = ₹90,000 total · 10 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 46 trades · win 34.8% · PF 0.77 · maxDD ₹630 (0.7%) · final ₹89,735</p>
+      <div class="chart"><canvas id="eq2"></canvas></div>
+      <div class="chart"><canvas id="pnl2"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case4 — ₹-44 (-0.44%)</h2>
+      <p><b>Setup:</b> 0 holdings (₹0) + ₹10,000 new = ₹10,000 total · 10 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 29 trades · win 51.7% · PF 0.53 · maxDD ₹71 (0.7%) · final ₹9,956</p>
+      <div class="chart"><canvas id="eq3"></canvas></div>
+      <div class="chart"><canvas id="pnl3"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case5 — ₹3,005 (7.51%)</h2>
+      <p><b>Setup:</b> 1 holdings (₹30,000) + ₹10,000 new = ₹40,000 total · 5 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 1 trades · win 100.0% · PF inf · maxDD ₹0 (0.0%) · final ₹43,005</p>
+      <div class="chart"><canvas id="eq4"></canvas></div>
+      <div class="chart"><canvas id="pnl4"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case6 — ₹-1,327 (-1.33%)</h2>
+      <p><b>Setup:</b> 5 holdings (₹50,000) + ₹50,000 new = ₹1,00,000 total · 15 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 49 trades · win 42.9% · PF 0.46 · maxDD ₹1,636 (1.6%) · final ₹98,673</p>
+      <div class="chart"><canvas id="eq5"></canvas></div>
+      <div class="chart"><canvas id="pnl5"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case7 — ₹-3,772 (-1.26%)</h2>
+      <p><b>Setup:</b> 20 holdings (₹2,00,000) + ₹1,00,000 new = ₹3,00,000 total · 20 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 71 trades · win 40.8% · PF 0.50 · maxDD ₹4,783 (1.6%) · final ₹2,96,228</p>
+      <div class="chart"><canvas id="eq6"></canvas></div>
+      <div class="chart"><canvas id="pnl6"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case8 — ₹-779 (-1.56%)</h2>
+      <p><b>Setup:</b> 0 holdings (₹0) + ₹50,000 new = ₹50,000 total · 20 symbols · 60d · rebalance 1d</p>
+      <p><b>Result:</b> 62 trades · win 29.0% · PF 0.31 · maxDD ₹889 (1.8%) · final ₹49,221</p>
+      <div class="chart"><canvas id="eq7"></canvas></div>
+      <div class="chart"><canvas id="pnl7"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case9 — ₹-512 (-0.57%)</h2>
+      <p><b>Setup:</b> 10 holdings (₹60,000) + ₹30,000 new = ₹90,000 total · 10 symbols · 30d · rebalance 5d</p>
+      <p><b>Result:</b> 46 trades · win 30.4% · PF 0.72 · maxDD ₹977 (1.1%) · final ₹89,488</p>
+      <div class="chart"><canvas id="eq8"></canvas></div>
+      <div class="chart"><canvas id="pnl8"></canvas></div>
+    </div>
+
+    <div class="case">
+      <h2>case10 — ₹-8,563 (-1.71%)</h2>
+      <p><b>Setup:</b> 0 holdings (₹0) + ₹5,00,000 new = ₹5,00,000 total · 40 symbols · 30d · rebalance 1d</p>
+      <p><b>Result:</b> 68 trades · win 27.9% · PF 0.40 · maxDD ₹9,188 (1.8%) · final ₹4,91,437</p>
+      <div class="chart"><canvas id="eq9"></canvas></div>
+      <div class="chart"><canvas id="pnl9"></canvas></div>
+    </div>
+<script>
+    new Chart(document.getElementById('eq0'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl0'), { type: 'bar', data: { labels: ["DELHIVERY","NMDC","BANDHANBNK","IOC","INDHOTEL","IRB","CONCOR","TATAMOTORS","PFC"], datasets: [{ label: 'P&L', data: [32,5,-4,-15,-23,-52,-85,-102,-153], backgroundColor: ["#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq1'), { type: 'line', data: { labels: Array.from({length:24}, (_,k)=>k), datasets: [{ label: 'Equity', data: [35000,28219.84406906738,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl1'), { type: 'bar', data: { labels: ["AXISBANK","DRREDDY","HINDALCO","MOTHERSON","ICICIBANK","ADANIGREEN","INFY","COALINDIA","TATASTEEL","NATCOPHARM","LICI"], datasets: [{ label: 'P&L', data: [38,27,15,-7,-16,-26,-45,-71,-122,-139,-205], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq2'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [90000,33813.91522229918,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000,90000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl2'), { type: 'bar', data: { labels: ["NAUKRI","KEC","SBILIFE","GAIL","AUBANK","LICI","AUROPHARMA","MUTHOOTFIN","GMRINFRA"], datasets: [{ label: 'P&L', data: [110,89,34,-32,-36,-49,-53,-159,-169], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq3'), { type: 'line', data: { labels: Array.from({length:24}, (_,k)=>k), datasets: [{ label: 'Equity', data: [10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,8226.545404418946,10000,10000,9130.426095581055,10000,10000,9205.291102209472,10000,10000,10000,10000,10000,10000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl3'), { type: 'bar', data: { labels: ["SYNGENE","MARICO","POONAWALLA","WHIRLPOOL","INDUSINDBK","MOTILALOFS"], datasets: [{ label: 'P&L', data: [16,1,1,-3,-8,-51], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq4'), { type: 'line', data: { labels: Array.from({length:24}, (_,k)=>k), datasets: [{ label: 'Equity', data: [40000,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095,10316.063911621095], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl4'), { type: 'bar', data: { labels: ["TECHM"], datasets: [{ label: 'P&L', data: [3005], backgroundColor: ["#22c55e"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq5'), { type: 'line', data: { labels: Array.from({length:24}, (_,k)=>k), datasets: [{ label: 'Equity', data: [100000,53606.3230345337,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl5'), { type: 'bar', data: { labels: ["DELHIVERY","ACC","BIOCON","FEDERALBNK","ASTRAL","AUBANK","HCLTECH","GODREJCP","DMART","OIL","FORTIS","HINDCOPPER","J&KBANK","BLUESTARCO"], datasets: [{ label: 'P&L', data: [114,114,25,-13,-14,-19,-63,-123,-126,-169,-171,-174,-269,-439], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq6'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [300000,131495.79643765866,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000,300000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl6'), { type: 'bar', data: { labels: ["HINDPETRO","ICICIPRULI","JKCEMENT","HCLTECH","M&M","ASTRAL","IOC","ADANIENSOL","CUMMINSIND","CIPLA","ZYDUSLIFE","ADANIPORTS","GICRE","HINDALCO","TATAMOTORS","TATACONSUM","BSE","TATATECH","MAXHEALTH"], datasets: [{ label: 'P&L', data: [946,900,83,30,18,6,-35,-72,-100,-238,-260,-321,-339,-386,-548,-637,-691,-1035,-1094], backgroundColor: ["#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq7'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl7'), { type: 'bar', data: { labels: ["HAVELLS","ICICIPRULI","HINDALCO","PIDILITIND","COALINDIA","UNITDSPR","CONCOR","FORTIS","RBLBANK","INFOSYS","AUROPHARMA","COLPAL","BANDHANBNK","KEC","BERGERPAINT","JINDALSAW","INDUSINDBK"], datasets: [{ label: 'P&L', data: [130,60,27,-2,-11,-19,-21,-30,-61,-62,-74,-81,-81,-96,-99,-116,-245], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq8'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [90000,43407.633928742966,90000,63585.19905322265,90000,90000,90000,76645.8297,76672.8351,90000,90000,76815.96339034424,63145.97994034423,76660.83306628418,76733.59724999999,90000,90000,90000,66132.4269790924,90000,90000,64051.11173616943,77141.82829394532,79367.874,79367.874], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl8'), { type: 'bar', data: { labels: ["INFOSYS","SBILIFE","ZYDUSLIFE","CUMMINSIND","HINDALCO","BSE","IRFC","CHAMBLFERT","IRCTC"], datasets: [{ label: 'P&L', data: [330,70,3,-22,-54,-81,-103,-310,-346], backgroundColor: ["#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });
+
+    new Chart(document.getElementById('eq9'), { type: 'line', data: { labels: Array.from({length:25}, (_,k)=>k), datasets: [{ label: 'Equity', data: [500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000,500000], borderColor: '#22c55e', fill: false, tension: 0.1 }] }, options: { plugins: { title: { display: true, text: 'Equity curve' } } } });
+    new Chart(document.getElementById('pnl9'), { type: 'bar', data: { labels: ["IDFCFIRSTB","HINDALCO","TATAELXSI","ABB","SIEMENS","HINDPETRO","SHRIRAMFIN","MARICO","TRENT","SBICARD","CUMMINSIND","IRFC","BAJFINANCE","COALINDIA","TATAMOTORS","INFOSYS","WIPRO","AMBUJACEM","CONCOR","ITC","ATGL","HDFCBANK"], datasets: [{ label: 'P&L', data: [2303,276,254,3,-75,-80,-127,-227,-283,-322,-342,-457,-487,-602,-630,-647,-674,-701,-1008,-1092,-1581,-2062], backgroundColor: ["#22c55e","#22c55e","#22c55e","#22c55e","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444","#ef4444"] }] }, options: { plugins: { title: { display: true, text: 'Per-symbol P&L' } }, indexAxis: 'y' } });</script>
+</body></html>

@@ -1,0 +1,236 @@
+{
+  "name": "case9",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 5,
+  "seed": 15,
+  "symbols": [
+    "IRCTC",
+    "IRFC",
+    "SBILIFE",
+    "CHAMBLFERT",
+    "CUMMINSIND",
+    "INFOSYS",
+    "BSE",
+    "HINDALCO",
+    "ZYDUSLIFE"
+  ],
+  "roundTrips": 8,
+  "winRate": 50,
+  "profitFactor": 1.4059587003594076,
+  "netPnl": 49.26866761706142,
+  "returnPct": 0.054742964018957126,
+  "maxDrawdown": 93.50634302257095,
+  "maxDrawdownPct": 0.10389593669174549,
+  "finalEquity": 90049.26866761706,
+  "equityCurve": [
+    90000,
+    43407.633928742966,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "SBILIFE",
+      "pnl": 79.87237830542293
+    },
+    {
+      "symbol": "IRFC",
+      "pnl": 43.72852210070613
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": 32.35240040459986
+    },
+    {
+      "symbol": "INFOSYS",
+      "pnl": 14.679110392668633
+    },
+    {
+      "symbol": "IRCTC",
+      "pnl": -3.90654109949984
+    },
+    {
+      "symbol": "BSE",
+      "pnl": -13.178290171085518
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "pnl": -37.89554056449982
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -66.38337175125096
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "SBILIFE",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 1874.2250555908204,
+      "pnl": 79.87237830542293,
+      "reason": "Closed LONG position. RSI 80.8 overbought (>70)"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 965.5068722045899,
+      "pnl": -66.38337175125096,
+      "reason": "Closed LONG position. Bollinger target hit (price 965.70 >= middle band 964.35)"
+    },
+    {
+      "symbol": "IRFC",
+      "direction": "SHORT",
+      "quantity": 75,
+      "price": 89.52209291534423,
+      "pnl": 43.72852210070613,
+      "reason": "Closed LONG position. RSI 83.1 overbought (>70)"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "direction": "SHORT",
+      "quantity": 14,
+      "price": 451.9096,
+      "pnl": -37.89554056449982,
+      "reason": "Closed LONG position. Bollinger target hit (price 452.00 >= middle band 451.49)"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 5540.8916,
+      "pnl": 32.35240040459986,
+      "reason": "Closed LONG position. Bollinger target hit (price 5542.00 >= middle band 5532.93)"
+    },
+    {
+      "symbol": "INFOSYS",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1081.6836444091796,
+      "pnl": 14.679110392668633,
+      "reason": "Closed LONG position. RSI 74.6 overbought (>70)"
+    },
+    {
+      "symbol": "BSE",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 3788.2422,
+      "pnl": -13.178290171085518,
+      "reason": "Closed LONG position. Bollinger target hit (price 3789.00 >= middle band 3781.64)"
+    },
+    {
+      "symbol": "IRCTC",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 499.4001,
+      "pnl": -3.90654109949984,
+      "reason": "Closed LONG position. Bollinger target hit (price 499.50 >= middle band 499.37)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 14604,
+    "executed": 8,
+    "rsi_not_oversold": 7588,
+    "concentration_cap": 2,
+    "no_mode": 3492,
+    "volume": 70,
+    "cooldown": 3,
+    "proposed": 67,
+    "risk_blocked": 67,
+    "bollinger_band": 1
+  },
+  "riskReasons": {
+    "Ticket size 17309.700439453125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17959.410247802734 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17926.92950439453 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16531.200439453125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17315.19921875 exceeds single-stock cap 13500 (15% of capital).": 2,
+    "Ticket size 17299.19921875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17305.499267578125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17310 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16360.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 14620 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17971.149536132812 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17669.750213623047 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17999.00062561035 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 14722 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17802 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17814.600219726562 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17919.359252929688 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17974.400062561035 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17980.54949951172 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17880.10025024414 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16704 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17931.19921875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17766 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16822.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17583.499755859375 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17539.49951171875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17575.200439453125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17976.45050048828 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16852.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17455.50048828125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17448.00048828125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17854.200439453125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16245 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17944 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17958.400390625 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17781.99951171875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17720 exceeds single-stock cap 13500 (15% of capital).": 2,
+    "Ticket size 17443.500366210938 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17580 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17581.500244140625 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17577.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17685 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16903.500366210938 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16468.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17904 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17635.999755859375 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17484.49951171875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17949.30061340332 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17947.290184020996 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17297.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17250 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17686.800415039062 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16655.399780273438 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 16192.5 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17680 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17984.640747070312 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17805.999755859375 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17785.999755859375 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17760 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17834.699584960938 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17654.000244140625 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17140.80078125 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17724.000244140625 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 17711.99951171875 exceeds single-stock cap 13500 (15% of capital).": 1,
+    "Ticket size 15945 exceeds single-stock cap 13500 (15% of capital).": 1
+  }
+}

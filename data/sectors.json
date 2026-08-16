@@ -1,0 +1,860 @@
+{
+  "sectors": [
+    {
+      "symbol": "RELIANCE",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "INFY",
+      "sector": "IT"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "TCS",
+      "sector": "IT"
+    },
+    {
+      "symbol": "SBIN",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "ITC",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "AXISBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "HCLTECH",
+      "sector": "IT"
+    },
+    {
+      "symbol": "WIPRO",
+      "sector": "IT"
+    },
+    {
+      "symbol": "ONGC",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "NTPC",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "MARUTI",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "M&M",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "sector": "TELECOM"
+    },
+    {
+      "symbol": "LT",
+      "sector": "INFRA"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "sector": "CEMENT"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "DRREDDY",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "TITAN",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "sector": "INFRA"
+    },
+    {
+      "symbol": "ABB",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "sector": "CONGLOMERATE"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "ATGL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "sector": "CEMENT"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "sector": "HEALTHCARE"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "BEL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "BHEL",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "BPCL",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "CANBK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "CGPOWER",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "CIPLA",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "COALINDIA",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "COFORGE",
+      "sector": "IT"
+    },
+    {
+      "symbol": "COLPAL",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "CONCOR",
+      "sector": "LOGISTICS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "DABUR",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "DLF",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "GAIL",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "GODREJCP",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "GRASIM",
+      "sector": "CEMENT"
+    },
+    {
+      "symbol": "HAVELLS",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "sector": "INSURANCE"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "HINDALCO",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "HAL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ICICIGI",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "sector": "INSURANCE"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "sector": "HOTELS"
+    },
+    {
+      "symbol": "IOC",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "IRCTC",
+      "sector": "INFRA"
+    },
+    {
+      "symbol": "IRFC",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "NAUKRI",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "INFOSYS",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "INDIGO",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "JIOFIN",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "LTIM",
+      "sector": "IT"
+    },
+    {
+      "symbol": "LICI",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MARICO",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "sector": "HEALTHCARE"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "NHPC",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "PFC",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "POWERGRID",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "PNB",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "REC",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "SBICARD",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "SBILIFE",
+      "sector": "INSURANCE"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "SIEMENS",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "sector": "FMCG"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "TECHM",
+      "sector": "IT"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "TRENT",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "VBL",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "VEDL",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "AARTIIND",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ACC",
+      "sector": "CEMENT"
+    },
+    {
+      "symbol": "ALKEM",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "ASTRAL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ATUL",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "AUBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "BIOCON",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "BSE",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "CESC",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "CROMPTON",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "sector": "CEMENT"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "sector": "LOGISTICS"
+    },
+    {
+      "symbol": "DMART",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "DIXON",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "FORTIS",
+      "sector": "HEALTHCARE"
+    },
+    {
+      "symbol": "GLENMARK",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "GICRE",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "HUDCO",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "IEX",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "IIFL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "INDIACEM",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "INDIANB",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "INOXWIND",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "IRB",
+      "sector": "INFRA"
+    },
+    {
+      "symbol": "J&KBANK",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "sector": "CONSUMER"
+    },
+    {
+      "symbol": "KAYNES",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "KEC",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "KEI",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "sector": "IT"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "sector": "HOTELS"
+    },
+    {
+      "symbol": "LODHA",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "LUPIN",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "M&MFIN",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "sector": "FINANCE"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "sector": "HEALTHCARE"
+    },
+    {
+      "symbol": "MFSL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MGL",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "MINDACORP",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MINDTREE",
+      "sector": "IT"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MPHASIS",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "MRF",
+      "sector": "AUTO"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "NMDC",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "OFSS",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "OIL",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "OLAELEC",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "sector": "IT"
+    },
+    {
+      "symbol": "PETRONET",
+      "sector": "ENERGY"
+    },
+    {
+      "symbol": "POLYCAB",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "RAILTEL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "RBLBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "RVNL",
+      "sector": "INFRA"
+    },
+    {
+      "symbol": "SAIL",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "SJVN",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "sector": "CAPITAL_GOODS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "sector": "PHARMA"
+    },
+    {
+      "symbol": "TATACHEM",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "sector": "IT"
+    },
+    {
+      "symbol": "TATATECH",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "TITAGARH",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "sector": "POWER"
+    },
+    {
+      "symbol": "TRIDENT",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "UBL",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "UCOBANK",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "UPL",
+      "sector": "CHEMICALS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "WELCORP",
+      "sector": "METALS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "sector": "ELECTRONICS"
+    },
+    {
+      "symbol": "YESBANK",
+      "sector": "BANK"
+    },
+    {
+      "symbol": "ZOMATO",
+      "sector": "OTHER"
+    },
+    {
+      "symbol": "ZEEL",
+      "sector": "MEDIA"
+    }
+  ]
+}

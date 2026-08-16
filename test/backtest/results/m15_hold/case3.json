@@ -1,0 +1,177 @@
+{
+  "name": "case3",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 10,
+  "seed": 9,
+  "symbols": [
+    "KEC",
+    "SBILIFE",
+    "GAIL",
+    "LICI",
+    "NAUKRI",
+    "MUTHOOTFIN",
+    "GMRINFRA",
+    "AUBANK",
+    "AUROPHARMA"
+  ],
+  "roundTrips": 43,
+  "winRate": 32.55813953488372,
+  "profitFactor": 0.2805408113808907,
+  "netPnl": -1531.3239082091482,
+  "returnPct": -1.701471009121276,
+  "maxDrawdown": 1728.5317545752914,
+  "maxDrawdownPct": 1.9205908384169905,
+  "finalEquity": 88468.67609179085,
+  "equityCurve": [
+    90000,
+    33806.53328356017,
+    70979.19621845397,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    76517.30445785522,
+    90000,
+    90000,
+    90000,
+    90000,
+    76646.29984100646,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    76671.8349,
+    63322.91587892761,
+    76821.3648,
+    76821.3648
+  ],
+  "perSymbol": [
+    {
+      "symbol": "LICI",
+      "pnl": 47.35976060378245
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "pnl": -52.6210884596618
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": -93.16825826287321
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": -133.586031013926
+    },
+    {
+      "symbol": "NAUKRI",
+      "pnl": -137.27361894877015
+    },
+    {
+      "symbol": "AUBANK",
+      "pnl": -152.56281137805857
+    },
+    {
+      "symbol": "GAIL",
+      "pnl": -154.87467624003807
+    },
+    {
+      "symbol": "GMRINFRA",
+      "pnl": -298.15994280811753
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -556.4372417014854
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 29,
+      "price": 445.61087220458984,
+      "pnl": -440.9934981202804,
+      "reason": "Closed LONG position. Bollinger target hit (price 445.70 >= middle band 444.61)"
+    },
+    {
+      "symbol": "GAIL",
+      "direction": "SHORT",
+      "quantity": 75,
+      "price": 175.5048852874756,
+      "pnl": -221.9495819671944,
+      "reason": "Closed LONG position. Bollinger target hit (price 175.54 >= middle band 174.44)"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 125,
+      "price": 106.70865735626221,
+      "pnl": -180.42938263361037,
+      "reason": "Closed LONG position. Bollinger target hit (price 106.73 >= middle band 106.56)"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 58,
+      "price": 111.69765722045898,
+      "pnl": -117.73056017450716,
+      "reason": "Closed LONG position. Bollinger target hit (price 111.72 >= middle band 111.57)"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 15,
+      "price": 441.71162779541015,
+      "pnl": 111.60826492462786,
+      "reason": "Closed LONG position. RSI 73.3 overbought (>70)"
+    },
+    {
+      "symbol": "SBILIFE",
+      "direction": "SHORT",
+      "quantity": 7,
+      "price": 1884.623,
+      "pnl": -91.48805292020053,
+      "reason": "Closed LONG position. Bollinger target hit (price 1885.00 >= middle band 1879.65)"
+    },
+    {
+      "symbol": "GAIL",
+      "direction": "SHORT",
+      "quantity": 38,
+      "price": 174.26514305114745,
+      "pnl": 85.59958144150502,
+      "reason": "Closed LONG position. RSI 74.0 overbought (>70)"
+    },
+    {
+      "symbol": "NAUKRI",
+      "direction": "SHORT",
+      "quantity": 11,
+      "price": 1218.50625,
+      "pnl": -85.18362012207334,
+      "reason": "Closed LONG position. Bollinger target hit (price 1218.75 >= middle band 1200.24)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 4815,
+    "executed": 76,
+    "rsi_not_oversold": 2204,
+    "concentration_cap": 3,
+    "no_mode": 1098,
+    "volume": 25,
+    "proposed": 34,
+    "cooldown": 2,
+    "risk_blocked": 1,
+    "bollinger_band": 6,
+    "circuit_breaker": 1
+  },
+  "riskReasons": {
+    "Ticket size 13723.750114440918 exceeds single-stock cap 13500 (15% of capital).": 1
+  }
+}

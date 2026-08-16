@@ -1,0 +1,255 @@
+{
+  "name": "case7",
+  "holdingsCount": 20,
+  "holdingsValue": 200000,
+  "newCapital": 100000,
+  "totalCapital": 300000,
+  "pickSymbols": 20,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 13,
+  "symbols": [
+    "CIPLA",
+    "ZYDUSLIFE",
+    "ICICIPRULI",
+    "HINDALCO",
+    "MAXHEALTH",
+    "TATACONSUM",
+    "ADANIPORTS",
+    "HINDPETRO",
+    "ADANIENSOL",
+    "TATATECH",
+    "TATAMOTORS",
+    "BSE",
+    "HCLTECH",
+    "M&M",
+    "IOC",
+    "GICRE",
+    "JKCEMENT",
+    "CUMMINSIND",
+    "ASTRAL"
+  ],
+  "roundTrips": 83,
+  "winRate": 22.89156626506024,
+  "profitFactor": 0.48968440886835,
+  "netPnl": -5565.5362893818365,
+  "returnPct": -1.8551787631272787,
+  "maxDrawdown": 6636.840459446365,
+  "maxDrawdownPct": 2.212280153148788,
+  "finalEquity": 294434.46371061815,
+  "equityCurve": [
+    300000,
+    131261.35783568118,
+    242246.5520229126,
+    292399.4802,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000,
+    300000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "TATATECH",
+      "pnl": 1768.756045738591
+    },
+    {
+      "symbol": "IOC",
+      "pnl": 161.33835617088437
+    },
+    {
+      "symbol": "JKCEMENT",
+      "pnl": 40.66475657100024
+    },
+    {
+      "symbol": "HINDPETRO",
+      "pnl": -1.8199752853775237
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": -57.723225794403476
+    },
+    {
+      "symbol": "GICRE",
+      "pnl": -79.4380856181991
+    },
+    {
+      "symbol": "ASTRAL",
+      "pnl": -124.61281402250344
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "pnl": -250.27088009652226
+    },
+    {
+      "symbol": "M&M",
+      "pnl": -271.65923655112545
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "pnl": -324.57672008351255
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "pnl": -377.72672723683485
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "pnl": -386.4009750636419
+    },
+    {
+      "symbol": "TATACONSUM",
+      "pnl": -407.1542547334856
+    },
+    {
+      "symbol": "BSE",
+      "pnl": -525.4404445389915
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "pnl": -554.737012600111
+    },
+    {
+      "symbol": "CIPLA",
+      "pnl": -562.561253961195
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "pnl": -659.5496727739401
+    },
+    {
+      "symbol": "HCLTECH",
+      "pnl": -913.3163733539451
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -2039.3077961485255
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "TATATECH",
+      "direction": "SHORT",
+      "quantity": 27,
+      "price": 872.8753777954101,
+      "pnl": 3202.7112460261,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "TATATECH",
+      "direction": "SHORT",
+      "quantity": 26,
+      "price": 835.9327555908203,
+      "pnl": -986.6504819451247,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "BSE",
+      "direction": "SHORT",
+      "quantity": 2,
+      "price": 3578.884177636719,
+      "pnl": -462.73416688880235,
+      "reason": "Closed LONG position. rebalance EXIT"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "direction": "SHORT",
+      "quantity": 12,
+      "price": 1779.644,
+      "pnl": -363.6557109299998,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 46,
+      "price": 967.0065722045898,
+      "pnl": -345.6003854008175,
+      "reason": "Closed LONG position. Bollinger target hit (price 967.20 >= middle band 961.26)"
+    },
+    {
+      "symbol": "CIPLA",
+      "direction": "SHORT",
+      "quantity": 30,
+      "price": 1458.1083444091796,
+      "pnl": -340.2960888387971,
+      "reason": "Closed LONG position. RSI 72.5 overbought (>70)"
+    },
+    {
+      "symbol": "HINDALCO",
+      "direction": "SHORT",
+      "quantity": 44,
+      "price": 1005.7988,
+      "pnl": -333.6773761668279,
+      "reason": "Closed LONG position. RSI 71.8 overbought (>70)"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "direction": "SHORT",
+      "quantity": 27,
+      "price": 1650.4698888183593,
+      "pnl": -317.0048477497936,
+      "reason": "Closed LONG position. Bollinger target hit (price 1650.80 >= middle band 1649.16)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 10172,
+    "executed": 138,
+    "rsi_not_oversold": 5201,
+    "bollinger_band": 7,
+    "no_mode": 2165,
+    "volume": 37,
+    "proposed": 65,
+    "circuit_breaker": 43,
+    "cooldown": 2,
+    "risk_blocked": 30
+  },
+  "riskReasons": {
+    "Ticket size 45121.0198059082 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45386.3994140625 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45316.798828125 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45005.401611328125 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45215.49865722656 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45253.99932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45138.50067138672 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45135.75134277344 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45363.99932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 46131.25 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45947.00134277344 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45815 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45982.74932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 46158.75 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 46337.5 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47685 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47462.25067138672 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 48125 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47503.50067138672 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47338.50067138672 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47288.99932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47618.99932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47844.50134277344 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47772.99865722656 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 47866.49932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 48017.74932861328 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45054.39929199219 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45170.39929199219 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45257.39929199219 exceeds single-stock cap 45000 (15% of capital).": 1,
+    "Ticket size 45240 exceeds single-stock cap 45000 (15% of capital).": 1
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "name": "case10",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 500000,
+  "totalCapital": 500000,
+  "pickSymbols": 40,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 16,
+  "symbols": [
+    "TATAELXSI",
+    "CUMMINSIND",
+    "IDFCFIRSTB",
+    "ITC",
+    "HDFCBANK",
+    "COALINDIA",
+    "SHRIRAMFIN",
+    "SBICARD",
+    "INFOSYS",
+    "ATGL",
+    "CONCOR",
+    "AMBUJACEM",
+    "SBILIFE",
+    "IRFC",
+    "SIEMENS",
+    "BHARTIARTL",
+    "WIPRO",
+    "ABB",
+    "TRENT",
+    "HAVELLS",
+    "HINDPETRO",
+    "INDHOTEL",
+    "MARICO",
+    "ICICIBANK",
+    "KOTAKBANK",
+    "HINDALCO",
+    "HEROMOTOCO",
+    "CGPOWER",
+    "RELIANCE",
+    "HINDUNILVR",
+    "HAL",
+    "TATAMOTORS",
+    "PFC",
+    "DRREDDY",
+    "BHARATFORG",
+    "BAJFINANCE"
+  ],
+  "roundTrips": 78,
+  "winRate": 20.51282051282051,
+  "profitFactor": 0.256590187092138,
+  "netPnl": -15598.149737191363,
+  "returnPct": -3.1196299474382725,
+  "maxDrawdown": 15598.14973719127,
+  "maxDrawdownPct": 3.119629947438254,
+  "finalEquity": 484401.8502628086,
+  "equityCurve": [
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "AMBUJACEM",
+      "pnl": 1104.9001517690317
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "pnl": 786.6808899000068
+    },
+    {
+      "symbol": "INFOSYS",
+      "pnl": 331.2050677967855
+    },
+    {
+      "symbol": "HINDPETRO",
+      "pnl": 62.740580727153656
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -119.7146363034924
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -222.63602312533502
+    },
+    {
+      "symbol": "MARICO",
+      "pnl": -225.62248251952386
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "pnl": -234.734202924783
+    },
+    {
+      "symbol": "RELIANCE",
+      "pnl": -283.1754580796837
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "pnl": -289.3222447020429
+    },
+    {
+      "symbol": "DRREDDY",
+      "pnl": -300.2909111684487
+    },
+    {
+      "symbol": "WIPRO",
+      "pnl": -351.0014367476242
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "pnl": -412.2621850792469
+    },
+    {
+      "symbol": "ABB",
+      "pnl": -510.9794171000046
+    },
+    {
+      "symbol": "PFC",
+      "pnl": -528.8417559794132
+    },
+    {
+      "symbol": "ITC",
+      "pnl": -534.8586887193749
+    },
+    {
+      "symbol": "HDFCBANK",
+      "pnl": -576.0804554942484
+    },
+    {
+      "symbol": "HAVELLS",
+      "pnl": -602.522647417033
+    },
+    {
+      "symbol": "TRENT",
+      "pnl": -658.9615535704638
+    },
+    {
+      "symbol": "CONCOR",
+      "pnl": -757.3667354318666
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "pnl": -857.357672530572
+    },
+    {
+      "symbol": "IRFC",
+      "pnl": -929.9231405500929
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": -970.005586591818
+    },
+    {
+      "symbol": "SBICARD",
+      "pnl": -1093.9264774348308
+    },
+    {
+      "symbol": "HAL",
+      "pnl": -1249.6445930375914
+    },
+    {
+      "symbol": "ICICIBANK",
+      "pnl": -1317.8514183999982
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "pnl": -1495.7139462898026
+    },
+    {
+      "symbol": "ATGL",
+      "pnl": -1627.1638458310442
+    },
+    {
+      "symbol": "TATAELXSI",
+      "pnl": -1733.718912356005
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "ICICIBANK",
+      "direction": "SHORT",
+      "quantity": 26,
+      "price": 1420.7158,
+      "pnl": -1317.8514183999982,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "direction": "SHORT",
+      "quantity": 89,
+      "price": 426.0147861022949,
+      "pnl": 1104.9001517690317,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 5548.89,
+      "pnl": 1094.2158626000078,
+      "reason": "Closed LONG position. Bollinger target hit (price 5550.00 >= middle band 5522.70)"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "direction": "SHORT",
+      "quantity": 10,
+      "price": 3711.1575223632813,
+      "pnl": -966.2593433124989,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "direction": "SHORT",
+      "quantity": 33,
+      "price": 1140.7718,
+      "pnl": 829.333011200005,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "SBICARD",
+      "direction": "SHORT",
+      "quantity": 114,
+      "price": 651.8696,
+      "pnl": -824.8055196999978,
+      "reason": "Closed LONG position. Bollinger target hit (price 652.00 >= middle band 650.62)"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "direction": "SHORT",
+      "quantity": 862,
+      "price": 86.30273569488526,
+      "pnl": -804.0103986131475,
+      "reason": "Closed LONG position. RSI 83.4 overbought (>70)"
+    },
+    {
+      "symbol": "HAVELLS",
+      "direction": "SHORT",
+      "quantity": 62,
+      "price": 1187.0625888183595,
+      "pnl": -602.522647417033,
+      "reason": "Closed LONG position. Bollinger target hit (price 1187.30 >= middle band 1178.61)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 19266,
+    "bollinger_band": 66,
+    "rsi_not_oversold": 10006,
+    "proposed": 78,
+    "executed": 134,
+    "volume": 41,
+    "cooldown": 4,
+    "concentration_cap": 3,
+    "no_mode": 3777,
+    "circuit_breaker": 98,
+    "risk_blocked": 27
+  },
+  "riskReasons": {
+    "Ticket size 75027 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75053.70162963867 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75543.30358886719 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75520 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75476.0009765625 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75464.00146484375 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75200.80163574219 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75497.40161132812 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75358.80322265625 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75636 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75807.59838867188 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75933 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75761.40161132812 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 76111.19677734375 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75959.40161132812 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75570 exceeds single-stock cap 75000 (15% of capital).": 2,
+    "Ticket size 75556.80322265625 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75642.59838867188 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75576.59838867188 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75550.19677734375 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75484.19677734375 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75365.40161132812 exceeds single-stock cap 75000 (15% of capital).": 2,
+    "Ticket size 75141 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75174 exceeds single-stock cap 75000 (15% of capital).": 1,
+    "Ticket size 75306 exceeds single-stock cap 75000 (15% of capital).": 1
+  }
+}

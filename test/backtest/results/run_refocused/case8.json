@@ -1,0 +1,226 @@
+{
+  "name": "case8",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 50000,
+  "totalCapital": 50000,
+  "pickSymbols": 20,
+  "days": 60,
+  "rebalanceDays": 1,
+  "seed": 14,
+  "symbols": [
+    "KEC",
+    "HAVELLS",
+    "INDUSINDBK",
+    "COLPAL",
+    "ICICIPRULI",
+    "PIDILITIND",
+    "HINDALCO",
+    "JINDALSAW",
+    "INFOSYS",
+    "UNITDSPR",
+    "FORTIS",
+    "RBLBANK",
+    "COALINDIA",
+    "CONCOR",
+    "NESTLEIND",
+    "AUROPHARMA",
+    "BERGERPAINT",
+    "BANDHANBNK"
+  ],
+  "roundTrips": 62,
+  "winRate": 29.03225806451613,
+  "profitFactor": 0.30920754195160355,
+  "netPnl": -779.3841605744042,
+  "returnPct": -1.5587683211488084,
+  "maxDrawdown": 888.5305008832729,
+  "maxDrawdownPct": 1.7770610017665458,
+  "finalEquity": 49220.6158394256,
+  "equityCurve": [
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "HAVELLS",
+      "pnl": 129.78940611146578
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "pnl": 59.738597663608104
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": 27.014146920200016
+    },
+    {
+      "symbol": "PIDILITIND",
+      "pnl": -2.356617247689975
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -10.502400807125667
+    },
+    {
+      "symbol": "UNITDSPR",
+      "pnl": -18.8966400000007
+    },
+    {
+      "symbol": "CONCOR",
+      "pnl": -20.71842715295041
+    },
+    {
+      "symbol": "FORTIS",
+      "pnl": -30.312792262253048
+    },
+    {
+      "symbol": "RBLBANK",
+      "pnl": -60.695946248165505
+    },
+    {
+      "symbol": "INFOSYS",
+      "pnl": -61.68321298859474
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": -74.15366737900084
+    },
+    {
+      "symbol": "COLPAL",
+      "pnl": -80.64377550186967
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "pnl": -80.79077019401203
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -95.56106464476457
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "pnl": -98.55596991211414
+    },
+    {
+      "symbol": "JINDALSAW",
+      "pnl": -116.0104619828423
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "pnl": -245.0445649482945
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "HAVELLS",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1182.6634444091796,
+      "pnl": 161.8264977515545,
+      "reason": "Closed LONG position. Bollinger target hit (price 1182.90 >= middle band 1173.30)"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "direction": "SHORT",
+      "quantity": 7,
+      "price": 1015.1469055908203,
+      "pnl": -104.81867916504758,
+      "reason": "Closed LONG position. Bollinger target hit (price 1015.35 >= middle band 1014.40)"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "direction": "SHORT",
+      "quantity": 28,
+      "price": 265.34691389770506,
+      "pnl": -74.97685146034792,
+      "reason": "Closed LONG position. Bollinger target hit (price 265.40 >= middle band 265.37)"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "direction": "SHORT",
+      "quantity": 22,
+      "price": 165.80682833862303,
+      "pnl": -61.45934772225118,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "INFOSYS",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 1156.4686111816407,
+      "pnl": -58.82839969936656,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "COLPAL",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 2085.1829776367185,
+      "pnl": -47.68967232300436,
+      "reason": "Closed LONG position. Bollinger target hit (price 2085.60 >= middle band 2084.04)"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 990.2019444091796,
+      "pnl": -47.13659780400244,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "direction": "SHORT",
+      "quantity": 15,
+      "price": 493.3013138977051,
+      "pnl": -47.039701909685945,
+      "reason": "Closed LONG position. Bollinger target hit (price 493.40 >= middle band 493.22)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 29188,
+    "rsi_not_oversold": 15796,
+    "proposed": 62,
+    "executed": 101,
+    "volume": 52,
+    "no_mode": 5519,
+    "bollinger_band": 18,
+    "circuit_breaker": 128,
+    "risk_blocked": 12,
+    "concentration_cap": 1,
+    "cooldown": 11
+  },
+  "riskReasons": {
+    "Ticket size 7515 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7505.999908447266 exceeds single-stock cap 7500 (15% of capital).": 3,
+    "Ticket size 7513.499908447266 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7502.249908447266 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7504.499816894531 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7522.5 exceeds single-stock cap 7500 (15% of capital).": 2,
+    "Ticket size 7524.000091552734 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7517.249908447266 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7528.499908447266 exceeds single-stock cap 7500 (15% of capital).": 1
+  }
+}

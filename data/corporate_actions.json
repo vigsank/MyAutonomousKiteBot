@@ -1,0 +1,8564 @@
+{
+  "actions": [
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RELIANCE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATASTEEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFY",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TCS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ITC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDUNILVR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AXISBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HCLTECH",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WIPRO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ONGC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NTPC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARUTI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&M",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NESTLEIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ULTRACEMCO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWSTEEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DRREDDY",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPORTS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIGREEN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIPOWER",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATGL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AMBUJACEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJ-AUTO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJFINSV",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BAJAJHLDNG",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BALKRISIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANKBARODA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHARATFORG",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BHEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BPCL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BOSCHLTD",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BRITANNIA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANBK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CGPOWER",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHOLAFIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CIPLA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COALINDIA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "COLPAL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CONCOR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CUMMINSIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DABUR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DLF",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EICHERMOT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GAIL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJCP",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GODREJPROP",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GRASIM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAVELLS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCAMC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HDFCLIFE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDALCO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HAL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDPETRO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIGI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IOC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRCTC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRFC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NAUKRI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INFOSYS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIGO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JSWELECTRIC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JIOFIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LTIM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LICI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MARICO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MAXHEALTH",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NHPC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PIDILITIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PFC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POWERGRID",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PNB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "REC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBICARD",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SBILIFE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTHERSON",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHREEBACEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SHRIRAMFIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SIEMENS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SOLARINDS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACONSUM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAPOWER",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPHARM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRENT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TVSMOTOR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNIONBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VBL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VEDL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AARTIIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ABBOTINDIA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ACC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ALKEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ASTRAL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ATUL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BANDHANBNK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BATAINDIA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BIOCON",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BLUESTARCO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "BSE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CANFINHOME",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CESC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHAMBLFERT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CHENNPETRO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "CROMPTON",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DALBHARAT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DEEPAKNTR",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DELHIVERY",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DMART",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "DIXON",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "EXIDEIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "FORTIS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GLENMARK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GMRINFRA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GICRE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "GUJGASLTD",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HINDCOPPER",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "HUDCO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IEX",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IIFL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIACEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INDIANB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "INOXWIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "IRB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "J&KBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JKCEMENT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JMFINANCIL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "JUBLFOOD",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KAYNES",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KEI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "KPITTECH",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LEMONTREE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LODHA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "LUPIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "M&MFIN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MANAPPURAM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "METROPOLIS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MFSL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MGL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDACORP",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MINDTREE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MPHASIS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "MRF",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NATCOPHARM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "NMDC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OBEROIRLTY",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OFSS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OIL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "OLAELEC",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PERSISTENT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PETRONET",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POLYCAB",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "POONAWALLA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "PRESTIGE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAILTEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RAMCOCEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RBLBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "RVNL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SAIL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SJVN",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SKFINDIA",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SUPREMEIND",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "SYNGENE",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATACHEM",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATAELXSI",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TATATECH",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TITAGARH",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TORNTPOWER",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "TRIDENT",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UBL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UCOBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "UPL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "VOLTAS",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WELCORP",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "YESBANK",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZOMATO",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-04-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-05-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-07-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-08-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-10-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-11-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-01-20",
+      "type": "EARNINGS"
+    },
+    {
+      "symbol": "ZEEL",
+      "date": "2026-02-20",
+      "type": "EARNINGS"
+    }
+  ]
+}

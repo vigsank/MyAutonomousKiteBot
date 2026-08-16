@@ -1,0 +1,219 @@
+{
+  "name": "case8",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 50000,
+  "totalCapital": 50000,
+  "pickSymbols": 20,
+  "days": 60,
+  "rebalanceDays": 1,
+  "seed": 14,
+  "symbols": [
+    "KEC",
+    "HAVELLS",
+    "INDUSINDBK",
+    "COLPAL",
+    "ICICIPRULI",
+    "PIDILITIND",
+    "HINDALCO",
+    "JINDALSAW",
+    "INFOSYS",
+    "UNITDSPR",
+    "FORTIS",
+    "RBLBANK",
+    "COALINDIA",
+    "CONCOR",
+    "NESTLEIND",
+    "AUROPHARMA",
+    "BERGERPAINT",
+    "BANDHANBNK"
+  ],
+  "roundTrips": 61,
+  "winRate": 24.59016393442623,
+  "profitFactor": 0.322766606674903,
+  "netPnl": -1059.9628883971116,
+  "returnPct": -2.119925776794223,
+  "maxDrawdown": 1105.460551839824,
+  "maxDrawdownPct": 2.210921103679648,
+  "finalEquity": 48940.03711160289,
+  "equityCurve": [
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000,
+    50000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "CONCOR",
+      "pnl": 23.219519442695862
+    },
+    {
+      "symbol": "NESTLEIND",
+      "pnl": 11.443597127801105
+    },
+    {
+      "symbol": "COLPAL",
+      "pnl": -0.341513091297891
+    },
+    {
+      "symbol": "INFOSYS",
+      "pnl": -11.510439876
+    },
+    {
+      "symbol": "COALINDIA",
+      "pnl": -11.525603151181123
+    },
+    {
+      "symbol": "FORTIS",
+      "pnl": -14.776539634847097
+    },
+    {
+      "symbol": "INDUSINDBK",
+      "pnl": -16.940533328855715
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": -27.06426005908257
+    },
+    {
+      "symbol": "RBLBANK",
+      "pnl": -37.661628139835926
+    },
+    {
+      "symbol": "ICICIPRULI",
+      "pnl": -45.858158364526375
+    },
+    {
+      "symbol": "BERGERPAINT",
+      "pnl": -49.28769881724797
+    },
+    {
+      "symbol": "UNITDSPR",
+      "pnl": -69.77585564877297
+    },
+    {
+      "symbol": "PIDILITIND",
+      "pnl": -108.82770409574653
+    },
+    {
+      "symbol": "HINDALCO",
+      "pnl": -142.12799495210254
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -160.7137593974586
+    },
+    {
+      "symbol": "HAVELLS",
+      "pnl": -182.08151014720812
+    },
+    {
+      "symbol": "JINDALSAW",
+      "pnl": -216.1328062634451
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 8,
+      "price": 452.1095722045898,
+      "pnl": -139.4683454204032,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 1467.5064888183595,
+      "pnl": 118.91056107949682,
+      "reason": "Closed LONG position. RSI 78.3 overbought (>70)"
+    },
+    {
+      "symbol": "JINDALSAW",
+      "direction": "SHORT",
+      "quantity": 14,
+      "price": 264.34711389770507,
+      "pnl": -108.54239328734693,
+      "reason": "Closed LONG position. rebalance TRIM"
+    },
+    {
+      "symbol": "UNITDSPR",
+      "direction": "SHORT",
+      "quantity": 5,
+      "price": 1460.7078,
+      "pnl": -100.82505086235719,
+      "reason": "Closed LONG position. Bollinger target hit (price 1461.00 >= middle band 1434.49)"
+    },
+    {
+      "symbol": "COLPAL",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 2110.4777223632814,
+      "pnl": 72.26021123383282,
+      "reason": "Closed LONG position. RSI 80.3 overbought (>70)"
+    },
+    {
+      "symbol": "HAVELLS",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1187.0625888183595,
+      "pnl": -58.797510909774715,
+      "reason": "Closed LONG position. Bollinger target hit (price 1187.30 >= middle band 1178.61)"
+    },
+    {
+      "symbol": "FORTIS",
+      "direction": "SHORT",
+      "quantity": 7,
+      "price": 959.6080277954102,
+      "pnl": -57.33806957357352,
+      "reason": "Closed LONG position. Bollinger target hit (price 959.80 >= middle band 940.19)"
+    },
+    {
+      "symbol": "COLPAL",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 2139.572,
+      "pnl": -52.40386508597092,
+      "reason": "Closed LONG position. Bollinger target hit (price 2140.00 >= middle band 2131.35)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 9631,
+    "rsi_not_oversold": 5241,
+    "bollinger_band": 27,
+    "volume": 39,
+    "proposed": 61,
+    "executed": 110,
+    "no_mode": 1562,
+    "circuit_breaker": 20,
+    "risk_blocked": 2,
+    "cooldown": 2,
+    "concentration_cap": 1
+  },
+  "riskReasons": {
+    "Ticket size 7564.39990234375 exceeds single-stock cap 7500 (15% of capital).": 1,
+    "Ticket size 7552.7998046875 exceeds single-stock cap 7500 (15% of capital).": 1
+  }
+}

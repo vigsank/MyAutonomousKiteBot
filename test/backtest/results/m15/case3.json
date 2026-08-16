@@ -1,0 +1,174 @@
+{
+  "name": "case3",
+  "holdingsCount": 10,
+  "holdingsValue": 60000,
+  "newCapital": 30000,
+  "totalCapital": 90000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 9,
+  "symbols": [
+    "KEC",
+    "SBILIFE",
+    "GAIL",
+    "LICI",
+    "NAUKRI",
+    "MUTHOOTFIN",
+    "GMRINFRA",
+    "AUBANK",
+    "AUROPHARMA"
+  ],
+  "roundTrips": 19,
+  "winRate": 52.63157894736842,
+  "profitFactor": 1.1166501886875269,
+  "netPnl": 45.49387006144137,
+  "returnPct": 0.050548744512712636,
+  "maxDrawdown": 229.66411871340824,
+  "maxDrawdownPct": 0.25518235412600915,
+  "finalEquity": 90045.49387006144,
+  "equityCurve": [
+    90000,
+    33806.53328356017,
+    70979.19621845397,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000,
+    90000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "LICI",
+      "pnl": 130.6266116006194
+    },
+    {
+      "symbol": "GAIL",
+      "pnl": 71.78155789819633
+    },
+    {
+      "symbol": "NAUKRI",
+      "pnl": 61.62960432850433
+    },
+    {
+      "symbol": "SBILIFE",
+      "pnl": 55.90966780622241
+    },
+    {
+      "symbol": "AUROPHARMA",
+      "pnl": 2.6651379575998178
+    },
+    {
+      "symbol": "KEC",
+      "pnl": -28.112060945600746
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "pnl": -38.95040514840953
+    },
+    {
+      "symbol": "AUBANK",
+      "pnl": -40.930051106158864
+    },
+    {
+      "symbol": "GMRINFRA",
+      "pnl": -169.12619232953176
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "GMRINFRA",
+      "direction": "SHORT",
+      "quantity": 58,
+      "price": 111.69765722045898,
+      "pnl": -117.73056017450716,
+      "reason": "Closed LONG position. Bollinger target hit (price 111.72 >= middle band 111.57)"
+    },
+    {
+      "symbol": "LICI",
+      "direction": "SHORT",
+      "quantity": 15,
+      "price": 441.71162779541015,
+      "pnl": 111.60826492462786,
+      "reason": "Closed LONG position. RSI 73.3 overbought (>70)"
+    },
+    {
+      "symbol": "GAIL",
+      "direction": "SHORT",
+      "quantity": 38,
+      "price": 174.26514305114745,
+      "pnl": 85.59958144150502,
+      "reason": "Closed LONG position. RSI 74.0 overbought (>70)"
+    },
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 13,
+      "price": 507.8984,
+      "pnl": -79.11615684179978,
+      "reason": "Closed LONG position. Bollinger target hit (price 508.00 >= middle band 507.94)"
+    },
+    {
+      "symbol": "NAUKRI",
+      "direction": "SHORT",
+      "quantity": 10,
+      "price": 1241.7516,
+      "pnl": 70.5683000372866,
+      "reason": "Closed LONG position. Bollinger target hit (price 1242.00 >= middle band 1240.35)"
+    },
+    {
+      "symbol": "SBILIFE",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 1866.2266555908202,
+      "pnl": 55.90966780622241,
+      "reason": "Closed LONG position. Bollinger target hit (price 1866.60 >= middle band 1863.41)"
+    },
+    {
+      "symbol": "AUBANK",
+      "direction": "SHORT",
+      "quantity": 6,
+      "price": 1032.4934111816406,
+      "pnl": -52.91059903653966,
+      "reason": "Closed LONG position. Bollinger target hit (price 1032.70 >= middle band 1032.05)"
+    },
+    {
+      "symbol": "KEC",
+      "direction": "SHORT",
+      "quantity": 27,
+      "price": 487.7524361022949,
+      "pnl": 51.00409589619903,
+      "reason": "Closed LONG position. Bollinger target hit (price 487.85 >= middle band 487.46)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 4815,
+    "executed": 26,
+    "rsi_not_oversold": 2066,
+    "no_mode": 1119,
+    "volume": 25,
+    "proposed": 10,
+    "risk_blocked": 1,
+    "bollinger_band": 5
+  },
+  "riskReasons": {
+    "Ticket size 13723.750114440918 exceeds single-stock cap 13500 (15% of capital).": 1
+  }
+}

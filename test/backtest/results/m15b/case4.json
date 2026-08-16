@@ -1,0 +1,146 @@
+{
+  "name": "case4",
+  "holdingsCount": 0,
+  "holdingsValue": 0,
+  "newCapital": 10000,
+  "totalCapital": 10000,
+  "pickSymbols": 10,
+  "days": 30,
+  "rebalanceDays": 1,
+  "seed": 10,
+  "symbols": [
+    "MOTILALOFS",
+    "SYNGENE",
+    "POONAWALLA",
+    "WHIRLPOOL",
+    "MARICO",
+    "INDUSINDBK"
+  ],
+  "roundTrips": 8,
+  "winRate": 62.5,
+  "profitFactor": 0.48826857179577327,
+  "netPnl": -33.760863702940604,
+  "returnPct": -0.3376086370294061,
+  "maxDrawdown": 61.26886164695679,
+  "maxDrawdownPct": 0.612688616469568,
+  "finalEquity": 9966.23913629706,
+  "equityCurve": [
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000,
+    10000
+  ],
+  "perSymbol": [
+    {
+      "symbol": "SYNGENE",
+      "pnl": 21.188874615423586
+    },
+    {
+      "symbol": "MARICO",
+      "pnl": 10.112503716114714
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "pnl": -3.7933803875216237
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "pnl": -61.26886164695728
+    }
+  ],
+  "topTrades": [
+    {
+      "symbol": "MOTILALOFS",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 866.3267,
+      "pnl": -52.169887429528636,
+      "reason": "Closed LONG position. Bollinger target hit (price 866.50 >= middle band 865.33)"
+    },
+    {
+      "symbol": "SYNGENE",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 416.11677220458984,
+      "pnl": 10.9924686855745,
+      "reason": "Closed LONG position. Bollinger target hit (price 416.20 >= middle band 416.10)"
+    },
+    {
+      "symbol": "MARICO",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 870.9257555908204,
+      "pnl": 10.112503716114714,
+      "reason": "Closed LONG position. Bollinger target hit (price 871.10 >= middle band 869.10)"
+    },
+    {
+      "symbol": "MOTILALOFS",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 945.56085,
+      "pnl": -9.098974217428648,
+      "reason": "Closed LONG position. Bollinger target hit (price 945.75 >= middle band 940.94)"
+    },
+    {
+      "symbol": "SYNGENE",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 400.2199277954102,
+      "pnl": 7.835481385532784,
+      "reason": "Closed LONG position. Bollinger target hit (price 400.30 >= middle band 400.09)"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 788.59225,
+      "pnl": -4.70493210929993,
+      "reason": "Closed LONG position. Bollinger target hit (price 788.75 >= middle band 787.97)"
+    },
+    {
+      "symbol": "SYNGENE",
+      "direction": "SHORT",
+      "quantity": 3,
+      "price": 407.3185138977051,
+      "pnl": 2.3609245443163025,
+      "reason": "Closed LONG position. Bollinger target hit (price 407.40 >= middle band 406.98)"
+    },
+    {
+      "symbol": "WHIRLPOOL",
+      "direction": "SHORT",
+      "quantity": 1,
+      "price": 769.9959944091797,
+      "pnl": 0.9115517217783067,
+      "reason": "Closed LONG position. Bollinger target hit (price 770.15 >= middle band 769.73)"
+    }
+  ],
+  "gateCounters": {
+    "total_evaluations": 3212,
+    "rsi_not_oversold": 1733,
+    "no_mode": 503,
+    "volume": 23,
+    "proposed": 8,
+    "executed": 16
+  },
+  "riskReasons": {}
+}
