@@ -9,28 +9,55 @@ Both reuse the project's existing `.env` LLM config (`OLLAMA_BASE_URL` +
 
 ## 1. LLM audit scripts
 
-Two Node.js CLIs run Ollama Cloud models against the entire `src/server`
+Three Node.js CLIs (one per npm script) run Ollama Cloud models against the
 codebase and write Markdown reports to `src/server/audit-report/`:
 
 | Command | File | What it audits |
 | ------- | ---- | -------------- |
-| `npm run audit:code` | `run_code_audit.mjs` | **Architecture** (glm) + **guardrails** (gemma), in parallel |
+| `npm run audit:code` | `run_code_audit.mjs` | **Architecture** + **guardrails**, in parallel |
 | `npm run audit:strategy` | `run_strategy_audit.mjs` | **Strategy / market-logic** audit (rate, grade, profitability plan) |
 | `npm run audit:profit` | `run_strategy_profit_audit.mjs` | **Profitability** audit of the whole project as an expert trader — feasibility of a ₹5k/₹10k → ₹1L/month goal, "no monthly loss" guardrails, growth plan |
 
+All three scripts construct an `OpenAI` client directly against
+`OLLAMA_BASE_URL` / `OLLAMA_API_KEY` (the same OpenAI-compatible config the bot's
+`LlmManager` uses) and write their reports under `src/server/audit-report/`:
+
+- `run_code_audit.mjs` runs **two** tasks in parallel and writes one report per
+  model: **architecture** (`glm_agent_report.md`) and **guardrails**
+  (`gemma_guardrail_report.md`).
+- `run_strategy_audit.mjs` writes `strategy_audit_report.md`.
+- `run_strategy_profit_audit.mjs` writes `profit_strategy_audit.md`.
+
 Each prompt asks for a strict, evidence-based report with per-finding severity,
 file:line, evidence, impact, and a prioritized action list. Models are
-overridable via `AUDIT_MODEL_ARCH`, `AUDIT_MODEL_GUARD`, `AUDIT_MODEL_STRATEGY`
-(they must exist on your Ollama Cloud; see `ollama list`).
+overridable via env (they must exist on your Ollama Cloud; see `ollama list`):
+
+| Model | Default | Override |
+| ----- | ------- | -------- |
+| Architecture (audit:code) | `glm-5.2:cloud` | `AUDIT_MODEL_ARCH` |
+| Guardrails (audit:code) | `gemma4` | `AUDIT_MODEL_GUARD` |
+| Strategy (audit:strategy) | `glm-5.2:cloud` | `AUDIT_MODEL_STRATEGY` |
+| Profit (audit:profit) | `glm-5.2:cloud` | `AUDIT_MODEL_PROFIT` |
+
+> **Note on the shared LLM helper.** The project ships a small `lib/llm-provider.mjs`
+> helper (described in `docs/plan/adhoc-change.md`) that is meant to resolve a
+> primary + LiteLLM fallback client and retry on 429/quota. **As of the current
+> source, none of the three audit scripts import it** — each still uses
+> `OpenAI` directly against `OLLAMA_BASE_URL`. So a LiteLLM fallback / direct
+> `gemini-2.5-pro` routing is **not** currently active in the audit scripts; treat
+> `lib/llm-provider.mjs` as an available-but-not-yet-wired helper.
 
 ## 2. `llm_traces` — per-call LLM observability
 
-Every LLM call (news **sentiment** and the **analyst verdict**) records a row in
-the `llm_traces` table:
+Every LLM call records a row in the `llm_traces` table:
 
-- `purpose` (`sentiment` | `analyst`), `symbol`, `model`
+- `purpose`, `symbol`, `model`
 - the exact **prompt** and **response**
 - `latency_ms`, `tokens_in`, `tokens_out`, `created_at`
+
+The `purpose` values currently written are: **`sentiment`** (news sentiment),
+**`analyst`** (pre-trade analyst verdict), **`holdings`** (holding-review verdict),
+and **`daily_report_<type>`** (the daily report engine's per-stage calls).
 
 This lets you answer *"why did the agent reject the BUY signal for TCS?"* by
 inspecting the recorded trace — the exact prompt, the model's raw JSON, latency,
@@ -76,13 +103,10 @@ The LLM audit reports surfaced correctness/safety fixes that have been applied:
   almost no trades. The LLM analyst is also disabled in backtest/walk-forward so
   they measure the code strategy edge, not live LLM judgment.
 
-
-
-
 These are reflected in `docs/CAPABILITIES.md` and the config knobs in
 `docs/CONFIGURATION.md`.
 
-## 3. The analyst verdict
+## 4. The analyst verdict
 
 The bot's `NewsSentimentEngine.analystVerdict()` asks the LLM to act as a final
 analyst on a candidate trade, combining code-computed indicators (RSI/ADX/ATR)
@@ -97,3 +121,5 @@ and the analyst can only *reject* (skip) a trade, never force one past the risk
 gate. It is enabled with `ANALYST_ENABLED=true` and governed by
 `ANALYST_REJECT_THRESHOLD` (default `70`). If the LLM is unavailable or returns
 invalid JSON, the trade proceeds (logged) — an LLM error never blocks execution.
+A sibling `holdingsVerdict()` performs a similar soft review of existing holdings
+(`purpose = 'holdings'`).

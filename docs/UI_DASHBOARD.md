@@ -1,4 +1,4 @@
-# UI Dashboard & Mock UI
+# UI Dashboard & Mock UI [INCOMPLETE & MAY BREAK]
 
 The project ships a full **React web dashboard** that visualizes the bot's state
 in real time. It reads from the same SQLite ledger the bot writes to, over a
@@ -25,9 +25,13 @@ small **Express REST API + WebSocket** backend served by the bot process.
 | `/orders` | Order book |
 | `/trades` | Trade blotter + realized PnL |
 | `/signals` | Signal feed (direction, RSI, sentiment, reason) |
+| `/fleet` | Fleet observability: probes, news, agent signals |
+| `/llm-traces` | Every LLM call (prompt/response/latency/tokens) — expandable rows |
 | `/risk` | Risk-gate audit trail + component health |
 | `/notifications` | Filterable activity feed |
-| `/llm-traces` | Every LLM call (prompt/response/latency/tokens) — expandable rows |
+
+There is no dedicated `/eod` page yet — the EOD endpoints exist on the API (see
+below) but are not currently consumed by a UI page.
 
 ## API
 
@@ -36,7 +40,15 @@ The bot's `src/server/api/server.ts` exposes read-only endpoints:
 `/api/overview`, `/api/positions`, `/api/orders`, `/api/trades`, `/api/signals`,
 `/api/risk-events`, `/api/notifications`, `/api/daily-summary`, `/api/health`,
 `/api/watchlist`, `/api/candles?symbol=&interval=`, `/api/candle-intervals`,
-`/api/llm-traces`, `/api/healthz`, plus `ws://host/ws`.
+`/api/llm-traces`, `/api/fleet/probes`, `/api/fleet/news`, `/api/fleet/signals`,
+`/api/fleet/reports`, `/api/eod/performance`, `/api/eod/overnight-matrix`,
+`/api/healthz`, plus `ws://host/ws`.
+
+The dashboard pages currently consume: overview, positions, orders, trades,
+signals, risk-events, notifications, daily-summary, health, watchlist, candles,
+candle-intervals, llm-traces, and the fleet probes/news/signals endpoints. The
+`/api/fleet/reports`, `/api/eod/*`, and `/api/healthz` endpoints are exposed by
+the backend but are not yet wired into a client page.
 
 ## Running
 
