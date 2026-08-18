@@ -579,20 +579,24 @@ export class Ledger {
   /* ================================================================ */
 
   /** Today's realized PnL + trade stats (for EOD performance logging). */
-  eodStats(): {
+  eodStats(day?: string): {
     realizedPnl: number;
     totalTrades: number;
     winning: number;
     losing: number;
     winRate: number;
   } {
-    const today = todayIST();
-    const startUTC = new Date(`${today}T00:00:00+05:30`).toISOString();
+    // Scoped to the requested IST day (e.g. '2026-03-05') when provided, else today.
+    const dayLabel = day ?? todayIST();
+    const startUTC = new Date(`${dayLabel}T00:00:00+05:30`).toISOString();
+    const endUTC = new Date(`${dayLabel}T00:00:00+05:30`);
+    endUTC.setUTCDate(endUTC.getUTCDate() + 1);
     const rows = this.db
       .prepare(
-        `SELECT pnl FROM trades WHERE status = 'FILLED' AND created_at >= ?`,
+        `SELECT pnl FROM trades
+          WHERE status = 'FILLED' AND created_at >= ? AND created_at < ?`,
       )
-      .all(startUTC) as Array<{ pnl: number | null }>;
+      .all(startUTC, endUTC.toISOString()) as Array<{ pnl: number | null }>;
     let realizedPnl = 0;
     let winning = 0;
     let losing = 0;
@@ -1082,7 +1086,7 @@ export class Ledger {
       .prepare(
         `SELECT report_type AS reportType, report_date AS reportDate,
                 report_json AS reportJson, created_at AS createdAt
-           FROM daily_reports ORDER BY created_at DESC LIMIT 1`,
+           FROM daily_reports ORDER BY report_id DESC LIMIT 1`,
       )
       .get() as any;
     return row ?? null;
@@ -1116,6 +1120,283 @@ export class Ledger {
       .replace(/[^a-z0-9]+/g, ' ')
       .trim();
     return crypto.createHash('sha1').update(norm).digest('hex');
+  }
+
+  /* ---- strategy parameter store (V011) ---- */
+
+  /** Read a persisted strategy parameter (e.g. momentumTopN), or null. */
+  getStrategyParam(key: string): string | null {
+    const row = this.db
+      .prepare('SELECT param_value FROM strategy_params WHERE param_key = ?')
+      .get(key) as { param_value: string } | undefined;
+    return row?.param_value ?? null;
+  }
+
+  /** Persist a strategy parameter (feedback/optimizer loop). */
+  setStrategyParam(key: string, value: string, source = 'optimizer'): void {
+    this.db
+      .prepare(
+        `INSERT INTO strategy_params (param_key, param_value, source, updated_at)
+         VALUES (?, ?, ?, datetime('now'))
+         ON CONFLICT(param_key) DO UPDATE SET
+           param_value = excluded.param_value,
+           source = excluded.source,
+           updated_at = datetime('now')`,
+      )
+      .run(key, value, source);
+  }
+
+  /* ---- closed-trade feed (V009/V010, for StrategyAdaptation F2) ---- */
+
+  /** Most recent closed (realized) trades, newest-first, for outcome learning. */
+  getClosedTrades(limit = 40): Array<{ pnl: number; ticketSize: number }> {
+    return this.db
+      .prepare(
+        `SELECT pnl, ticket_size AS ticketSize FROM trades
+          WHERE status = 'FILLED' AND pnl IS NOT NULL AND pnl != 0
+          ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
+  /* ---- order idempotency (V012, E1) ---- */
+
+  /** Atomically claim the right to execute an order intent; false if duplicate. */
+  claimOrderIntent(claim: {
+    key: string;
+    symbol: string;
+    side: string;
+    quantity: number;
+    intent: string;
+  }): boolean {
+    const res = this.db
+      .prepare(
+        `INSERT INTO order_intents (intent_key, symbol, side, quantity, intent, status, claimed_at)
+         VALUES (?, ?, ?, ?, ?, 'CLAIMED', datetime('now'))
+         ON CONFLICT(intent_key) DO UPDATE SET
+           status = 'CLAIMED', claimed_at = datetime('now'), settled_at = NULL
+         WHERE order_intents.status = 'ABANDONED'`,
+      )
+      .run(claim.key, claim.symbol, claim.side, claim.quantity, claim.intent);
+    return res.changes > 0;
+  }
+
+  /** Settle a claimed intent after execution (EXECUTED | ABANDONED). */
+  settleOrderIntent(key: string, status: 'EXECUTED' | 'ABANDONED'): void {
+    this.db
+      .prepare(
+        `UPDATE order_intents SET status = ?, settled_at = datetime('now')
+          WHERE intent_key = ?`,
+      )
+      .run(status, key);
+  }
+
+  /** Back-link a broker order id to a fill (V012). */
+  setBrokerOrderIdForTrade(tradeId: string, brokerOrderId: string): void {
+    this.db
+      .prepare('UPDATE trades SET broker_order_id = ? WHERE trade_id = ?')
+      .run(brokerOrderId, tradeId);
+  }
+
+  /* ---- reconciliation log (V012, E2) ---- */
+
+  /** Record a ledger ⇄ broker reconciliation finding. */
+  recordReconciliation(r: {
+    status: 'OK' | 'DRIFT' | 'ERROR';
+    symbol?: string | null;
+    issue?: string | null;
+    ledgerQty?: number | null;
+    brokerQty?: number | null;
+    detail?: string | null;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO reconciliation_log
+           (status, symbol, issue, ledger_qty, broker_qty, detail, run_at)
+         VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+      )
+      .run(
+        r.status,
+        r.symbol ?? null,
+        r.issue ?? null,
+        r.ledgerQty ?? null,
+        r.brokerQty ?? null,
+        r.detail ?? null,
+      );
+  }
+
+  /** Most recent reconciliation rows, newest-first (for the readiness test). */
+  getRecentReconciliations(limit = 20): Array<{
+    status: string;
+    symbol: string | null;
+    issue: string | null;
+    ledgerQty: number | null;
+    brokerQty: number | null;
+    detail: string | null;
+    runAt: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT status, symbol, issue, ledger_qty AS ledgerQty,
+                broker_qty AS brokerQty, detail, run_at AS runAt
+           FROM reconciliation_log ORDER BY run_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
+  /* ---- shadow book / AI authority (V013, Phase 4) ---- */
+
+  /** Log an AI-originated (or momentum) proposal, executed or shadow-only. */
+  recordAgentProposal(p: {
+    symbol: string;
+    originator: string;
+    direction: string;
+    quantity: number;
+    entryPrice: number;
+    aiTilt: number;
+    thesis?: string;
+    executed?: boolean;
+    outcome?: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO agent_proposals
+           (symbol, originator, direction, quantity, entry_price,
+            ai_tilt, thesis, executed, outcome, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+      )
+      .run(
+        p.symbol,
+        p.originator,
+        p.direction,
+        p.quantity,
+        p.entryPrice,
+        p.aiTilt,
+        p.thesis ?? 'no thesis',
+        p.executed ? 1 : 0,
+        p.outcome ?? null,
+      );
+  }
+
+  /** Read logged proposals, newest-first, optionally filtered by originator. */
+  getAgentProposals(
+    limit = 50,
+    originator?: string,
+  ): Array<{
+    symbol: string;
+    originator: string;
+    direction: string;
+    quantity: number;
+    entryPrice: number;
+    aiTilt: number;
+    executed: number;
+    outcome: string | null;
+    createdAt: string;
+  }> {
+    if (originator) {
+      return this.db
+        .prepare(
+          `SELECT symbol, originator, direction, quantity, entry_price AS entryPrice,
+                  ai_tilt AS aiTilt, executed, outcome, created_at AS createdAt
+             FROM agent_proposals WHERE originator = ? ORDER BY created_at DESC LIMIT ?`,
+        )
+        .all(originator, limit) as any[];
+    }
+    return this.db
+      .prepare(
+        `SELECT symbol, originator, direction, quantity, entry_price AS entryPrice,
+                ai_tilt AS aiTilt, executed, outcome, created_at AS createdAt
+           FROM agent_proposals ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
+  /** Months of shadow-book history (earliest proposal → now). */
+  shadowBookMonths(now: Date = new Date()): number {
+    const row = this.db
+      .prepare('SELECT MIN(created_at) AS first FROM agent_proposals')
+      .get() as { first: string | null } | undefined;
+    if (!row?.first) return 0;
+    const first = new Date(row.first);
+    const months =
+      (now.getUTCFullYear() - first.getUTCFullYear()) * 12 +
+      (now.getUTCMonth() - first.getUTCMonth());
+    return Math.max(0, months);
+  }
+
+  /**
+   * Forward-return of each logged proposal over a horizon, grouped by originator
+   * (MOMENTUM executed vs AI_COMPOSITE shadow). Returns [] when no proposals
+   * have a forward candle yet.
+   */
+  scoreShadowBook(horizonDays = 21): Array<{
+    originator: string;
+    scored: number;
+    avgReturnPct: number;
+    hitRate: number;
+  }> {
+    const proposals = this.db
+      .prepare(
+        `SELECT p.proposal_id AS id, p.symbol, p.direction, p.entry_price AS entryPrice,
+                p.originator, p.created_at AS createdAt
+           FROM agent_proposals p`,
+      )
+      .all() as any[];
+    const byOriginator = new Map<
+      string,
+      { total: number; count: number; wins: number }
+    >();
+    for (const p of proposals) {
+      // SQLite stores UTC as 'YYYY-MM-DD HH:MM:SS'; parse it as UTC so the
+      // horizon comparison is exact regardless of the host's timezone.
+      const rawCreated = String(p.createdAt ?? '');
+      const createdUtc = new Date(
+        rawCreated.includes('T')
+          ? rawCreated
+          : rawCreated.replace(' ', 'T') + 'Z',
+      );
+      if (Number.isNaN(createdUtc.getTime())) continue;
+      const horizon = new Date(createdUtc.getTime() + horizonDays * 86400000);
+      const instId = this.resolveInstrumentId(p.symbol, 'NSE');
+      // First close at/after the horizon (forward return from the decision date).
+      const row = this.db
+        .prepare(
+          `SELECT close FROM candles
+            WHERE instrument_id = ? AND timestamp >= ?
+            ORDER BY timestamp ASC LIMIT 1`,
+        )
+        .get(instId, horizon.toISOString()) as { close: number } | undefined;
+      if (!row || row.close <= 0) continue;
+      const ret =
+        p.direction === 'SHORT' || p.direction === 'SELL'
+          ? (p.entryPrice - row.close) / p.entryPrice
+          : (row.close - p.entryPrice) / p.entryPrice;
+      const acc = byOriginator.get(p.originator) ?? { total: 0, count: 0, wins: 0 };
+      acc.total += ret * 100;
+      acc.count += 1;
+      if (ret > 0) acc.wins += 1;
+      byOriginator.set(p.originator, acc);
+    }
+    return [...byOriginator.entries()].map(([originator, v]) => ({
+      originator,
+      scored: v.count,
+      avgReturnPct: v.count > 0 ? v.total / v.count : 0,
+      hitRate: v.count > 0 ? v.wins / v.count : 0,
+    }));
+  }
+
+  /* ---- realized P&L by month (Phase 5.1) ---- */
+
+  /** Realized P&L grouped by IST month, oldest→newest (feeds the kill ladder). */
+  realizedPnlByMonth(): Array<{ month: string; pnl: number }> {
+    const rows = this.db
+      .prepare(
+        `SELECT substr(created_at, 1, 7) AS month, SUM(pnl) AS pnl
+           FROM trades WHERE pnl IS NOT NULL
+          GROUP BY month ORDER BY month ASC`,
+      )
+      .all() as Array<{ month: string; pnl: number | null }>;
+    return rows.map((r) => ({ month: r.month, pnl: r.pnl ?? 0 }));
   }
 
   /* ---- private ---- */

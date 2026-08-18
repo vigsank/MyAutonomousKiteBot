@@ -1,136 +1,68 @@
 ## Executive Summary
-- [FAIL] The 1-year goal of generating ₹1,00,000/month from a ₹5,000–₹10,000 starting capital is mathematically impossible without extreme leverage or reckless risk. It requires a sustained 55% monthly return to build the necessary capital base, which no equity strategy can achieve.
-- [FAIL] The current position sizing logic (`MarketAgent.ts:530`) will reject almost all trades on a ₹10,000 capital base. A 1% risk budget yields ₹100, which is too small to buy even a single share of most NSE stocks with a reasonable ATR stop.
-- [FAIL] The "No Monthly Loss" goal is not supported by the current code. The monthly drawdown guard (`RiskEngine.ts:92`) only halts *new* entries; it leaves open positions to bleed, guaranteeing a negative month-end P&L if the threshold is breached.
-- [WARN] The default configuration (`AppConfig.ts:122-124`) is calibrated for ₹5,00,000 capital. Deploying with ₹10,000 without adjusting `MAX_DAILY_DRAWDOWN` and `MAX_TRADE_ALLOCATION` will cause logic mismatches and risk engine bypasses.
-- [WARN] Transaction costs (`PaperTrader.ts:24`) will consume a disproportionate amount of profit on small ticket sizes. A ₹2,000 trade incurs ~₹50 in round-trip costs, a 2.5% drag that requires significant gross edge to overcome.
-- [PASS] The architecture correctly isolates the LLM as a signal source and enforces deterministic risk (`RiskEngine.ts:32`). The system will not blow up the account overnight, but it also will not grow it to the target.
+- [FAIL] The 1-year ₹10k stepping goal is mathematically and structurally impossible with the current momentum strategy. Fixed costs (brokerage) and minimum capital requirements will guarantee a net loss in Month 1.
+- [FAIL] The cost model in `PaperTrader.ts:30` uses bps for brokerage, yielding ₹0.48 on a ₹1,600 trade instead of the real ₹20 flat fee. This makes your backtests dangerously fake for small accounts.
+- [WARN] The 5-10 stock momentum portfolio cannot be properly diversified with ₹10,000. 80% deployed is ₹8,000, leaving ₹1,600 per stock. Fixed costs will consume 2.7% per round trip, destroying the 1.25% expected monthly momentum premium.
+- [WARN] The 2% monthly drawdown guard (`RiskEngine.ts:100`) is ₹200 on a ₹10k account. A single normal market fluctuation will trigger a month-long halt, preventing recovery.
+- [PASS] The LLM as a filter-only (`AiAuthorityPolicy.ts`) and the hard risk caps in `RiskEngine.ts` are well-designed and prevent catastrophic loss.
+- [PASS] The tax model (`Tax.ts:50`) correctly applies 20% STCG, which is crucial for a monthly rebalancing strategy.
 
 ## The Math — Is the Goal Feasible?
-The goal is to generate ₹1,00,000/month of income within 12 months, starting with ₹10,000. 
+Let's do the math on your Month 1 goal with ₹10,000.
+- **Capital**: ₹10,000. 
+- **Cash Reserve**: 20% (`AppConfig.ts`), leaving ₹8,000 deployable.
+- **Portfolio**: 5 stocks (`MomentumStrategy.ts:140`), so ₹1,600 per stock.
+- **Real Costs (India)**: Zerodha charges a flat ₹20 per trade. STT is 0.1% on buy and sell. 
+  - Buy: ₹20 (brokerage) + ₹1.60 (STT) = ₹21.60
+  - Sell: ₹20 (brokerage) + ₹1.60 (STT) = ₹21.60
+  - Total round-trip cost per stock: ₹43.20.
+- **Cost as % of position**: ₹43.20 / ₹1,600 = **2.7%**.
+- **Expected Momentum Return**: ~15% annualized = **1.25% per month**.
+- **Net Monthly Return per stock**: 1.25% - 2.7% = **-1.45%**.
+- **Month 1 P&L**: -1.45% * 5 stocks = **-₹116**. 
 
-**1. Required Capital Base:**
-To sustainably withdraw ₹1,00,000/month without depleting the principal, you need a realistic monthly return of 2–5%. 
-- At 5% monthly return: ₹1,00,000 / 0.05 = ₹20,00,000 (20 Lakhs) required capital.
-- At 2% monthly return: ₹1,00,000 / 0.02 = ₹50,00,000 (50 Lakhs) required capital.
+**Verdict**: You will fail the goal in Month 1. Cumulative P&L will be negative. To overcome a 2.7% cost drag, you need > 2.7% monthly return (32% annualized), which no momentum strategy sustains.
 
-**2. Required Compounding Rate:**
-To grow ₹10,000 to ₹20,00,000 in 12 months via compounding:
-- Formula: `Final = Initial * (1 + R)^12`
-- `20,00,000 = 10,000 * (1 + R)^12` -> `200 = (1 + R)^12`
-- `R = 200^(1/12) - 1 ≈ 0.552` or **55.2% per month**.
-
-**Verdict:** A 55.2% monthly return is mathematically unattainable in equity markets without massive leverage (which is explicitly out of scope) or taking catastrophic risks (which the `RiskEngine` prevents). The 1-year target must be revised.
+**Required Capital Base for Sustainable Profit**:
+- You need the fixed ₹20 brokerage to be negligible. That happens at ₹16,000 per stock (0.125%).
+- For a 5-stock portfolio: 5 * ₹16,000 = ₹80,000 deployable.
+- With 20% cash reserve, total capital needed = **₹1,00,000**.
+- At ₹1L, expected net monthly profit is ~0.98% = **₹980**.
 
 ## Codebase & Algorithm Review
-
-### 1. Execution Layer & Position Sizing
-- **File:** `src/server/MarketAgent.ts:530-540`
-  ```typescript
-  const budget = (this.config.risk.availableCapital * cfg.riskPerTradePercent) / 100;
-  const stopDist = this.stopDistance(symbol, price);
-  const riskPerShare = stopDist;
-  if (riskPerShare <= 0) return watchQuantity;
-  const riskSized = Math.floor(budget / riskPerShare);
-  if (riskSized <= 0) return 0;
-  ```
-  **Impact:** With ₹10,000 capital and a 1% risk per trade (`RISK_PER_TRADE_PERCENT=1`), the budget is ₹100. If a stock is priced at ₹500 with an ATR stop of ₹10, `riskSized` = 10 shares. Ticket size = ₹5,000. However, for a stock priced at ₹1,000 with a ₹20 stop, `riskSized` = 5 shares. Ticket size = ₹5,000. If the stop is ₹25, `riskSized` = 4 shares. If the stop is >₹100, `riskSized` = 0, and the trade is skipped. The bot will be unable to trade high-priced stocks or volatile stocks.
-
-### 2. Risk Engine & Capital Guards
-- **File:** `src/server/RiskEngine.ts:92-99`
-  ```typescript
-  const monthlyPnl = this.ledger.monthlyRealizedPnl();
-  const monthlyDdPct = (Math.abs(Math.min(0, monthlyPnl)) / this.config.risk.availableCapital) * 100;
-  if (monthlyDdPct > this.config.risk.maxMonthlyDrawdownPct) {
-    failures.push(`Monthly drawdown ${monthlyDdPct.toFixed(1)}% exceeds max...`);
-  }
-  ```
-  **Impact:** This guard halts *new* entries if the monthly loss exceeds 2% (default). It does **not** close existing positions. If the bot hits a -2% loss, it stops trading, but open positions remain exposed to market movements, meaning the month-end P&L will almost certainly be a loss, violating the "No Monthly Loss" goal.
-
-- **File:** `src/server/AppConfig.ts:122-124`
-  ```typescript
-  availableCapital: num('AVAILABLE_CAPITAL', 500000),
-  maxDailyDrawdown: num('MAX_DAILY_DRAWDOWN', 15000),
-  maxTradeAllocation: num('MAX_TRADE_ALLOCATION', 20000),
-  ```
-  **Impact:** If the user sets `AVAILABLE_CAPITAL=10000` but leaves the other defaults, `maxDailyDrawdown` is ₹15,000 (150% of capital) and will never trigger. `maxTradeAllocation` is ₹20,000, allowing the bot to deploy 200% of capital in a single trade (blocked later by the cash reserve, but still misconfigured).
-
-### 3. Cost Model
-- **File:** `src/server/PaperTrader.ts:24-30`
-  ```typescript
-  let brokerage = (n * c.brokerageBps) / 10000;
-  if (c.brokerageMax > 0) brokerage = Math.min(brokerage, c.brokerageMax);
-  const statutory = (n * c.statutoryBps) / 10000;
-  const gst = (brokerage * c.gstPct) / 100;
-  return brokerage + statutory + gst;
-  ```
-  **Impact:** On a ₹5,000 trade, brokerage (3 bps) is ₹1.50, but the `brokerageMax` is ₹20. So brokerage is ₹1.50. Statutory (10 bps) is ₹5. GST (18% on brokerage) is ₹0.27. Total charges = ₹6.77 per leg. Round trip = ~₹13.54. This is a 0.27% drag per round trip. While not catastrophic, combined with slippage (2 bps = ₹1 per leg), it requires a gross edge of at least 0.3% just to break even.
-
-### 4. EOD Layer
-- **File:** `src/server/EodEngine.ts:28-46`
-  **Impact:** The `squareOffIntraday` function only closes `MIS` (intraday) positions. However, `MarketAgent.ts:715` defaults to `CNC` (delivery) positions. Unless explicitly configured to use `MIS`, the bot will hold positions overnight, exposing the ₹10,000 capital to gap risks that could wipe out the account in a single day.
+- **`MomentumStrategy.ts:140` (`quantityFor`)**: Divides deployable capital by `slots` (5-10). With 10k, this creates tiny ₹1,600 tickets. There is no minimum capital floor to prevent this.
+- **`PaperTrader.ts:30` (`charges`)**: `brokerage = (n * c.brokerageBps) / 10000`. For a ₹1,600 trade at 3bps, this yields ₹0.48. It caps at `c.brokerageMax` (20), but 0.48 is far below 20. This is a fatal flaw for small accounts. The bot thinks costs are 0.3% when they are 2.7%.
+- **`RiskEngine.ts:100` (`maxMonthlyDrawdownPct`)**: 2% of 10k is ₹200. `currentDrawdown()` includes unrealized P&L. A single ₹1,600 position moving 12.5% hits this. The bot will halt constantly, making it impossible to recover.
+- **`Tax.ts:50` (`estimateTax`)**: 20% STCG. Correct, but adds another drag on monthly rebalances. If you make 1.25% gross, you keep 1.0% after tax.
+- **`DailyReportEngine.ts:60`**: LLM suggests allocations, but `RiskEngine` enforces. Good design.
+- **`EodEngine.ts:30`**: Squares off MIS. Momentum uses CNC, so this is fine.
+- **`GoLiveLadder.ts:30`**: `maxDrawdownPct` 45%. Too wide for a 10k account. 45% of 10k is ₹4,500, which violates your "no cumulative loss" rule.
 
 ## Profitability Gaps
-1. **Position Sizing Floor:** The risk-parity sizing (`MarketAgent.ts:530`) will return 0 for many viable trades on a ₹10,000 capital base, causing the bot to sit idle and miss opportunities.
-2. **Cost Drag:** Small position sizes mean fixed costs (like the ₹20 brokerage cap, though it calculates percentage first) and slippage take a larger percentage bite of gross profits.
-3. **Monthly Drawdown Locks in Loss:** The current monthly guard (`RiskEngine.ts:92`) stops trading after a loss but doesn't flatten the portfolio, guaranteeing a red month if the threshold is hit.
-4. **Overnight Risk:** Defaulting to `CNC` product type (`MarketAgent.ts:715`) without an overnight gap risk management strategy for a ₹10k account is dangerous. A 10% gap down on a ₹5,000 position is a ₹500 loss (5% of capital), which exceeds the monthly drawdown limit in one morning.
+1. **Fixed Cost Ignorance**: The bot assumes brokerage scales linearly with bps. In India, discount brokers charge a flat ₹20 per trade. For a ₹1,600 trade, ₹20 is 1.25%, not 0.03%. Your backtests are lying to you.
+2. **Over-Diversification on Small Capital**: 5-10 stocks on ₹10,000 means ₹1,000-1,600 per stock. This guarantees fixed costs dominate.
+3. **Monthly Drawdown Guard is Too Tight**: 2% of 10k is ₹200. One bad stock will trigger this and halt trading for the month, preventing recovery.
+4. **Tax Drag on Monthly Rebalance**: 20% STCG on short-term gains. If you make 1.25%, you keep 1.0%. This leaves almost no margin for error after costs.
 
 ## "No Monthly Loss" Guardrails
-To guarantee a positive month-end P&L, the bot must actively manage the monthly P&L, not just halt entries. Implement these concrete rules:
+To guarantee no monthly loss pushes Cum P&L negative, you need a dynamic portfolio stop.
+1. **Cumulative Profit Stop**: If `Cum P&L + Unrealized P&L < 0`, close all positions immediately.
+   - Implementation in `RiskEngine.ts`: Add a check `if (this.ledger.cumulativeRealizedPnl() + this.ledger.unrealizedPnl() < 0) { failures.push('Cumulative P&L stop breached'); }`
+2. **Position Size Floor**: Do not trade if `deployable / slots < 16000`. (i.e., need at least ₹16,000 per stock to make fixed costs manageable).
+   - Implementation in `MomentumStrategy.ts:140`: `if (perNameTarget < 16000) return 0;`
+3. **Dynamic Drawdown Guard**: Instead of 2% of total capital, use 50% of current Cum P&L. If Cum P&L is ₹500, max loss is ₹250.
+   - Implementation in `RiskEngine.ts:100`: `const maxLoss = Math.max(200, this.ledger.cumulativeRealizedPnl() * 0.5);`
 
-1. **Trailing Monthly Profit Lock:**
-   - Once the monthly realized P&L reaches a positive threshold (e.g., +1% of capital, or ₹100 on ₹10k), move all open position stop-losses to breakeven.
-   - Once the monthly P&L reaches +2% (₹200), close all open positions and halt trading for the remainder of the month. This locks in a green month.
-
-2. **Hard Monthly Stop-Loss (Flatten and Halt):**
-   - If the monthly realized P&L drops to -1% (-₹100), immediately close ALL open positions (market orders) and halt all trading for the rest of the month. 
-   - This ensures the maximum monthly loss is capped at -1% (plus slippage on the closing orders), preventing a -2% or worse month.
-
-3. **Implementation Location:**
-   - Modify `src/server/RiskEngine.ts:evaluate` to check the monthly P&L *before* evaluating the trade. If the monthly halt flag is active, reject the trade.
-   - Add a new function in `src/server/EodEngine.ts` or `src/server/MarketAgent.ts` that runs on every tick/candle to check the monthly P&L against the hard stop and trailing lock thresholds, executing the flatten/halt logic.
-
-## Realistic Growth Plan (₹5k/₹10k → ₹1L/month)
-The 1-year target is **unachievable**. Here is an honest, realistic timeline:
-
-- **Phase 1: Capital Preservation & Validation (Months 1-3)**
-  - Start with ₹10,000.
-  - Goal: Do not lose money. Aim for 2-3% per month (₹200-₹300/month).
-  - Focus on proving the bot's edge net of costs. 
-  - Expected Capital: ₹10,600 - ₹10,900.
-
-- **Phase 2: Slow Compounding (Months 4-12)**
-  - Continue aiming for 3-5% monthly.
-  - Compound the small gains.
-  - Expected Capital at Month 12: ₹10,000 * (1.04)^12 ≈ ₹16,000.
-  - Monthly Income at Month 12: ~₹640 (4% of ₹16k).
-
-- **Phase 3: Scaling Capital (Years 2-5)**
-  - To reach ₹1L/month at a realistic 5% return, you need ₹20,00,000 capital.
-  - You must inject external capital. Compounding ₹10k to ₹20L at 5% monthly takes over 10 years.
-  - Add ₹5,000 - ₹10,000 per month from external income to accelerate the capital base growth.
-
-**Revised Target:** Change the goal from "₹1L/month in 1 year" to "Build a ₹2L capital base over 2-3 years through compounding and external deposits, then aim for ₹10k/month (5% return)."
+## Realistic Growth Plan (₹10k → +₹10k/month stepping)
+- **Months 1-9**: Do NOT trade with the bot. Manually invest the ₹10,000/month into a Nifty BeES or a single large-cap stock to accumulate capital without bleeding to brokerage.
+- **Month 10**: Capital = ₹1,00,000. Turn on the bot. Deployable = ₹80,000. 5 stocks = ₹16,000 each.
+- **Month 11**: Capital = ₹1,10,000 + profits.
+- **Month 12**: Capital = ₹1,20,000 + profits.
+- **Expected monthly profit at 100k**: ~0.98% = ₹980. Over 3 months (Months 10-12): ~₹3,000.
+- **Honest verdict**: The 1-year goal of trading from Month 1 with 10k is dead. The realistic timeline to profitability is Month 10, assuming you save 10k/month manually first.
 
 ## Prioritized Action Items
-
-1. **Implement Hard Monthly Flatten Logic (Critical for "No Monthly Loss" goal)**
-   - **File:** `src/server/MarketAgent.ts` (add check in `onTicks` or `evaluateSymbol`)
-   - **Action:** If `ledger.monthlyRealizedPnl() < -1% of capital`, close all open positions and set a `monthlyHalt` flag in `bot_state`. Check this flag at the start of `evaluateSymbol` to skip all logic.
-
-2. **Fix Position Sizing for Small Capital**
-   - **File:** `src/server/MarketAgent.ts:530-540`
-   - **Action:** Change the sizing logic to allow a minimum of 1 share if `riskSized` is 0 but the `budget` can cover the `stopDist` for 1 share. Alternatively, switch to a fixed fractional model (e.g., 2% of capital per trade) for small accounts, ignoring ATR risk sizing until capital > ₹1L.
-
-3. **Adjust Default Configurations for ₹10k Capital**
-   - **File:** `.env` or `AppConfig.ts`
-   - **Action:** Set `MAX_DAILY_DRAWDOWN=200` (2% of 10k), `MAX_TRADE_ALLOCATION=2000` (20% of 10k), `MAX_MONTHLY_DRAWDOWN_PCT=1`. 
-
-4. **Switch to Intraday (MIS) Only for Small Capital**
-   - **File:** `src/server/MarketAgent.ts:715`
-   - **Action:** Change default `product` to `MIS` so `EodEngine.squareOffIntraday` actually squares off positions, eliminating overnight gap risk which is fatal for small accounts.
-
-5. **Implement Trailing Monthly Profit Lock**
-   - **File:** `src/server/MarketAgent.ts` (`checkExit` method)
-   - **Action:** If `ledger.monthlyRealizedPnl() > 2% of capital`, force exit all open positions and set `monthlyHalt` flag to lock in the green month.
+1. **Fix the cost model** in `PaperTrader.ts:30` to use a flat ₹20 per trade instead of bps for small notional. This will show you the truth in backtests.
+2. **Add a capital floor** in `MomentumStrategy.ts:140` to refuse trading if `perNameTarget < 16000`.
+3. **Implement the `CumulativeProfitStop`** in `RiskEngine.ts` to enforce the "no monthly loss" rule.
+4. **Adjust `maxMonthlyDrawdownPct`** in `RiskEngine.ts:100` to be dynamic based on Cum P&L.
+5. **Advise the user** to manually accumulate capital to ₹1L before enabling the bot.

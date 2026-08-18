@@ -75,7 +75,10 @@ export function buildDomainAgents(): AgentDef[] {
       true,
       ["sentiment"],
       async (ctx: AgentContext) => {
-        const scores = await sentimentScores(ctx);
+        // Read the sentiment agent's published payload — never re-query the news
+        // engine (G3: only the `sentiment` agent may touch it).
+        const sent = ctx.blackboard.sentiment();
+        const scores = sent?.scores ?? {};
         const buckets: Record<string, string[]> = { bullish: [], bearish: [], neutral: [] };
         for (const [symbol, score] of Object.entries(scores)) {
           buckets[bucket(score)].push(symbol);
@@ -94,7 +97,8 @@ export function buildDomainAgents(): AgentDef[] {
       true,
       ["sentiment"],
       async (ctx: AgentContext) => {
-        const scores = await sentimentScores(ctx);
+        const sent = ctx.blackboard.sentiment();
+        const scores = sent?.scores ?? {};
         let bullish = 0;
         let bearish = 0;
         for (const score of Object.values(scores)) {

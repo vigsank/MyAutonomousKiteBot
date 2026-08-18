@@ -13,6 +13,7 @@ import { runHoldingsReview } from "../agents/holdingsReview";
 import { AgentContext } from "../agents/types";
 import { istMinutes } from "../agents/scheduler";
 import { KiteMcpClient } from "./KiteMcpClient";
+import { Blackboard } from "../agents/blackboard";
 
 /** How often the probe scheduler checks the IST clock. */
 const PROBE_TICK_MS = 60 * 1000;
@@ -70,6 +71,7 @@ export class AgentsRuntime {
       trader: this.opts.trader,
       mcp: this.mcp,
       probeRunId,
+      blackboard: new Blackboard(),
     };
   }
 

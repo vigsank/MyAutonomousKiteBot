@@ -33,6 +33,36 @@ export interface MomentumScore {
   momentum: number;
 }
 
+/** Thresholds that map an AI regime score to an exposure multiplier. */
+export interface RegimeParams {
+  /** regime_score at/below this → risk-off (go to the floor). */
+  riskOff: number;
+  /** regime_score at/below this starts de-risking (linear down to the floor). */
+  defensive: number;
+  /** Floor on the multiplier (0 = go to cash on risk-off). */
+  floor: number;
+}
+
+/**
+ * Convert an AI market-regime score ([-1,1]) to a sizing multiplier in
+ * [floor, 1]. Used for sentiment-regime switching: scale EXPOSURE without
+ * changing which names momentum picks.
+ *
+ *   score >= defensive        → 1.0  (full size)
+ *   defensive > score > riskOff → linear 1.0 → floor
+ *   score <= riskOff          → floor (0 = go to cash)
+ */
+export function regimeMultiplier(
+  score: number,
+  p: RegimeParams = { riskOff: -0.3, defensive: 0, floor: 0.4 },
+): number {
+  if (score >= p.defensive) return 1;
+  if (p.defensive <= p.riskOff) return p.floor; // guard against inverted thresholds
+  if (score <= p.riskOff) return p.floor;
+  const t = (p.defensive - score) / (p.defensive - p.riskOff); // 0 at defensive, 1 at riskOff
+  return Math.max(0, 1 - t * (1 - p.floor));
+}
+
 /**
  * Compute the momentum of a close series over [now - lookback - skip, now - skip]
  * months. Returns the fractional return, or null if insufficient data.

@@ -514,6 +514,11 @@ export interface MockEngineConfig {
   marginRate?: number;
   /** Directory containing `<SYMBOL>_<interval>.csv` replay files. */
   dataDir?: string;
+  /**
+   * Optional SQLite file for persisting orders/positions/ledger across restarts
+   * (acts like a real Zerodha backend). Omit to keep the mock in-memory.
+   */
+  stateFile?: string;
 }
 
 export interface StateSnapshot {

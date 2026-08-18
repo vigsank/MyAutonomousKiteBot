@@ -40,6 +40,8 @@ export type AgentId =
   | "drawdown_monitor"
   | "holdings_review"
   // F — decision (golden path)
+  | "momentum_rank"
+  | "daily_report_context"
   | "regime"
   | "screener"
   | "validator"
@@ -70,6 +72,10 @@ export interface TradeProposal {
   thesis: string;
   riskScore: number; // 0-100
   timestamp: string;
+  /** Who originated this proposal: only MOMENTUM may execute. */
+  originator?: "MOMENTUM" | "AI_COMPOSITE";
+  /** AI shrink multiplier (0..1); the AI may never upsize (locked tilt <= 1). */
+  aiTilt: number;
 }
 
 /** Outcome of a single agent run within a pass. */
@@ -103,8 +109,14 @@ export interface AgentContext {
   /** Optional — set when the runtime wires the real risk/execution layer. */
   risk?: RiskEngine;
   trader?: PaperTrader;
+  /** Optional — live order router (idempotency + live gate + reconciliation halt). */
+  liveTrader?: import("../server/LiveTrader").LiveTrader;
   /** Optional — read-only Kite MCP client (mock or live) for account data. */
   mcp?: KiteMcpClient;
   /** Optional — current probe run id when running inside a probe pass. */
   probeRunId?: string;
+  /** The shared blackboard for this pass (published as agents complete). */
+  blackboard: import("./blackboard").Blackboard;
+  /** The momentum strategy — the sole ORIGINATOR of trade candidates. */
+  momentum?: import("../server/MomentumStrategy").MomentumStrategy;
 }

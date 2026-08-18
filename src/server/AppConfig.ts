@@ -100,6 +100,8 @@ export interface AppConfig {
     maxMonthlyDrawdownPct: number;
     /** Risk appetite guiding the LLM advisor + algo sizing. */
     riskAppetite: 'conservative' | 'balanced' | 'aggressive';
+    /** Minimum available capital before the momentum rebalance trades at all (0 = off). */
+    minCapital: number;
   };
   costs: {
     slippageBps: number;
@@ -114,6 +116,17 @@ export interface AppConfig {
     maxOptionsExposure: number;
     expiryDays: number;
     strikeOffsetPct: number;
+  };
+  /** Live-order routing (Phase E) — opt-in, off by default. */
+  live: {
+    /** Master switch: allow orders to reach the broker (default false). */
+    allowLiveOrders: boolean;
+    /** When live orders are on, log payloads only, don't send (default true). */
+    shadowMode: boolean;
+    /** Blast-radius cap: refuse live orders above this notional. */
+    maxLiveOrderValue: number;
+    /** Block new entries when the ledger/broker book has drifted. */
+    haltOnDrift: boolean;
   };
   strategy: {
     mode: 'mean_reversion' | 'pullback_trend' | 'breakout';
@@ -175,6 +188,32 @@ export interface AppConfig {
     kellyEnabled: boolean;
     /** Fractional-Kelly scale (0..1) — safer than full Kelly. */
     kellyScale: number;
+    /** Cross-sectional momentum — number of names to hold (validated 5–10). */
+    momentumTopN: number;
+    /** Momentum lookback in months (12 default). */
+    momentumLookbackMonths: number;
+    /** Rank-hysteresis band: incumbents hold their slot within top N+band. */
+    momentumHysteresisBand: number;
+    /** Liquidity floor in INR (0 = disabled). */
+    momentumLiquidityFloorInr: number;
+    /** Trailing window (days) for the liquidity ADV proxy. */
+    momentumLiquidityLookbackDays: number;
+    /** When true, go to cash if the median momentum is negative (OFF default). */
+    momentumRiskOff: boolean;
+    /** AI sentiment-regime switching: scale exposure by the daily report's regime_score. */
+    momentumRegimeEnabled: boolean;
+    /** regime_score at/below this → risk-off (shrink to the floor). */
+    momentumRegimeRiskOffThreshold: number;
+    /** regime_score at/below this starts de-risking (linear down to the floor). */
+    momentumRegimeDefensiveThreshold: number;
+    /** Floor on the regime sizing multiplier (0 = go to cash on risk-off). */
+    momentumRegimeFloorMultiplier: number;
+    /** News sentiment below this vetoes momentum entries / forces exits. */
+    newsVetoThreshold: number;
+    /** Binary corporate-action types that trigger the event blackout. */
+    eventBlackoutTypes: string[];
+    /** Days before a binary event to blackout (0 disables). */
+    eventBlackoutDays: number;
   };
   watchlist: WatchSymbol[];
   dataDir: string;
@@ -416,6 +455,7 @@ export function loadConfig(): AppConfig {
         const v = str('RISK_APPETITE', 'balanced').toLowerCase();
         return v === 'conservative' || v === 'aggressive' ? v : 'balanced';
       })(),
+      minCapital: num('MIN_CAPITAL', 0),
     },
     costs: {
       slippageBps: num('PAPER_SLIPPAGE_BPS', 2),
@@ -430,6 +470,12 @@ export function loadConfig(): AppConfig {
       maxOptionsExposure: num('MAX_OPTIONS_EXPOSURE', 20000),
       expiryDays: num('OPTION_EXPIRY_DAYS', 30),
       strikeOffsetPct: num('OPTION_STRIKE_OFFSET_PCT', 2),
+    },
+    live: {
+      allowLiveOrders: str('ALLOW_LIVE_ORDERS') === 'true',
+      shadowMode: str('LIVE_SHADOW_MODE') !== 'false',
+      maxLiveOrderValue: num('MAX_LIVE_ORDER_VALUE', 25000),
+      haltOnDrift: str('HALT_ON_DRIFT') !== 'false',
     },
     strategy: {
       mode: (str('STRATEGY_MODE', 'mean_reversion') === 'pullback_trend' ? 'pullback_trend' : str('STRATEGY_MODE', 'mean_reversion') === 'breakout' ? 'breakout' : 'mean_reversion'),
@@ -474,6 +520,19 @@ export function loadConfig(): AppConfig {
       orbVolumeMultiplier: num('ORB_VOLUME_MULTIPLIER', 1.5),
       kellyEnabled: str('KELLY_ENABLED') === 'true',
       kellyScale: num('KELLY_SCALE', 0.5),
+      momentumTopN: num('MOMENTUM_TOP_N', 6),
+      momentumLookbackMonths: num('MOMENTUM_LOOKBACK_MONTHS', 12),
+      momentumHysteresisBand: num('MOMENTUM_HYSTERESIS_BAND', 8),
+      momentumLiquidityFloorInr: num('MOMENTUM_LIQUIDITY_FLOOR_INR', 0),
+      momentumLiquidityLookbackDays: num('MOMENTUM_LIQUIDITY_LOOKBACK_DAYS', 20),
+      momentumRiskOff: str('MOMENTUM_RISK_OFF') === 'true',
+      momentumRegimeEnabled: str('MOMENTUM_REGIME_ENABLED') !== 'false',
+      momentumRegimeRiskOffThreshold: num('MOMENTUM_REGIME_RISK_OFF_THRESHOLD', -0.3),
+      momentumRegimeDefensiveThreshold: num('MOMENTUM_REGIME_DEFENSIVE_THRESHOLD', 0),
+      momentumRegimeFloorMultiplier: num('MOMENTUM_REGIME_FLOOR_MULTIPLIER', 0.4),
+      newsVetoThreshold: num('NEWS_VETO_THRESHOLD', -0.5),
+      eventBlackoutTypes: csv(str('EVENT_BLACKOUT_TYPES', 'EARNINGS,RESULTS,RATING,REGULATORY,MERGER,DEMERGER,AGM,BOARD_MEETING,SPLIT,BONUS,RIGHTS_ISSUE')),
+      eventBlackoutDays: num('EVENT_BLACKOUT_DAYS', 3),
     },
     watchlist: loadWatchlist(dataDir),
     dataDir,

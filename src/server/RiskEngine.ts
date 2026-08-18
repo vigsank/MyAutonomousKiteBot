@@ -48,6 +48,18 @@ export class RiskEngine {
     // notional past the single-stock cap (repeated adds can otherwise build a
     // single oversized position).
     const existing = this.ledger.getPosition(trade.symbol, trade.exchange);
+
+    // Exits / reductions always reduce exposure and free capital, so they
+    // bypass the allocation, concentration, capital-capacity and drawdown caps.
+    // Only a positive ticket is required — otherwise a fully-deployed book could
+    // never be trimmed or closed (this previously blocked every sell and let the
+    // book grow unbounded past topN).
+    const isClose = existing !== null && existing.direction !== trade.direction;
+    if (isClose) {
+      const allowed = trade.ticketSize > 0;
+      return { allowed, reasons: allowed ? [] : ['Ticket size must be positive.'] };
+    }
+
     if (existing && existing.direction === trade.direction) {
       const newNotional =
         existing.quantity * existing.avgPrice + trade.quantity * trade.entryPrice;
@@ -112,7 +124,6 @@ export class RiskEngine {
     // of total account balance. Only applies to NEW entries (not closes), and
     // uses the actual ATR-based stop distance when provided (falls back to the
     // fixed stopLossPercent). riskAtStop = quantity * stopDist.
-    const isClose = existing && existing.direction !== trade.direction;
     if (!isClose) {
       const stopDist =
         trade.stopDistance ??

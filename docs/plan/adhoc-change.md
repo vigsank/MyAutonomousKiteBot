@@ -1,4 +1,4 @@
-# Adhoc changes — profitability plan implementation
+# Adhoc changes
 
 This file records changes made agentically during plan implementation that were
 *not* spelled out verbatim in `docs/plan/plan.md`, plus decisions deferred for
@@ -6,266 +6,149 @@ human review. The user audits this after the fact.
 
 ---
 
-## During Phase 4–5 implementation (obvious, shipped)
+## 6-month mock trade validation (2026-08-17)
 
-1. **`strategy.eventBlackoutDays` config key (env `EVENT_BLACKOUT_DAYS`, default 3).**
-   Phase 4.2 needed a window for the generalised event blackout. The old code
-   hard-coded a 3-day literal inside `hasUpcomingEarnings`. Extracted it to
-   config (0 disables) so the blackout is tunable without a code change. Default
-   preserves prior behaviour exactly. — `AppConfig.ts`, `.env`, `.env.example`.
+**Context.** Built `test/backtest/mock_30d_trade.ts` to run a configurable
+multi-month paper trade through the kite-paper-node mock broker treated as the
+real Zerodha backend (orders routed via `LiveTrader` → `POST /orders/:variety`).
+Running it surfaced two issues that were corrected in the harness and one real
+bug in the risk engine that was fixed in `src/server`.
 
-2. **`Ledger.shadowBookMonths()` and `Ledger.realizedPnlByMonth()` helpers.**
-   Phase 4.3 (`decideAiAuthority`) needs "months of shadow history"; Phase 5.1
-   (consecutive losing months) needs a per-month realized-P&L series. Both are
-   read-only queries over existing tables (`agent_proposals`, `trades`). Additive.
+### Adhoc 1 — RiskEngine blocked every sell (REAL BUG, fixed in src/server)
 
-3. **`npm run status:golive` operator script + `scripts/go_live_status.ts`.**
-   Phase 5 asked for *written* kill criteria + a ladder. To make them usable (not
-   just prose) I added a dashboard that evaluates the criteria against the real
-   ledger and prints the ladder + recommended stage. Read-only; no trading effect.
-   The drawdown figure it prints is a **proxy** (worst cumulative realized loss vs
-   capital), not a true peak-to-trough series — flagged in the code. A proper
-   peak-to-trough drawdown series is future work (see deferred #1 below).
+**Symptom.** In a multi-month run the book grew past `topN` (e.g. 7 positions
+with `topN=5`) because *no* position was ever sold even when it left the target
+portfolio.
 
-4. **New unit tests wired into `test:unit`:** `test:authority`
-   (`test/ai_authority_test.ts`) and `test:ladder` (`test/go_live_ladder_test.ts`).
-   The event blackout is covered by a new `testEventBlackout()` inside the
-   existing `test/risk_regression_test.ts`. All pass; `npm run ci` green
-   (unit suite + `validate:momentum` VALIDATED at 36.99%, +26.84pp over Nifty).
+**Root cause.** `RiskEngine.evaluate` applied the capital-capacity and
+single-stock caps to **closes** as if they were buys:
 
-5. **Refreshed the two strategy-audit prompts** (`run_strategy_audit.mjs`,
-   `run_strategy_profit_audit.mjs`) to describe the CURRENT refocused
-   architecture: momentum as the single originator, AI as filter + shadow book
-   (`scoreShadowBook` / `decideAiAuthority`), the event blackout, the go-live
-   ladder + kill criteria, and the Nifty-50 success bar (beat Nifty, not zero).
-   The old prompts still framed the brain as `MarketAgent` strategy modes only.
-   No behavioural change — these scripts just call an LLM to review the code.
-
----
-
-## LiteLLM fallback layer (this session)
-
-6. **`'litellm'` added to `LlmProvider` union; `LlmConfig.fallback?: LlmConfig` field added.**
-   `AppConfig.ts`: new `resolveLiteLlm()` reads `LITELLM_BASE_URL` / `LITELLM_API_KEY`
-   (returns `null` when absent); both the `ollama` and `openai` branches of `resolveLlm()`
-   now spread `fallback` onto the returned config when non-null. All existing behaviour
-   unchanged when the LiteLLM vars are empty.
-
-7. **`LlmManager` fallback wiring.** When `config.fallback` is present, a second
-   `OpenAI` client is constructed pointing at LiteLLM. `callModel()` catches any
-   error, checks `isFallbackError()` (429 / rate-limit / quota by status code OR
-   message substring), and retries once via `callFallback()` which substitutes the
-   fallback's `activeModel` for the primary model name. All public signatures
-   unchanged; `chatEnsemble` gets fallback for free through `callModel`.
-   New `fallbackInfo` getter for observability.
-
-8. **Shared `lib/llm-provider.mjs`** — thin helper used by all three audit `.mjs`
-   scripts: `buildClients()` (primary + optional fallback client from env),
-   `callWithFallback()` (primary-first, 429→LiteLLM retry), `isQuotaError()`.
-   All three scripts (`run_strategy_audit.mjs`, `run_strategy_profit_audit.mjs`,
-   `run_code_audit.mjs`) updated to use it — `import OpenAI` removed from each.
-
-9. **Env vars** appended to `.env` and `.env.example`:
-   `LITELLM_BASE_URL`, `LITELLM_API_KEY`, `LITELLM_MODEL`,
-   `LITELLM_MODELS`, `LITELLM_ENSEMBLE_MODELS`, `LITELLM_FAST_ENSEMBLE_MODELS`.
-   Both set to blank values by default — fallback is **disabled until you fill them in**.
-
-10. **`docs/CONFIGURATION.md`** updated: new rows in the env vars overview table,
-    new subsection 2.3 "Option C — LiteLLM fallback" with flow diagram, model
-    table and ensemble-choice rationale, troubleshooting entries.
-
----
-
-## Cycle 1 — audit run (COMPLETE)
-
-**Strategy audit** ran via LiteLLM fallback (`anthropic--claude-4.5-sonnet`) — Ollama 429 triggered fallback correctly.
-**Profit audit** ran directly on LiteLLM (`gemini-2.5-pro`, 1M token context) — needed for the 750k-char full-project payload.
-
-Reports saved to `src/server/audit-report/strategy_audit_report.md` and `profit_strategy_audit.md`.
-
-### Implemented from audit findings (obvious, safe)
-
-11. **CRITICAL #2 — Headline sanitization against prompt injection** (`DailyReportEngine.ts`).
-    New `sanitizeHeadline()` method: caps at 220 chars, strips unsafe characters, collapses
-    whitespace. Applied to macro headlines (`a.title`), source names, and events line (`e.headline`).
-    Pure defence — no behavioural change on clean data.
-
-12. **CRITICAL #3 — Per-trade binding cap passed to LLM prompt** (`DailyReportEngine.ts`).
-    `buildPrompt()` now computes `singleStockCapInr` and `perTradeCap` from config and adds a
-    "Per-trade hard cap: ₹..." line to the CAPITAL SNAPSHOT section of the prompt. Ensures
-    LLM suggestions are realistic and won't be silently cut by the RiskEngine.
-
-13. **HIGH #4 — Event blackout types now configurable** (`AppConfig.ts`, `MomentumStrategy.ts`).
-    Removed `static readonly BINARY_EVENT_TYPES` set. New `strategy.eventBlackoutTypes: string[]`
-    (env `EVENT_BLACKOUT_TYPES`, default: all original 8 types plus `SPLIT`, `BONUS`,
-    `RIGHTS_ISSUE` — the audit flagged these as missing). `hasUpcomingEvent()` builds the Set
-    from config at call time. Extend via `.env` with no code change.
-
-    `npm run ci` after all fixes: **VALIDATED 36.99% / +26.84pp over Nifty** — gate unchanged.
-
-### Deferred from audit findings (non-obvious, needs user decision)
-
-- **CRITICAL #1 — Remove/demote MarketAgent legacy code.** Both audits flagged this independently.
-  The user has explicitly said the agent fleet is core infra and must not be removed. However,
-  both auditors noted it runs on every 3-second tick batch computing RSI/ADX/ATR signals that
-  are never executed — pure CPU/memory waste. *Options for the user:*
-  (a) Keep as-is (legacy monitoring layer, no trades originate from it).
-  (b) Demote it: remove `proposeTrade` calls from `MarketAgent`, make it write to
-      `agent_alerts` table only — still runs, still AI-backed, but can't accidentally originate.
-  (c) Remove fully (not recommended per user directive).
-
-- **Profit audit — Monthly drawdown cap 2% → 5-7%.** The auditor called `maxMonthlyDrawdownPct=2`
-  a "stranglehold" — on a ₹500k account it's a ₹10k floor; one bad trade halts the month.
-  5-7% is more realistic for compounding. This is a risk-appetite setting — the user decides.
-  Current `.env` value: `MAX_MONTHLY_DRAWDOWN_PCT=2`.
-
-- **Profit audit — ₹1L/month in 1 year is mathematically impossible** (requires 62% monthly
-  compound return). Realistic timeline is 4-5 years starting from ₹25k live. The auditor
-  endorsed the `GoLiveLadder.ts` approach — start ₹25k, compound 100%, scale on evidence.
-  This is informational, not a code change.
-
-### Profit audit script fix (adhoc code change)
-
-14. **`run_strategy_profit_audit.mjs` — large-context routing.** The 750k-char full-project
-    payload exceeded Claude Sonnet's context window (400 error). Updated the script to detect
-    when LiteLLM is configured and route directly to `gemini-2.5-pro` (1M token context) for
-    the primary call, bypassing Ollama entirely for this large-context audit. Ollama remains
-    primary for the strategy audit (441k chars, fits fine).
-
-- **Ran `npm run audit:strategy` then `npm run audit:profit` sequentially as
-  instructed.** Both failed with the SAME error, before producing any report:
-
-  ```
-  429 you (vgnshs2) have reached your weekly usage limit, upgrade for higher
-  limits: https://ollama.com/upgrade or add extra usage:
-  https://ollama.com/settings
-  ```
-
-- **This is an Ollama Cloud account quota, not a code/config problem.** The
-  scripts parse (`node --check` OK), credentials are present in `.env`, and the
-  codebase packaged fine (436,444 chars). There is nothing to fix on our side.
-
-- **Consequence:** I could not complete the "run cycle → read reports →
-  implement good suggestions → run cycle 2" loop, because no reports were
-  produced. Re-running would only burn more 429s.
-
-- **Deferred to the user (non-obvious):** once the weekly limit resets (or extra
-  usage is added), re-run `npm run audit:strategy && npm run audit:profit`. The
-  refreshed prompts now target the momentum + AI-filter + go-live design, so the
-  reports will be relevant. I did not implement any audit-driven changes because
-  there are no audit findings yet.
-
----
-
-## Cycle 2 — audit run + 30-day mock trading (COMPLETE)
-
-**Strategy audit** ran via LiteLLM (`anthropic--claude-4.5-sonnet`) — Ollama 429 triggered fallback.
-**Profit audit** ran directly on LiteLLM (`gemini-2.5-pro`, 1M token context).
-
-Reports saved to `src/server/audit-report/strategy_audit_report.md` and `profit_strategy_audit.md`.
-
-### Audit finding analysis
-
-**Cycle 2 strategy audit — two CRITICAL findings investigated and found to be FALSE POSITIVES:**
-
-- **CRITICAL #1 (Look-ahead bias):** Auditor claimed `rebalance()` uses end-of-month prices.
-  Investigation: in the live path (`index.ts:265`) `pts[pts.length - 1]` IS the current day's
-  price — correct for live execution. In `strategy_lab.ts` the backtest uses
-  `closeOnOrBefore(pts, date)` for entry prices — also correct (uses rebalance-date price).
-  **No look-ahead bias exists. No code change needed.**
-
-- **CRITICAL #3 (Event blackout entry-only):** Auditor claimed `hasUpcomingEvent` doesn't exit
-  held positions. Investigation of `MomentumStrategy.ts:267-268`: when `eventBlackout=true`,
-  the guard condition `!eventBlackout` is false, so the `continue` does NOT execute, and the
-  position falls through to the sell path. **Event blackout DOES force exits on held positions.
-  No code change needed.** (This was already correctly implemented.)
-
-### Implemented from Cycle 2 audit findings (obvious, safe)
-
-15. **Monthly drawdown cap 2% → 5% (new default).** Both auditors independently called the
-    2% cap a "stranglehold": on a ₹500k account it's a ₹10k monthly floor; a single stop-loss
-    hit can halt the month. Raised default to 5% in `AppConfig.ts` (line ~549) and
-    `.env.example`. Users who have `MAX_MONTHLY_DRAWDOWN_PCT=2` explicitly set in `.env`
-    are unaffected; new deployments get 5%. `npm run ci` still VALIDATED 36.99%.
-
-16. **MarketAgent demoted to shadow-only.** Both auditors flagged `MarketAgent.proposeTrade`
-    as the source of the dual-brain architecture conflict. Per user directive, the agent fleet
-    stays (never remove) but is now harmless: `proposeTrade()` in `MarketAgent.ts` was replaced
-    with a shadow-only path that calls `ledger.recordAgentProposal(executed=false, originator=
-    AI_COMPOSITE, outcome=SHADOW)`. No trade ever executes from MarketAgent. The shadow book
-    accumulates data that `AiAuthorityPolicy` and `scoreShadowBook` can evaluate over time.
-    `executeProposedTrade` is kept intact (not removed) — it remains reachable if the demotion
-    is ever reversed, but is never called from the current `proposeTrade` path.
-    All existing unit tests pass.
-
-### 30-day mock trading test
-
-**Test command:** `DAYS=30 ENV_FILE=.env.test npx ts-node test/backtest/momentum_live_pattern.ts`
-
-**Simulation window:** 2026-07-17 → 2026-08-15 (30 trading days)
-**Symbols selected by momentum (top-4 lookback 6mo):** WELCORP, J&KBANK, JINDALSAW, ADANIPOWER
-**Data source:** kite-paper-node REST API serving real NSE daily CSVs
-
-**ALL 10 CASES (ranked):**
-```
-1. case10  ₹5,00,000 → -0.02%  (₹-110)
-2. case7   ₹3,00,000 → -0.04%  (₹-113)
-3. case6   ₹1,00,000 → -0.12%  (₹-120)
-4. case3   ₹90,000   → -0.12%  (₹-110)
-5. case9   ₹90,000   → -0.12%  (₹-110)
-6. case2   ₹35,000   → -0.18%  (₹-62)
-7. case8   ₹50,000   → -0.37%  (₹-186)
-8. case5   ₹40,000   → -0.44%  (₹-176)
-9. case1   ₹20,000   → -1.06%  (₹-212)
-10. case4  ₹10,000   → -2.32%  (₹-232)
+```ts
+// capital capacity
+if (used + trade.ticketSize > spendable) { … 'Insufficient capital' … }
+// single-stock cap
+if (trade.ticketSize > singleStockCap) { … }
 ```
 
-**Strong top 5 (by return):**
-| Case | Capital | Return | P&L | Final |
-|---|---|---|---|---|
-| case10 | ₹5,00,000 | -0.02% | ₹-110 | ₹4,99,890 |
-| case7 | ₹3,00,000 | -0.04% | ₹-113 | ₹2,99,887 |
-| case6 | ₹1,00,000 | -0.12% | ₹-120 | ₹99,880 |
-| case3 | ₹90,000 | -0.12% | ₹-110 | ₹89,890 |
-| case9 | ₹90,000 | -0.12% | ₹-110 | ₹89,890 |
+For a SELL the ticket is positive (quantity × price), so on a fully-deployed
+book `used + sellTicket > spendable` always fired → every exit was rejected
+(`Insufficient capital`). This would have made the **live** bot unable to trim
+or close positions, letting the book drift unbounded past its slot count.
 
-**Analysis of results:**
-- All 10 cases show small losses (–0.02% to –2.32%). The losses are dominated by
-  transaction costs (brokerage + STT + slippage), NOT by adverse price movement.
-- The 4-stock momentum portfolio (WELCORP, J&KBANK, JINDALSAW, ADANIPOWER) had flat
-  underlying performance over this 30-day window — consistent with the OOS validation showing
-  momentum works on a 12-month lookback with monthly rebalance, not 30-day windows.
-- The 6-month lookback used in this test (forced by available CSV history) is shorter than the
-  validated 12-month lookback; results are not comparable to the 36.99% OOS number.
-- **Capital size matters**: case4 (₹10k) lost 2.32% from costs alone on 3 trades. case10
-  (₹5L) lost only 0.02% on 4 trades — the cost-to-notional ratio improves dramatically
-  with capital, confirming the `GoLiveLadder` minimum of ₹25k is correct.
-- **This test is expected**: a 30-day window tests transaction costs, not the momentum edge.
-  The momentum edge operates on 12-month lookbacks and monthly rebalances — its value is
-  revealed over 3–5 years, not 30 days.
+**Fix.** Exits/reductions always reduce exposure and free capital, so they now
+short-circuit the caps. In `RiskEngine.evaluate`, after the `existing` position
+lookup:
 
-### Deferred from Cycle 2 (non-obvious, needs user decision)
+```ts
+const isClose = existing !== null && existing.direction !== trade.direction;
+if (isClose) {
+  const allowed = trade.ticketSize > 0;
+  return { allowed, reasons: allowed ? [] : ['Ticket size must be positive.'] };
+}
+```
 
-- **AI veto impact on momentum edge.** Profit auditor noted that `reportVetoes()` may be
-  systematically filtering good momentum names without any evidence it helps. Recommendation:
-  disable LLM veto for first 12 months of live trading (`MomentumStrategy.reportVetoes`
-  return false) until `AiAuthorityPolicy` has evidence. This is a risk-appetite decision.
-  NOT changed — user should decide.
+The single-trade risk cap already excluded closes; this now excludes them from
+the allocation/concentration/capital/drawdown caps too. `npm run test:risk` and
+`npm run test:unit` all pass; `npm run validate:momentum` still **VALIDATED
+(36.99%)**. Without this fix the 6-month backtest could not sell and the book
+grew past `topN`.
 
-- **Cash reserve 20% → 10%.** Auditor noted 20% is high for a monthly-rebalance equity
-  strategy. At 10% the bot deploys more capital, improving returns but increasing drawdown.
-  Current 20% is intentional. NOT changed — user should decide.
+### Adhoc 2 — synthetic-data contamination in the mock harness
 
+**Symptom.** The target portfolio kept picking `ZOMATO`, `MINDTREE`, `LTIM`,
+`JSWELECTRIC` — none of which have a `_1d.csv` in `kite-paper-node/data`.
 
-1. **True peak-to-trough drawdown series.** The kill-criteria dashboard uses a
-   conservative proxy (worst cumulative realized loss). A real equity-curve
-   peak-to-trough would be more accurate for the 45% ceiling. Not built because
-   it needs a design choice (mark-to-market cadence, realized-vs-unrealized) that
-   is a judgement call, not an obvious fix.
+**Root cause.** The harness passed the full 214-symbol watchlist as the mock's
+`seedSymbols`. For the 4 symbols with no CSV, the mock generated **synthetic
+random-walk** data, which the ranker then bought on fake prices.
 
-2. **Kill criteria are advisory, not auto-enforced end-to-end.** The RiskEngine
-   already halts on daily/portfolio/monthly drawdown. The two NEW criteria
-   (consecutive losing months, tracking error vs Nifty) are evaluated by
-   `GoLiveLadder`/`status:golive` but do not yet auto-halt the live loop — by
-   design (Phase 5 = "written before real money moves"; wiring them into the
-   live scheduler is a go-live step for when real capital is at stake).
+**Fix.** The harness now filters fetched data to symbols that have a real
+`_1d.csv` (`realCsvSymbols()`), so only genuine NSE closes enter the ranking.
+
+### Adhoc 3 — adaptive lookback for the 12-month window
+
+**Symptom.** Early monthly rebalances bought nothing.
+
+**Root cause.** The validated 12-month lookback needs 13 months of data, but the
+CSVs span only ~12 months (Aug 2025 → Aug 2026), so `computeMomentum` returned
+null for every symbol at the start of the window.
+
+**Fix.** The harness sets an **adaptive lookback** per rebalance — the longest
+available up to 12 months (min 2) — mirroring `sim_12m_sip.ts`, so the strategy
+can rank every month. The report header notes this deviation from the fixed
+12-month edge.
+
+### Validation
+
+- `npx tsc --noEmit` = 0 errors (root)
+- `npm run test:risk` = pass
+- `npm run test:unit` = all suites pass
+- `npm run validate:momentum` = VALIDATED (36.99%)
+- 6-month mock trade (₹1,00,000, mock broker as real backend): **+₹2,807 (+2.81%)**, 6 monthly rebalances, per-day + per-month report at `test/backtest/results/mock_trade_report.md`.
+
+---
+
+## 5-year data refresh + re-run (2026-08-17)
+
+**Context.** The 12-month CSVs were a weak, unrepresentative period for momentum
+(6-month mock trade was only +2.8%). To get a fair test, extended the daily
+history to 5 years.
+
+### Adhoc 4 — fetch 5 years of daily data from Yahoo
+
+`kite-paper-node/scripts/fetch-watchlist-csv.js` hardcoded `'1d': { days: 365 }`.
+Changed to `days: 1825` (5 years) and added an `--interval=1d` filter so the
+refresh only pulls daily data (fast, avoids Yahoo rate-limit throttling). Re-ran
+for all 210 watchlist symbols → each `_1d.csv` now spans **Aug 2021 → Aug 2026**
+(~1238 rows). `ZOMATO` is delisted on Yahoo (0 rows) — it was one of the
+synthetic symbols anyway.
+
+### Adhoc 5 — harness now uses the true 12-month lookback
+
+With 5 years of data the adaptive-lookback formula caps at 12 months for every
+rebalance, so the harness now exercises the **validated 12-month lookback**
+(not the degraded 5–10 month adaptive fallback). Report title/notes updated to
+reflect this; output file is now `mock_trade_report_{MONTHS}m.md`.
+
+### Re-run results (₹1,00,000, mock broker as real backend, 12-month lookback)
+
+- **6-month** (Mar–Aug 2026): **+₹11,766 (+11.77%)** → `mock_trade_report_6m.md`
+- **12-month** (Sep 2025–Aug 2026): **+₹13,802 (+13.80%)** → `mock_trade_report_12m.md`
+
+Both are far healthier than the 12-month-data result (+2.8%), confirming the
+earlier low number was a data-window artifact, not a strategy/code problem. The
+portfolio-drawdown guard (10%) halts new entries after a drawdown (visible in
+later months as `Portfolio drawdown … exceeds max 10%`), which is the intended
+"no monthly loss" behaviour.
+
+---
+
+## Sentiment-regime switching (Initiative 6, built 2026-08-17)
+
+**What.** The AI daily report already carries `market_regime.regime_score`
+([-1,1]). Momentum now consumes it as a **shrink-only exposure dial**: in a
+bearish regime it scales position sizing down, and can go to cash when
+`MOMENTUM_REGIME_FLOOR_MULTIPLIER=0`. It never changes which names momentum
+picks — only how big the book runs. This is the coarse, low-frequency,
+capital-preserving "momentum-on vs momentum-off" signal.
+
+**Implementation.**
+- Pure fn `regimeMultiplier(score, {riskOff, defensive, floor})` in
+  `src/server/signals/momentum.ts` — score ≥ defensive → 1.0; ≤ riskOff → floor;
+  between → linear.
+- `MomentumStrategy` extracts `regime_score` in `loadReportBias()` and applies
+  `currentRegimeMultiplier()` in `quantityFor()` alongside `StrategyAdaptation`.
+- Config: `MOMENTUM_REGIME_ENABLED` (true), `MOMENTUM_REGIME_RISK_OFF_THRESHOLD`
+  (-0.3), `MOMENTUM_REGIME_DEFENSIVE_THRESHOLD` (0),
+  `MOMENTUM_REGIME_FLOOR_MULTIPLIER` (0.4). Documented in `.env.example` +
+  `docs/CONFIGURATION.md` §18.
+- Tests: pure-math cases (18–22) + strategy-integration (23–24) in
+  `test/momentum_test.ts`. `test:unit` all pass; `validate:momentum` VALIDATED.
+
+**Note on the existing `REGIME_GATING_ENABLED` / `REGIME_ADAPTIVE` env keys:**
+those belong to the older MarketAgent path and are unrelated to this momentum
+regime feature. The new keys are prefixed `MOMENTUM_REGIME_` to avoid ambiguity.
+
+**Deferred (TODO #14):** news/event-driven plays — AI flags a catalyst and
+proposes a long as a SEPARATE originator, shadow-book-gated. Not built; logged in
+`docs/plan/TODO.md`.

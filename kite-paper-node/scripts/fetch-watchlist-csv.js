@@ -58,7 +58,7 @@ const INTERVALS = {
   '1m': { days: 7, suffix: '1min' },
   '5m': { days: 30, suffix: '5min' },
   '15m': { days: 30, suffix: '15min' },
-  '1d': { days: 365, suffix: '1d' },
+  '1d': { days: 1825, suffix: '1d' }, // 5 years of daily history (Yahoo provides 5+ yrs for NSE)
 };
 
 function readJson(file, fallback) {
@@ -171,20 +171,23 @@ function toCsv(rows, token) {
 async function main() {
   const onlyArg = process.argv.find((a) => a.startsWith('--symbols='));
   const only = onlyArg ? onlyArg.split('=')[1].split(',').map((s) => s.trim().toUpperCase()) : null;
+  const intervalArg = process.argv.find((a) => a.startsWith('--interval='));
+  const onlyInterval = intervalArg ? intervalArg.split('=')[1] : null;
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   const instruments = syncWatchlistToMaster().filter(
     (i) => !only || only.includes(i.tradingsymbol.toUpperCase())
   );
+  const intervals = Object.entries(INTERVALS).filter(([k]) => !onlyInterval || k === onlyInterval);
   let ok = 0;
   let fail = 0;
 
-  console.log(`Fetching ${instruments.length} symbols × ${Object.keys(INTERVALS).length} intervals...\n`);
+  console.log(`Fetching ${instruments.length} symbols × ${intervals.length} intervals...\n`);
 
   for (const inst of instruments) {
     const symbol = toYahooSymbol(inst.tradingsymbol);
-    for (const [interval, cfg] of Object.entries(INTERVALS)) {
+    for (const [interval, cfg] of intervals) {
       try {
         const rows = await fetchChart(symbol, interval, cfg.days);
         if (rows.length === 0) {

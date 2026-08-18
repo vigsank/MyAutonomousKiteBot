@@ -88,6 +88,23 @@ CLI flags that matter for the parent:
 | `--mcp-exclude` | `` | Comma-separated tool names to exclude from MCP |
 | `--ticker` | `random-walk` | `random-walk` or `replay` |
 | `--replay-source` | — | CSV glob for historical replay (ticker=replay) |
+| `--state-file` | — | SQLite file to persist orders/positions/ledger across restarts |
+
+### 2c. Persistent broker state (`--state-file`)
+
+By default the mock is **in-memory** — restarting the server loses all orders,
+positions and P&L. To make it behave like a **real Zerodha backend that survives
+restarts**, point it at a SQLite file:
+
+```bash
+npx ts-node src/bin/cli.ts --port=4000 --mcp=hybrid --state-file=./mock-broker.db
+```
+
+Every order/GTT/position mutation is written to the DB (via the optional
+`better-sqlite3` dependency, resolved from the parent project). On boot the
+engine restores the saved state, so a stopped-and-restarted mock retains the
+account just like a live broker. Leave `--state-file` unset to keep the old
+in-memory behaviour.
 
 With `--mcp=http|hybrid` you get:
 - REST: `http://host:4000` (Kite-shaped endpoints)

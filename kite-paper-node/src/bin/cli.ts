@@ -90,6 +90,7 @@ async function main(): Promise<void> {
   const config: MockEngineConfig = {
     ...fileConfig,
     startingCapital: num(args['starting-capital'], fileConfig.startingCapital ?? 1_000_000),
+    stateFile: (args['state-file'] as string) ?? fileConfig.stateFile ?? undefined,
     ticker: {
       mode: tickerMode as TickerConfig['mode'],
       randomWalk: {

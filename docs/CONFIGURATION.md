@@ -30,7 +30,7 @@ environment variables (loaded from `.env`). A few things live in JSON files
 17. [15. Troubleshooting](#15-troubleshooting)
 18. [16. UI / dashboard](#16-ui--dashboard)
 19. [17. Walk-forward validation (script)](#17-walk-forward-validation-script)
-20. [18. Momentum & live-trading keys (present in `.env`, NOT yet read)](#18-momentum--live-trading-keys-present-in-env-not-yet-read)
+20. [18. Momentum & live-trading keys](#18-momentum--live-trading-keys)
 
 ---
 
@@ -992,38 +992,41 @@ The walk-forward / backtest harnesses (`test/backtest/backtest.ts`, `walk_forwar
 
 ---
 
-## 18. Momentum & live-trading keys (present in `.env`, NOT yet read)
+## 18. Momentum & live-trading keys
 
-> ⚠️ **Read this carefully.** The `.env` file ships with momentum and live-order
-> keys (e.g. `MOMENTUM_TOP_N`, `MOMENTUM_HYSTERESIS_BAND`, `EVENT_BLACKOUT_DAYS`,
-> `MAX_LIVE_ORDER_VALUE`). **`AppConfig.ts` does NOT read any of these keys today.**
-> They have **no effect** on the running bot, and this section does **not** list
-> defaults for them (that would be inventing behavior that isn't wired up).
+These keys (`MOMENTUM_TOP_N`, `MOMENTUM_HYSTERESIS_BAND`, `MOMENTUM_LOOKBACK_MONTHS`,
+`MOMENTUM_LIQUIDITY_FLOOR_INR`, `MOMENTUM_LIQUIDITY_LOOKBACK_DAYS`, `MOMENTUM_RISK_OFF`,
+`NEWS_VETO_THRESHOLD`, `EVENT_BLACKOUT_DAYS`, `EVENT_BLACKOUT_TYPES`, `MIN_CAPITAL`,
+`ALLOW_LIVE_ORDERS`, `LIVE_SHADOW_MODE`, `MAX_LIVE_ORDER_VALUE`, `HALT_ON_DRIFT`)
+are now **read by `AppConfig.ts`** and wired into the momentum/live engine
+(`MomentumStrategy`, `LiveTrader`, `OrderGuard`, `Reconciler`, `StrategyOptimizer`,
+`StrategyAdaptation`). The tree type-checks cleanly and the momentum walk-forward
+gate VALIDATES (see `docs/BACKTESTING.md`).
 
-These keys exist in `.env` because the **momentum/live engine** — `MomentumStrategy`,
-`LiveTrader`, `OrderGuard`, `Reconciler`, `StrategyOptimizer`, `StrategyAdaptation`
-— is **designed but not wired in**. It is not imported by `src/server/index.ts`
-and the tree does **not** currently type-check (49 TypeScript errors, mostly
-momentum config fields referenced by `StrategyOptimizer.ts` that `AppConfig`
-doesn't provide). Concretely:
+Defaults (see §Environment variables overview for the full list):
 
-- The momentum keys present in `.env` (`MOMENTUM_*`, `EVENT_BLACKOUT_*`,
-  `MAX_LIVE_ORDER_VALUE`) are **ignored** by the loader.
-- `ALLOW_LIVE_ORDERS` and `LIVE_SHADOW_MODE` appear only as a **comment** in
-  `.env`; they are not set and not read. The bot is **paper-only** — there is no
-  live execution path wired into `index.ts`.
-- Until the momentum/live engine is wired in and compiles, treat anything that
-  documents these keys as **aspirational**, not current behaviour. The config
-  that actually works is the set in §Environment variables overview above.
+| Key | Default | Meaning |
+|-----|---------|---------|
+| `MOMENTUM_TOP_N` | `6` | Names to hold (validated 5–10) |
+| `MOMENTUM_LOOKBACK_MONTHS` | `12` | Momentum lookback |
+| `MOMENTUM_HYSTERESIS_BAND` | `8` | Rank-hysteresis band |
+| `MOMENTUM_LIQUIDITY_FLOOR_INR` | `0` | ADV floor (0 = disabled) |
+| `MOMENTUM_LIQUIDITY_LOOKBACK_DAYS` | `20` | ADV window |
+| `MOMENTUM_RISK_OFF` | `false` | Go-to-cash on negative median momentum |
+| `MOMENTUM_REGIME_ENABLED` | `true` | Scale momentum exposure by the AI report's regime_score |
+| `MOMENTUM_REGIME_RISK_OFF_THRESHOLD` | `-0.3` | regime_score at/below this → risk-off (to the floor) |
+| `MOMENTUM_REGIME_DEFENSIVE_THRESHOLD` | `0` | regime_score at/below this starts de-risking (linear) |
+| `MOMENTUM_REGIME_FLOOR_MULTIPLIER` | `0.4` | Floor on the regime sizing multiplier (0 = go to cash) |
+| `NEWS_VETO_THRESHOLD` | `-0.5` | News score below this vetoes/forces exit |
+| `EVENT_BLACKOUT_DAYS` | `3` | Days before a binary event to blackout (0 disables) |
+| `EVENT_BLACKOUT_TYPES` | 8 types + SPLIT/BONUS/RIGHTS_ISSUE | Blackout event types |
+| `MIN_CAPITAL` | `0` | Min available capital to rebalance (0 = off) |
+| `ALLOW_LIVE_ORDERS` | `false` | Master live-order switch (opt-in) |
+| `LIVE_SHADOW_MODE` | `true` | Log payloads only when live is on |
+| `MAX_LIVE_ORDER_VALUE` | `25000` | Blast-radius cap on live order notional |
+| `HALT_ON_DRIFT` | `true` | Block entries when ledger/broker book drifted |
 
-Do **not** rely on these keys to change trading behaviour today. If you need a
-key documented here to actually take effect, it must first be added to
-`AppConfig.ts` (and the strategy/risk code that consumes it).
-
----
-
-*See also the architecture overview and quick start in the root `README.md`, and
-`docs/CAPABILITIES.md` / `docs/STRATEGIES_TECHNIQUES.md` for design notes on the
-not-yet-wired momentum & live layers.*
+Live orders remain **off by default** (`ALLOW_LIVE_ORDERS=false`); the bot is
+paper-only through `kite-paper-node` until you explicitly opt in.
 
 ---

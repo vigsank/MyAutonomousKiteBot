@@ -4,7 +4,7 @@ import { RiskEngine } from './RiskEngine';
 import { PaperTrader } from './PaperTrader';
 import { logger } from './Logger';
 import { TradeRequest } from './types';
-import { rankByMomentum, selectWithHysteresis, applyLiquidityFloor, ClosePoint } from './signals/momentum';
+import { rankByMomentum, selectWithHysteresis, applyLiquidityFloor, regimeMultiplier, ClosePoint } from './signals/momentum';
 import { LiveDataService } from './LiveDataService';
 import { LiveTrader } from './LiveTrader';
 import { StrategyAdaptation } from './StrategyAdaptation';
@@ -25,6 +25,8 @@ export class MomentumStrategy {
   /** Per-symbol action bias + suggested allocation from the latest daily report. */
   private reportBias = new Map<string, { action_bias: string; suggested_allocation_inr: number }>();
   private reportLoadedAt = '';
+  /** Latest report's market regime score in [-1, 1] (0 = neutral when no report). */
+  private regimeScore = 0;
   /** Last computed ranking, published to the agent blackboard (see lastRanking). */
   private rankingCache: Array<{ symbol: string; momentum: number; inTarget: boolean }> = [];
   private targetCache: string[] = [];
@@ -78,6 +80,10 @@ export class MomentumStrategy {
       this.reportLoadedAt = latest.createdAt;
       this.reportBias.clear();
       const parsed = JSON.parse(latest.reportJson);
+      // Capture the AI market-regime score ([-1,1]) for regime-based sizing.
+      const regime = parsed?.market_regime;
+      this.regimeScore =
+        regime && typeof regime.regime_score === 'number' ? regime.regime_score : 0;
       const recs = parsed?.portfolio_recommendations ?? [];
       for (const rec of recs) {
         if (rec && typeof rec.symbol === 'string' && typeof rec.action_bias === 'string') {
@@ -97,6 +103,37 @@ export class MomentumStrategy {
     this.loadReportBias();
     const bias = this.reportBias.get(symbol)?.action_bias;
     return bias === 'AVOID' || bias === 'EXIT_FULL';
+  }
+
+  /**
+   * AI sentiment-regime switching (Initiative 6).
+   *
+   * The daily report's `market_regime.regime_score` ([-1,1]) is a coarse,
+   * low-frequency AI read of market weather. This layer converts it to a sizing
+   * multiplier that scales EXPOSURE — it never changes which names momentum
+   * picks, only how big the book runs:
+   *
+   *   score >= defensive      → 1.0  (full size)
+   *   defensive > score > riskOff → linear 1.0 → floor
+   *   score <= riskOff        → floor (0 = go to cash)
+   *
+   * It is advisory and shrink-only: it can only reduce exposure below the
+   * configured caps, never raise it. Inert when no AI report exists (score 0).
+   */
+  currentRegimeMultiplier(): number {
+    if (!this.config.strategy.momentumRegimeEnabled) return 1;
+    this.loadReportBias(); // ensure the latest regime_score is loaded
+    return regimeMultiplier(this.regimeScore, {
+      riskOff: this.config.strategy.momentumRegimeRiskOffThreshold,
+      defensive: this.config.strategy.momentumRegimeDefensiveThreshold,
+      floor: this.config.strategy.momentumRegimeFloorMultiplier,
+    });
+  }
+
+  /** The latest report's regime score, or 0 when no report is available. */
+  currentRegimeScore(): number {
+    this.loadReportBias();
+    return this.regimeScore;
   }
 
   /** Number of symbols to hold (validated: 5–10). Reads from param store, falls back to config. */
@@ -519,6 +556,9 @@ export class MomentumStrategy {
     if (this.adaptation) {
       perSymbol *= this.adaptation.riskMultiplier();
     }
+
+    // Sentiment-regime switching: scale exposure by the AI report's regime_score.
+    perSymbol *= this.currentRegimeMultiplier();
 
     // Never propose more than is actually free right now.
     perSymbol = Math.min(perSymbol, capital.available);

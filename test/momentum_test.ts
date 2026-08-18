@@ -9,9 +9,16 @@ import {
   selectWithHysteresis,
   averageDailyValue,
   applyLiquidityFloor,
+  regimeMultiplier,
   MomentumInput,
   MomentumScore,
 } from '../src/server/signals/momentum';
+import { loadConfig } from '../src/server/AppConfig';
+import { Ledger } from '../src/server/Ledger';
+import { RiskEngine } from '../src/server/RiskEngine';
+import { PaperTrader } from '../src/server/PaperTrader';
+import { LiveDataService } from '../src/server/LiveDataService';
+import { MomentumStrategy } from '../src/server/MomentumStrategy';
 
 let failures = 0;
 function assert(cond: boolean, msg: string) {
@@ -184,6 +191,84 @@ assert(
   failOpen.kept.some((i) => i.symbol === 'NOVOL'),
   'symbol without volume data is kept (fail-open)',
 );
+
+/* ------------------------------------------------------------------ */
+/* Sentiment-regime switching (Initiative 6)                            */
+/* ------------------------------------------------------------------ */
+
+// Default params: defensive=0, riskOff=-0.3, floor=0.4.
+const REGIME = { riskOff: -0.3, defensive: 0, floor: 0.4 };
+
+// 18. Bullish / neutral regime → full size.
+assert(regimeMultiplier(0.6, REGIME) === 1, 'bullish regime is full size');
+assert(regimeMultiplier(0, REGIME) === 1, 'neutral regime is full size');
+
+// 19. Risk-off regime → floor.
+assert(regimeMultiplier(-0.3, REGIME) === 0.4, 'at risk-off threshold → floor');
+assert(regimeMultiplier(-0.8, REGIME) === 0.4, 'deeply bearish regime → floor');
+
+// 20. Between defensive and risk-off → linear interpolation.
+//    score=-0.15 is halfway between 0 and -0.3 → multiplier halfway to floor.
+const mid = regimeMultiplier(-0.15, REGIME);
+assert(Math.abs(mid - (1 - 0.5 * (1 - 0.4))) < 1e-9, `mid-regime de-risks linearly (got ${mid})`);
+
+// 21. floor=0 means go to cash on risk-off.
+const cash = { riskOff: -0.3, defensive: 0, floor: 0 };
+assert(regimeMultiplier(-0.3, cash) === 0, 'floor 0 → go to cash at risk-off');
+assert(regimeMultiplier(0.2, cash) === 1, 'floor 0 keeps full size in a good regime');
+
+// 22. Inverted thresholds never throw and degrace to the floor.
+assert(regimeMultiplier(-0.5, { riskOff: 0, defensive: -0.1, floor: 0.3 }) === 0.3, 'inverted thresholds fall to floor');
+
+/* ------------------------------------------------------------------ */
+/* Regime integration: the report's regime_score drives sizing          */
+/* ------------------------------------------------------------------ */
+
+function wireStrategy(regimeScore: number | null): MomentumStrategy {
+  const config = loadConfig();
+  config.risk.availableCapital = 1_000_000;
+  config.strategy.momentumTopN = 4;
+  config.strategy.momentumRegimeEnabled = true;
+  config.strategy.momentumRegimeRiskOffThreshold = -0.3;
+  config.strategy.momentumRegimeDefensiveThreshold = 0;
+  config.strategy.momentumRegimeFloorMultiplier = 0.4;
+  const ledger = new Ledger(':memory:');
+  ledger.runMigrations();
+  if (regimeScore !== null) {
+    ledger.recordDailyReport({
+      reportType: 'pre_open',
+      reportDate: '2026-01-01',
+      reportJson: JSON.stringify({
+        report_type: 'pre_open',
+        summary: 'test',
+        market_regime: { overall_sentiment: 'BEARISH', regime_score: regimeScore, primary_catalyst: 'test' },
+        capital_management: { available_capital: 1_000_000, recommended_cash_reserve_pct: 20, suggested_total_deployment_pct: 80 },
+        portfolio_recommendations: [],
+      }),
+    });
+  }
+  const risk = new RiskEngine(config, ledger);
+  const trader = new PaperTrader(config, ledger);
+  const strategy = new MomentumStrategy(config, ledger, risk, trader, new LiveDataService());
+  return strategy;
+}
+
+// 23. A risk-off report drives the multiplier to the floor and shrinks sizing.
+{
+  const s = wireStrategy(-0.6);
+  assert(s.currentRegimeScore() === -0.6, 'regime score is read from the latest report');
+  assert(s.currentRegimeMultiplier() === 0.4, 'risk-off regime scales exposure to the floor');
+  // sizeFor on a ₹100 stock: deployable = 80% of 1M / 4 slots = 200k, * floor 0.4 = 80k → 800 shares.
+  const qty = s.sizeFor('ACME', 100);
+  assert(qty <= 800, `risk-off regime reduces position size (got ${qty}, want <=800)`);
+}
+
+// 24. No report / neutral regime → full size (no report = score 0 = neutral).
+{
+  const s = wireStrategy(null);
+  assert(s.currentRegimeScore() === 0, 'no report defaults to neutral regime score');
+  assert(s.currentRegimeMultiplier() === 1, 'neutral / no report is full size');
+}
 
 console.log(failures === 0 ? '\nALL MOMENTUM TESTS PASSED' : `\n${failures} TEST(S) FAILED`);
 process.exit(failures === 0 ? 0 : 1);

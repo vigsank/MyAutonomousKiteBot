@@ -5,11 +5,14 @@ market, how it works, and what it is **not** (yet) able to do. It is the
 "what does this thing actually do?" reference, and it reflects the **current**
 state of the code (not the aspirational plan).
 
-> **Read this first.** There are two strategy systems in this repository. The
-> one that actually **runs** is the `MarketAgent` + agent-fleet design wired in
-> `src/server/index.ts`. A second, separately-built **momentum** strategy engine
-> exists as source + backtests + migrations but is **not wired into the runnable
-> bot** and does not currently type-check. See
+> **Read this first.** The bot runs two complementary strategy systems. The
+> **momentum strategy** (`MomentumStrategy` + `signals/momentum.ts`) is the
+> validated cross-sectional edge and the **single originator** of trade
+> candidates, feeding the agent blackboard. The **`MarketAgent` + agent-fleet**
+> design wired in `src/server/index.ts` runs the live loop, and the AI layer
+> (news sentiment + 3-stage daily report + domain agents A–H on a shared
+> blackboard) filters/vetoes/shrinks those candidates. Execution always routes
+> through the immutable `RiskEngine`. See
 > [Current state & known gaps](#current-state--known-gaps) for the honest
 > picture.
 
@@ -272,57 +275,46 @@ health heartbeat, and the agent probe scheduler.
 The **strategy the runnable bot executes is the `MarketAgent` regime-adaptive
 RSI/ADX/ATR design** plus the agent-fleet / 3-stage daily-report layer.
 
-### 5.2 Momentum strategy: designed & backtested, NOT wired
+### 5.2 Momentum strategy: wired, validated, and the single originator
 
 The **momentum** strategy engine (`MomentumStrategy` + `src/server/signals/momentum.ts`
 + `LiveTrader` + `OrderGuard` + `Reconciler` + `StrategyOptimizer` +
-`StrategyAdaptation`, and related migrations) exists as **source + backtest
-harnesses + migrations** (V011 strategy params, V012 live readiness, V013 agent
-proposals, V014 tax accrual). It has a validated backtest record on real Yahoo
-data (~+37% annualized net on the shipped config vs Nifty) and a large
-`test/backtest/` harness suite.
+`StrategyAdaptation`, and migrations V011–V015) is **wired end-to-end** and
+type-checks cleanly (`tsc --noEmit` = 0 errors):
 
-However, it is **NOT wired into the runnable entrypoint** `index.ts`:
-
-- `index.ts` does **not** instantiate `MomentumStrategy`, `LiveTrader`,
-  `OrderGuard`, `Reconciler`, `StrategyOptimizer`, or `StrategyAdaptation`.
-- Those files **do not currently type-check** against the current
-  `AppConfig.ts` / `Ledger.ts` surface. They reference config keys that are not
-  in `AppConfig` (`momentumTopN`, `momentumLookbackMonths`,
+- The momentum config keys (`momentumTopN`, `momentumLookbackMonths`,
   `momentumHysteresisBand`, `momentumLiquidityFloorInr`,
   `momentumLiquidityLookbackDays`, `momentumRiskOff`, `newsVetoThreshold`,
-  `risk.minCapital`, `eventBlackoutTypes`, `eventBlackoutDays`, `config.live.*`)
-  and `Ledger` methods that do not yet exist there (`getStrategyParam`,
-  `setStrategyParam`, `getClosedTrades`, `claimOrderIntent`, `settleOrderIntent`,
-  `recordReconciliation`, `setBrokerOrderIdForTrade`, `recordAgentProposal`,
-  `scoreShadowBook`, `shadowBookMonths`, `realizedPnlByMonth`).
-- Related governance modules (`GoLiveLadder`, `AiAuthorityPolicy`, `Tax`) are
-  pure and unit-tested but not consumed by the running server; the momentum
-  backtests are run from `test/backtest/*.ts`.
+  `risk.minCapital`, `eventBlackoutTypes`, `eventBlackoutDays`) and the `live`
+  block are now read by `AppConfig` (previously the `.env` had them but the
+  loader did not).
+- The `Ledger` accessors they need (`getStrategyParam`, `setStrategyParam`,
+  `getClosedTrades`, `claimOrderIntent`, `settleOrderIntent`,
+  `setBrokerOrderIdForTrade`, `recordReconciliation`, `getRecentReconciliations`,
+  `recordAgentProposal`, `getAgentProposals`, `shadowBookMonths`,
+  `scoreShadowBook`, `realizedPnlByMonth`) are implemented.
+- The momentum engine is the **single originator** of trade candidates on the
+  agent blackboard; the AI layer (DailyReportEngine + domain agents) only
+  vetoes/shrinks/re-ranks them. Execution routes through `LiveTrader` → the
+  `RiskEngine` gate.
+- The walk-forward gate **VALIDATES** at 36.99% annualized net (+26.84pp over
+  Nifty) — see `docs/BACKTESTING.md`.
 
-So: the momentum edge is **validated on paper but is not yet part of the live
-bot**. It is a separate, forward-looking implementation. `STRATEGIES_TECHNIQUES.md`
-documents the full design there, clearly flagged as designed-but-not-wired.
+### 5.3 `package.json` scripts
 
-### 5.3 Missing `package.json` scripts
-
-Several npm scripts referenced in `docs/plan/` do **not** exist in the current
-`package.json`: `ci`, `validate:momentum`, `test:unit`, `test:momentum`,
-`test:risk`, `test:indicators`, `test:live`, `test:feedback`, `score:shadow`,
-`status:golive`, `attribute:leaks`, `estimate:survivorship`.
-
-Their source exists (e.g. `scripts/go_live_status.ts`, `scripts/score_shadow_book.ts`,
-`test/backtest/momentum_walk_forward.ts`, `test/backtest/survivorship_bias.ts`,
-and the unit-test files), but the npm wiring is missing. **Adding these scripts
-is out of scope for documentation** — they are listed here so nobody expects a
-command that isn't there.
+The `test:momentum|risk|indicators|live|feedback|agents|execution|tax|shadow|
+authority|ladder`, `test:unit`, `validate:momentum`, `score:shadow`,
+`status:golive`, `attribute:leaks`, `estimate:survivorship`, and `ci` scripts are
+all present. `npm run test:unit` is green (11 suites) and `npm run ci` runs the
+unit suite then `validate:momentum`.
 
 ### 5.4 Paper-only; no real orders
 
-- **Does not place real orders.** Everything is paper/simulated. A real
-  execution path (`LiveTrader`) is designed behind a hard `ALLOW_LIVE_ORDERS`
-  gate with shadow mode, order idempotency, and broker reconciliation — but it
-  is **not wired** and not enabled.
+- **Does not place real orders by default.** Everything is paper/simulated
+  through `kite-paper-node`. A real execution path (`LiveTrader`) is built
+  behind a hard `ALLOW_LIVE_ORDERS` gate with shadow mode (`LIVE_SHADOW_MODE`),
+  order idempotency (`OrderGuard`), and broker reconciliation (`Reconciler`); it
+  is wired but **off by default** and never fires without explicit opt-in.
 - **No true account-free live streaming.** Live ticks require a broker account
   (Kite) or the `kite-paper-node` mock. Yahoo is historical-only.
 - **Not financial advice.** It is a research/validation tool, not a guarantee

@@ -6,27 +6,27 @@ signal, risk technique, cost/tax model, governance rule, agent-architecture, and
 validation method in the repository — and is explicit about what is **wired into
 the runnable bot** versus what is **designed / backtested but not wired**.
 
-> **Orientation.** The repo contains **two strategy systems**:
+> **Orientation.** The repo has **two strategy systems** that are now reconciled
+> through a blackboard authority model:
 >
-> 1. **The runnable bot** — `MarketAgent`'s regime-adaptive RSI/ADX/ATR strategy
->    plus the agent fleet, wired in `src/server/index.ts`. This is what actually
->    trades (on paper) today.
-> 2. **The momentum engine** — `MomentumStrategy` + `signals/momentum.ts` +
+> 1. **The momentum engine** — `MomentumStrategy` + `signals/momentum.ts` +
 >    `LiveTrader` + `OrderGuard` + `Reconciler` + `StrategyOptimizer` +
->    `StrategyAdaptation`. This is **designed, backtested, and has migrations,
->    but is NOT wired into `index.ts` and does not currently type-check** against
->    the current `AppConfig`/`Ledger` surface. Everywhere below, this is flagged
->    as **designed-but-not-wired**.
+>    `StrategyAdaptation`. This is the **validated cross-sectional edge** and the
+>    **single originator** of trade candidates; it is wired (config + ledger
+>    accessors + blackboard) and type-checks cleanly. `validate:momentum`
+>    VALIDATED at 36.99% annualized (+26.84pp over Nifty).
+> 2. **`MarketAgent`'s regime-adaptive RSI/ADX/ATR loop** plus the agent fleet,
+>    wired in `src/server/index.ts`. This runs the live tick/news loop; its
+>    candidate signals are reconciled against the momentum originator.
 
 Throughout, "wired" means instantiated by, or reachable from, the runnable
-entrypoint `src/server/index.ts`. Everything else is source that exists and is
-tested by harnesses but is not part of the live bot.
+entrypoint `src/server/index.ts` (or the agent fleet/blackboard it drives).
 
 ---
 
 ## Table of contents
 
-1. [Momentum strategy (designed / backtested, NOT wired)](#1-momentum-strategy-designed--backtested-not-wired)
+1. [Momentum strategy (the single originator)](#1-momentum-strategy-the-single-originator)
 2. [MarketAgent: the runnable strategy brain](#2-marketagent-the-runnable-strategy-brain)
 3. [AI layer: LLM providers, ensemble, reports, sentiment](#3-ai-layer-llm-providers-ensemble-reports-sentiment)
 4. [Risk management techniques](#4-risk-management-techniques)
@@ -38,11 +38,14 @@ tested by harnesses but is not part of the live bot.
 
 ---
 
-## 1. Momentum strategy (designed / backtested, NOT wired)
+## 1. Momentum strategy (the single originator)
 
-**Status: designed, validated in backtests, migrations shipped — but NOT wired
-into the runnable entrypoint `index.ts`, and does not type-check against the
-current `AppConfig`/`Ledger` surface.** The design lives in
+**Status: wired and validated.** The momentum engine
+(`src/server/MomentumStrategy.ts` + `src/server/signals/momentum.ts`) is the
+cross-sectional edge and the **single originator** of trade candidates on the
+agent blackboard. It type-checks against the current `AppConfig`/`Ledger`
+surface, and the walk-forward gate `validate:momentum` VALIDATES at 36.99%
+annualized net (+26.84pp over Nifty). The design lives in
 `src/server/MomentumStrategy.ts` + `src/server/signals/momentum.ts` (the pure
 signal math) and is exercised by the `test/backtest/*` harnesses.
 
@@ -113,13 +116,12 @@ On real Yahoo data over ~5 years, the shipped config (topN 5–10, hysteresis) i
 reported at roughly **+37% annualized net, ~+27pp over the Nifty 50**, ~65%
 positive months, beating Nifty in 6/8 walk-forward windows; the same config
 without hysteresis does not pass the walk-forward gate (≈+22%). These are the
-numbers the plan's `validate:momentum` claims were based on. **Caveats:**
-current-listed universe only (survivorship bias — see §9), pre-tax in places,
-and the npm script that produces the headline is not present in the current
-`package.json` (see `CAPABILITIES.md` §5.3).
+numbers `validate:momentum` reports. **Caveats:** current-listed universe only
+(survivorship bias — see §9), pre-tax in places.
 
-> Because this engine is not wired, none of the above is currently being
-> executed live. It is the validated blueprint for the next phase.
+> This engine is now wired as the single originator on the agent blackboard
+> (`validate:momentum` VALIDATED, 36.99% net, +26.84pp over Nifty). The AI layer
+> vetoes/shrinks/re-ranks its candidates but never originates.
 
 ## 2. MarketAgent: the runnable strategy brain
 
@@ -560,13 +562,12 @@ sufficient*.
 | `OptionsEngine` / `OptionsTrader` | ✅ wired (OFF by default) |
 | `TelegramHITL` | ✅ wired (OFF unless creds present) |
 | `KiteMcpClient` (read-only MCP) | ✅ wired |
-| `MomentumStrategy` + `signals/momentum.ts` | ⛔ designed/backtested, NOT wired |
-| `LiveTrader` / `OrderGuard` / `Reconciler` | ⛔ designed, NOT wired |
-| `StrategyOptimizer` / `StrategyAdaptation` | ⛔ designed, NOT wired |
-| `GoLiveLadder` / `AiAuthorityPolicy` / `Tax` | ⛔ designed (pure, tested), NOT wired |
+| `MomentumStrategy` + `signals/momentum.ts` | ✅ wired — single originator on the blackboard; `validate:momentum` VALIDATED |
+| `LiveTrader` / `OrderGuard` / `Reconciler` | ✅ wired — execution authority, off by default (paper) |
+| `StrategyOptimizer` / `StrategyAdaptation` | ✅ wired (topN param store / risk multiplier) |
+| `GoLiveLadder` / `AiAuthorityPolicy` / `Tax` | ✅ wired (pure, tested; advisory on `status:golive`) |
 
-> The two strategy systems are **not alternatives currently in competition** —
-> the runnable bot runs `MarketAgent` today, and the momentum engine is the
-> validated blueprint for a future phase. Before wiring it, the momentum stack
-> must be reconciled to the current `AppConfig`/`Ledger` surface (see
-> `CAPABILITIES.md` §5).
+> The momentum engine is now the **single originator** of trade candidates on the
+> agent blackboard; the AI layer vetoes/shrinks/re-ranks but never originates.
+> `MarketAgent` (the RSI/ADX/ATR loop) and the momentum engine are reconciled
+> through this blackboard authority model — see `CAPABILITIES.md` §5.

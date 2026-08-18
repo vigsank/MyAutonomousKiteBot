@@ -1,47 +1,59 @@
-# 🪁 My Autonomous Kite Vault
+# 🪁 My Autonomous Kite Bot
 
 **Personal agentic stock trading bot** for the **Zerodha Kite** ecosystem, written
-in pure **TypeScript/Node.js** — no Python. It uses a **hybrid** design: fast
-deterministic code handles the market math, and an optional **LLM** (OpenAI or
-Ollama Cloud) adds news sentiment and a final **analyst verdict** on candidate
-trades. It ships in **paper-trading mode** with a full **web dashboard**, and is
-built to be validated on paper before any real money is involved.
+in pure **TypeScript/Node.js** — no Python. It uses a **hybrid** design: a
+validated **momentum** strategy is the single originator of trade candidates, an
+extensible **agent fleet** (domains A–H on a shared blackboard) plus an **LLM**
+(OpenAI, Ollama Cloud, or LiteLLM) add news sentiment and a 3-stage daily
+report that **veto/shrink/re-rank** those candidates, and the deterministic
+**RiskEngine** is the immutable execution gate. It ships in **paper-trading mode**
+through a local `kite-paper-node` mock (which can persist state like a real
+broker), with a full **web dashboard**, and is built to be validated on paper
+before any real money is involved.
 
 > ⚠️ **Paper-only by default.** The bot never places real Kite orders. Every
 > buy/sell is simulated and persisted to a local SQLite ledger. Real execution is
-> a deliberate, gated future step (see "Live trading?" below).
+> a deliberate, gated step behind `ALLOW_LIVE_ORDERS` (see "Live trading?" below).
 
 ---
 
 ## Highlights
 
+- 🏆 **Momentum is the brain** — cross-sectional 12-month momentum (skip-1),
+  top-N with rank hysteresis, monthly rebalance, liquidity floor + event
+  blackout. Validated out-of-sample: `npm run validate:momentum` → **VALIDATED
+  36.99% annualized, +26.84pp over Nifty**. It is the **single originator** of
+  trade candidates.
+- 🧠 **AI filters, never originates** — the agent fleet (A–H) + `DailyReportEngine`
+  (09:00 / 11:00 / 15:15 IST) read the momentum ranking from a shared blackboard
+  and may **veto, shrink or re-rank** it — never add to it. AI-originated ideas
+  outside the ranking are logged as a **shadow book** (`score:shadow`) and graded
+  by `AiAuthorityPolicy` (PROMOTE/HOLD/RETIRE).
+- 🛡️ **RiskEngine** — the single immutable arbiter: drawdown (incl. unrealized
+  PnL), per-trade / single-stock / sector caps, cash reserve, risk-at-stop.
+  Every decision is audited to the DB.
+- 🧩 **Agent fleet on a blackboard** — domains A–H (data, technical, fundamental,
+  sentiment, portfolio, decision, post-trade, governance) publish to a per-pass
+  blackboard; a failed agent degrades its dependents to `skipped`, never
+  poisons them.
+- 💾 **`kite-paper-node` mock as a real broker** — the mock serves real NSE CSVs
+  (~210 symbols) and can persist orders/positions/ledger to SQLite
+  (`--state-file`), so it survives restarts like a live Zerodha backend.
+- 🎯 **Trade-quality gates:** optional regime gating, evidence-based signal
+  confidence floor, minimum reward:risk, ATR-based adaptive stops, circuit
+  breaker, cooldown.
 - 📊 **Web dashboard** (`src/client`, Vite + React + shadcn/ui): live overview,
-  candlestick charts (TradingView Lightweight Charts), positions/orders/trades,
-  signals, risk audit, notifications, and an **LLM Traces** page.
-- 📡 **Real-time ticks** via KiteTicker (3s coalescing) + **historical data**
-  via Kite Connect v3 REST (for RSI warmup).
-- 📈 **Strategies:** `mean_reversion` (RSI-14), `pullback_trend`, `breakout` —
-  guarded by **ADX regime filter**, **volume confirmation**, **ATR-based adaptive
-  stops**, **volatility-based (risk-parity) sizing**, a **circuit breaker**,
-  **time-of-day** filters, and a hard **cooldown**.
-- 🎯 **Trade-quality gates:** optional **regime gating** (trade only in a
-  compatible market regime), **evidence-based signal confidence** floor, and a
-  **minimum reward:risk** (target vs stop) requirement.
-- 🧠 **AI/LLM:** news sentiment every 10 min (Google News RSS + free TinyFish web search), plus
-  a **final analyst verdict** (AGREE/CAUTION/AVOID + risk score) on candidate
-  trades — always subordinate to the immutable `RiskEngine`.
+  candlesticks, positions/orders/trades, signals, risk audit, notifications,
+  **LLM Traces**, and a **fleet** observability page.
 - 💰 **Realistic paper fills:** adverse **slippage** + NSE-style **brokerage /
-  statutory / GST** so paper P&L is net of costs.
-- 🛡️ **RiskEngine** — immutable guardrails (drawdown incl. unrealized PnL,
-  per-trade allocation, capital caps). Every decision is audited to the DB.
+  statutory / GST** so paper P&L is net of costs. **Tax** modelled (STCG 20% /
+  LTCG 12.5%).
 - 👤 **Human-in-the-loop** via Telegram (optional): approve/reject large tickets,
-  `/stop` kill-switch, `/status`, `/models`, `/model`, `/llm`.
-- 💾 **SQLite** persistence (`better-sqlite3`) with a Liquibase-style migration
-  runner and a **UI backend** (Express REST + WebSocket).
+  `/stop`, `/status`, `/models`, `/model`, `/llm`.
 - 🔍 **Observability:** `llm_traces` records every LLM call (prompt, response,
-  latency, tokens) so you can inspect *why* the agent decided something.
-- 🧪 **Validation:** parameter optimizer + a new **walk-forward / out-of-sample**
-  validation script that gives a blunt `VALIDATED` / `NOT VALIDATED` verdict.
+  latency, tokens); `audit:code|strategy|profit` LLM audits the codebase.
+- 🧪 **Validation:** walk-forward OOS gate, leak attribution, survivorship-bias
+  estimation, 12-month SIP sim, go-live ladder (`status:golive`).
 
 ---
 
@@ -51,15 +63,19 @@ built to be validated on paper before any real money is involved.
 src/
 ├── server/            # the bot + UI backend (Express REST + WebSocket)
 │   ├── index.ts       # entrypoint / wiring
-│   ├── MarketAgent.ts # strategy brain (indicators, gates, execution queue)
+│   ├── MomentumStrategy.ts + signals/momentum.ts  # validated originator
+│   ├── MarketAgent.ts # live RSI/ADX/ATR loop + gates + execution queue
 │   ├── RiskEngine.ts  # immutable risk gatekeeper
+│   ├── LiveTrader.ts / OrderGuard.ts / Reconciler.ts  # execution authority
 │   ├── PaperTrader.ts # simulated execution (net of costs)
 │   ├── Ledger.ts      # SQLite persistence + query layer
-│   ├── NewsSentimentEngine.ts # RSS + LLM sentiment + analyst verdict
-│   ├── LlmManager.ts  # OpenAI/Ollama provider (+ trace metadata)
+│   ├── DailyReportEngine.ts # 3-stage AI daily report
+│   ├── NewsSentimentEngine.ts # RSS + TinyFish + LLM sentiment
+│   ├── LlmManager.ts  # OpenAI/Ollama/LiteLLM provider (+ trace)
 │   ├── KiteStreamer.ts / providers/  # live + historical data
 │   └── api/           # Express routes + read queries + WebSocket
-└── client/            # React dashboard (Vite + shadcn/ui), own package.json
+├── agents/            # domain agents A–H + blackboard + orchestrator
+└── client/            # React dashboard (Vite + shadcn/ui)
 ```
 
 ## Quick start
@@ -76,9 +92,8 @@ cp .env.example .env   # see docs/CONFIGURATION.md
 npm run build:ui
 npm run dev
 
-# 4. Or run a hot-reloaded UI in dev (Vite on :5173, proxies /api + /ws)
-npm run dev          # terminal 1 (bot + API on :3000)
-npm run dev:ui       # terminal 2 (dashboard on :5173)
+# 4. Validate the momentum edge (OOS gate)
+npm run validate:momentum
 ```
 
 > `better-sqlite3` is a native module. If `npm install` fails during its build,
@@ -91,37 +106,39 @@ npm run dev:ui       # terminal 2 (dashboard on :5173)
 | Command | Description |
 | ------- | ----------- |
 | `npm run dev` | Run the bot + API + dashboard (paper mode) on `:3000` |
-| `npm run build` | Compile server to `dist/` |
-| `npm start` | Run compiled output |
+| `npm run build` / `npm start` | Compile / run server `dist/` |
 | `npm run typecheck` / `typecheck:test` / `typecheck:ui` | Type-check server / tests / client |
-| `npm run build:ui` | Build the React dashboard |
-| `npm run dev:ui` | Vite dev server (hot reload) on `:5173` |
-| `npm run mock:ui` | Seed a mock DB + start the dashboard (no broker needed) |
-| `npm run backtest` | Backtest vs real history → `data/backtest_report.csv` |
-| `npm run optimize` | Parameter sweep + multi-fold walk-forward |
-| `npm run simulate` | Synthetic 2-min market simulation |
-| `npm run test:backtest` | Self-test the onCandle backtest path |
-| `npm run validate:strategy` | **Walk-forward / OOS validation** + edge verdict |
-| `npm run audit:code` | LLM code audit (architecture + guardrails reports) |
-| `npm run audit:strategy` | LLM strategy/market-logic audit report |
+| `npm run build:ui` / `dev:ui` / `mock:ui` | Dashboard build / dev / mock UI |
+| `npm run test:unit` | All 11 unit suites (momentum, risk, indicators, live, feedback, agents, execution, tax, shadow, authority, ladder) |
+| `npm run ci` | `test:unit` + `validate:momentum` |
+| `npm run validate:momentum` | **OOS walk-forward gate** → VALIDATED / NOT VALIDATED |
+| `npm run validate:strategy` | Legacy RSI walk-forward (old MarketAgent harness) |
+| `npm run backtest` / `optimize` / `simulate` | Backtest / optimize / simulate |
+| `npm run score:shadow` | Score the AI shadow book + AI-authority verdict |
+| `npm run status:golive` | Go-live ladder + kill-criteria dashboard |
+| `npm run attribute:leaks` | Gross→net leak-attribution waterfall |
+| `npm run estimate:survivorship` | Survivorship-bias floor |
+| `npm run audit:code` / `audit:strategy` / `audit:profit` | LLM code / strategy / profit audits |
 
 ---
 
 ## Live trading?
 
-**Today the bot is paper-only** — there is no live execution path. But it is
-built on the real **Kite Connect SDK**, so it *can* be extended to live. The
-recommended (and codebase-mandated) path mirrors RakshaQuant's safety design:
-add a `LiveTrader` behind a hard `ALLOW_LIVE_ORDERS` gate, run it in **shadow
-mode** first, add order idempotency + broker reconciliation, and only enable real
-orders after extensive paper testing **and** a passing walk-forward verdict. See
-`docs/CAPABILITIES.md` → "Live trading readiness".
+**Today the bot is paper-only** (through `kite-paper-node`). The live execution
+path is **built** — `LiveTrader` behind a hard `ALLOW_LIVE_ORDERS` gate with
+`LIVE_SHADOW_MODE`, order idempotency (`OrderGuard`), and broker reconciliation
+(`Reconciler`) — but **off by default**. To go live: set `ALLOW_LIVE_ORDERS=true`
+and `LIVE_SHADOW_MODE=false`, point `LIVE_PROVIDER` at the real Zerodha Kite
+SDK, and only after passing `npm run validate:momentum` and clearing the
+`GoLiveLadder` kill criteria. See `docs/CAPABILITIES.md` and
+`docs/STRATEGIES_TECHNIQUES.md` §6.
 
 ## Documentation
 
 - [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md) — every configurable entity
-- [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) — what the bot can do + live-readiness
-- [`docs/BACKTESTING.md`](docs/BACKTESTING.md) — backtest, optimize, **walk-forward**
+- [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) — what the bot can do
+- [`docs/BACKTESTING.md`](docs/BACKTESTING.md) — backtest, optimize, walk-forward
+- [`docs/STRATEGIES_TECHNIQUES.md`](docs/STRATEGIES_TECHNIQUES.md) — deep strategy/technique analysis
 - [`docs/UI_DASHBOARD.md`](docs/UI_DASHBOARD.md) — the web dashboard + mock UI
 - [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — LLM audit scripts + `llm_traces`
 - [`Agents.md`](Agents.md) — contribution guide & engineering practices

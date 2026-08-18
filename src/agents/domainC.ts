@@ -199,5 +199,55 @@ export function buildDomainAgents(): AgentDef[] {
         };
       },
     ),
+
+    def(
+      "daily_report_context",
+      "Daily Report Context",
+      "C6",
+      true,
+      [],
+      async (ctx: AgentContext) => {
+        const latest = ctx.ledger.getLatestReport();
+        if (!latest) {
+          return { summary: "daily_report_context: no daily report yet", status: "skipped" as const };
+        }
+        let parsed: any;
+        try {
+          parsed = JSON.parse(latest.reportJson);
+        } catch (err) {
+          return {
+            summary: `daily_report_context: unparseable report (${String(err)})`,
+            status: "failed" as const,
+          };
+        }
+        const regime = parsed?.market_regime ?? {};
+        const cap = parsed?.capital_management ?? {};
+        const recs = parsed?.portfolio_recommendations ?? [];
+        const bias: Record<string, string> = {};
+        const suggestedAllocation: Record<string, number> = {};
+        for (const r of recs) {
+          if (r && typeof r.symbol === "string" && typeof r.action_bias === "string") {
+            bias[r.symbol] = r.action_bias;
+            if (typeof r.suggested_allocation_inr === "number") {
+              suggestedAllocation[r.symbol] = r.suggested_allocation_inr;
+            }
+          }
+        }
+        return {
+          summary: `daily_report_context: parsed report (${Object.keys(bias).length} recs, regime ${regime.regime_score ?? "n/a"})`,
+          payload: {
+            regimeScore: typeof regime.regime_score === "number" ? regime.regime_score : 0,
+            overallSentiment: regime.overall_sentiment ?? "NEUTRAL",
+            bias,
+            suggestedAllocation,
+            recommendedCashReservePct:
+              typeof cap.recommended_cash_reserve_pct === "number"
+                ? cap.recommended_cash_reserve_pct
+                : null,
+            createdAt: latest.createdAt,
+          },
+        };
+      },
+    ),
   ];
 }

@@ -46,6 +46,7 @@ import { UserService } from './services/user-service';
 import { GTTService } from './services/gtt-service';
 import { resolveConfig } from './utils/config';
 import { isWithinMarketHours } from './utils/date-utils';
+import { StatePersistence } from './state/state-persistence';
 import * as path from 'path';
 
 export class MockEngine {
@@ -78,9 +79,12 @@ export class MockEngine {
   private aggregator: OHLCAggregator;
   private recordedEvents: Array<{ timestamp: string; event: any }> = [];
   public readonly csvDataProvider: CsvDataProvider;
+  /** Optional SQLite persistence so the mock survives restarts like a broker. */
+  public readonly persistence: StatePersistence;
 
   constructor(config?: MockEngineConfig) {
     this.config = resolveConfig(config);
+    this.persistence = new StatePersistence(config?.stateFile ?? null);
 
     this.store = new StateStore(this.config.startingCapital);
     this.bus = new TickEventBus();
@@ -148,6 +152,26 @@ export class MockEngine {
 
     // Auto-seed symbols from config.
     this.seedSymbolsFromConfig();
+
+    // Restore persisted broker state (orders/positions/ledger) on boot, so the
+    // mock acts like a real Zerodha backend that survives restarts.
+    if (this.persistence.enabled) {
+      const restored = this.persistence.load();
+      if (restored) {
+        this.store.restore(restored);
+        this.bus.emit?.('state_restored', restored);
+      }
+    }
+  }
+
+  /**
+   * Persist the current broker state to SQLite (no-op when persistence is
+   * disabled). Call this after a batch of order mutations.
+   */
+  persist(): void {
+    if (this.persistence.enabled) {
+      this.persistence.save(this.store.snapshot());
+    }
   }
 
   private seedSymbolsFromConfig(): void {
@@ -195,6 +219,14 @@ export class MockEngine {
     this.recordedEvents = [];
     this.store.reset(this.config.startingCapital);
     this.seedSymbolsFromConfig();
+  }
+
+  /** Reset the broker state AND clear any persisted snapshot (fresh account). */
+  resetAll(config?: MockEngineConfig): void {
+    this.reset(config);
+    if (this.persistence.enabled) {
+      this.persistence.save(this.store.snapshot());
+    }
   }
 
   // -------------------------------------------------------------------------

@@ -1,7 +1,20 @@
 import { logger } from "../server/Logger";
 import { getRegistry } from "./registry";
 import { withinHoldWindow } from "./scheduler";
+import { Blackboard } from "./blackboard";
 import { AgentContext, AgentDef, AgentId, AgentResult } from "./types";
+
+/**
+ * Publish a completed agent's payload to the blackboard so downstream agents
+ * read it instead of recomputing (G2/G3). Only a `done` agent publishes: a
+ * `failed` agent that published a half-built payload would silently poison
+ * every downstream decision.
+ */
+function publishDone(ctx: AgentContext, r: AgentResult): void {
+  if (r.status === "done" && r.payload !== undefined) {
+    ctx.blackboard.publish(r.id, r.payload);
+  }
+}
 
 /** Run every agent's `run` safely; a thrown error becomes a 'failed' result. */
 async function runSafe(agent: AgentDef, ctx: AgentContext): Promise<AgentResult> {
@@ -52,10 +65,34 @@ export async function runPass(
   const resultMap = new Map<AgentId, AgentResult>(skippedResults.map((r) => [r.id, r]));
   const pending = new Set<AgentId>(active.map((a) => a.id));
 
+  // An agent is ready when every dep has RESOLVED and none of them FAILED.
+  // A pending (not-yet-run) dep means "wait", not "skip".
+  const depFailed = (d: AgentId): boolean => resultMap.get(d)?.status === "failed";
   const ready = (): AgentDef[] =>
-    active.filter((a) => pending.has(a.id) && a.deps.every((d) => resultMap.has(d)));
+    active.filter(
+      (a) => pending.has(a.id) && a.deps.every((d) => resultMap.has(d)) && !a.deps.some(depFailed),
+    );
+
+  // Agents whose dependency FAILED can never become ready — degrade to skipped.
+  const degradeSkipped = (): void => {
+    for (const id of pending) {
+      const a = active.find((x) => x.id === id);
+      if (a && a.deps.some(depFailed)) {
+        resultMap.set(id, {
+          id,
+          status: "skipped",
+          startedAt: new Date(),
+          durationMs: 0,
+          summary: `${id}: skipped (dependency failed)`,
+        });
+        pending.delete(id);
+      }
+    }
+  };
 
   while (pending.size > 0) {
+    degradeSkipped();
+    if (pending.size === 0) break;
     const readyNow = ready();
     if (readyNow.length === 0) {
       // Unresolvable dependency cycle / unmet deps — mark the rest failed.
@@ -76,6 +113,7 @@ export async function runPass(
     await Promise.all(
       parallelBatch.map(async (a) => {
         const r = await runSafe(a, ctx);
+        publishDone(ctx, r);
         resultMap.set(a.id, r);
         pending.delete(a.id);
       }),
@@ -85,6 +123,7 @@ export async function runPass(
     const sequentialBatch = ready().filter((a) => !a.parallel);
     for (const a of sequentialBatch) {
       const r = await runSafe(a, ctx);
+      publishDone(ctx, r);
       resultMap.set(a.id, r);
       pending.delete(a.id);
     }
@@ -147,6 +186,7 @@ export async function scheduleLoop(opts: ScheduleLoopOptions): Promise<ScheduleL
         now,
         risk: opts.risk,
         trader: opts.trader,
+        blackboard: new Blackboard(),
       };
       // Gate BEFORE running: in the hold window, never invoke strategist/execute.
       const hold = withinHoldWindow(now, opts.holdWindowMin);

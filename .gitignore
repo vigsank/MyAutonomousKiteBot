@@ -40,3 +40,6 @@ Thumbs.db
 .vscode/
 *.swp
 .env.test
+
+# Regenerable backtest caches (price data) — never commit
+test/backtest/results/**/.cache/

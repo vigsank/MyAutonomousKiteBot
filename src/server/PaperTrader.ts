@@ -53,15 +53,17 @@ export class PaperTrader {
       const existing = this.ledger.getPosition(request.symbol, request.exchange);
 
       if (existing) {
-        // Close existing position if we trade in the opposite direction.
+        // Opposite direction: reduce (partial) or close (full) the position.
         if (existing.direction !== request.direction) {
           const closeSide = directionToSide(request.direction);
           const exitFill = this.applySlippage(request.entryPrice, closeSide);
-          const grossPnl = this.computeClosePnl(existing, exitFill);
-          // Net of costs: entry leg + exit leg charges.
+          // NSE CNC cannot go short: an oversized sell clamps to what is held.
+          const sellQty = Math.min(request.quantity, existing.quantity);
+          const grossPnl = this.computeClosePnl(existing, exitFill, sellQty);
+          // Net of costs: entry leg on the sold slice + exit leg on the sold slice.
           const totalCharges =
-            this.charges(existing.avgPrice * existing.quantity) +
-            this.charges(exitFill * existing.quantity);
+            this.charges(existing.avgPrice * sellQty) +
+            this.charges(exitFill * sellQty);
           const closePnl = grossPnl - totalCharges;
           const tradeId = newTradeId();
           const fillOut: TradeFill = {
@@ -69,17 +71,28 @@ export class PaperTrader {
             symbol: request.symbol,
             exchange: request.exchange,
             direction: request.direction,
-            quantity: request.quantity,
+            quantity: sellQty,
             price: exitFill,
-            ticketSize: request.ticketSize,
+            ticketSize: sellQty * exitFill,
             pnl: closePnl,
             status: 'FILLED',
-            reason: `Closed ${existing.direction} position. ${request.reason}`,
+            reason:
+              sellQty < existing.quantity
+                ? `Reduced ${existing.direction} position (${sellQty} of ${existing.quantity}). ${request.reason}`
+                : `Closed ${existing.direction} position. ${request.reason}`,
             timestamp: request.timestamp,
           };
           this.ledger.recordTrade(fillOut);
-          this.recordOrder(request, side, tradeId, 'CLOSE');
-          this.ledger.closePosition(request.symbol, exitFill, closePnl);
+          this.recordOrder(request, side, tradeId, sellQty < existing.quantity ? 'TRIM' : 'CLOSE');
+          if (sellQty >= existing.quantity) {
+            this.ledger.closePosition(request.symbol, exitFill, closePnl);
+          } else {
+            this.ledger.upsertPosition({
+              ...existing,
+              quantity: existing.quantity - sellQty,
+              avgPrice: existing.avgPrice,
+            });
+          }
           return fillOut;
         }
         // Same direction: augment position (weighted average price, slippage-adjusted).
@@ -144,7 +157,7 @@ export class PaperTrader {
     request: TradeRequest,
     side: 'BUY' | 'SELL',
     tradeId: string,
-    action: 'OPEN' | 'ADD' | 'CLOSE',
+    action: 'OPEN' | 'ADD' | 'TRIM' | 'CLOSE',
   ): void {
     this.ledger.recordOrder({
       orderId: newTradeId(),
@@ -164,10 +177,11 @@ export class PaperTrader {
     });
   }
 
-  private computeClosePnl(position: Position, closePrice: number): number {
+  private computeClosePnl(position: Position, closePrice: number, qty?: number): number {
+    const n = qty ?? position.quantity;
     if (position.direction === 'LONG') {
-      return (closePrice - position.avgPrice) * position.quantity;
+      return (closePrice - position.avgPrice) * n;
     }
-    return (position.avgPrice - closePrice) * position.quantity;
+    return (position.avgPrice - closePrice) * n;
   }
 }

@@ -81,16 +81,41 @@ ARCHITECTURE CONTEXT (the bot's focus design):
 - EQUITY ONLY (no options/futures in scope).
 
 THE USER'S GOAL (evaluate it honestly, do not flatter):
-- Start with ₹5,000–₹10,000 of capital.
-- Through slow, accumulated holdings and profits, reach a stage within 1 year where the bot generates ₹1,00,000/month of income from trading.
-- The bot must ALWAYS end each month in overall PROFIT — never a monthly loss (individual losing trades are acceptable, but the month-end P&L must be positive).
+- Start trading on **Day 1 of Month 1 with ₹10,000** of real capital.
+- **Every month, step up capital by ₹10,000** (Month 2 → ₹20,000, Month 3 →
+  ₹30,000, ... Month 12 → ₹1,20,000 total contributions).
+- **Profits are reinvested as new capital** and can be re-used in trade. Losses
+  reduce the available base.
+- At the end of **each quarter, half-year, and full year**, the cumulative P&L
+  (realized + unrealized, net of costs and tax) must be **PROFITABLE**. The bot
+  must never end a month with an overall monthly loss that pushes the running
+  cumulative P&L negative.
 
 YOUR TASKS:
-1. ANALYZE THE ENTIRE PROJECT: every strategy mode (mean_reversion / pullback_trend / breakout), every indicator (RSI/ADX/ATR/SMA + the new pivots / 7-day S/R / Kelly in TechnicalIndicators), entry/exit rules, position sizing, the RiskEngine and its hard caps (single-stock 15%, cash reserve 20%, risk-at-stop 1.5%, sector 30%, portfolio drawdown guard), the ORB filter, the cost model (slippage + NSE fees), the LLM analyst verdict, the DailyReportEngine (Reasoning Layer), the EodEngine (square-off, EOD performance, overnight matrix), the trade-quality gates (regime, confidence, min R:R), the concentration cap, the circuit breaker, and the walk-forward validation. Cite file:line where relevant.
-2. DO THE MATH on the goal. Be explicit and unsparing: what monthly return % is required to turn ₹5k or ₹10k into ₹1L/month income within 12 months? Is that mathematically feasible without extreme leverage or reckless risk? What capital base is actually required to produce ₹1L/month at a realistic, sustainable monthly return (e.g. 2–5%)? Give the exact numbers.
-3. IDENTIFY the specific algorithm changes that would most improve profitability and win-rate (exits, R:R, regime selection, position sizing, drawdown control).
-4. DESIGN the "NO MONTHLY LOSS" guardrails: concrete rules so the bot stops trading for the month once a drawdown/loss threshold is hit, protecting the month-end P&L. Tie these to the existing portfolio drawdown guard and cash-reserve cap where possible.
-5. GIVE A REALISTIC GROWTH PLAN from ₹5k/₹10k toward ₹1L/month, with honest milestones and timelines, and state clearly whether the 1-year target is achievable or must be revised.
+1. ANALYZE THE ENTIRE PROJECT: the momentum strategy (the single originator),
+   every indicator (RSI/ADX/ATR/SMA + pivots / 7-day S/R / Kelly), entry/exit
+   rules, position sizing, the RiskEngine and its hard caps (single-stock 15%,
+   cash reserve 20%, risk-at-stop 1.5%, sector 30%, portfolio drawdown guard),
+   the cost model (slippage + NSE fees), the Tax model (STCG 20% / LTCG 12.5%),
+   the LLM analyst verdict, the DailyReportEngine (Reasoning Layer), the EodEngine
+   (square-off, EOD performance, overnight matrix), the shadow book +
+   AiAuthorityPolicy, the trade-quality gates, the GoLiveLadder kill criteria,
+   and the walk-forward validation. Cite file:line where relevant.
+2. DO THE MATH on the goal. Be explicit and unsparing: with ₹10k in Month 1 and
+   a ₹10k/month step-up (plus reinvested profits), what monthly return % is
+   required to end the 12th month with a profitable cumulative P&L? Model it as
+   a monthly-compounding book where each month adds ₹10k to the base. Give the
+   exact numbers and the realistic capital base required for sustainable
+   month-end profit.
+3. IDENTIFY the specific algorithm changes that would most improve profitability
+   and win-rate (exits, R:R, regime selection, position sizing, drawdown
+   control).
+4. DESIGN the "NO MONTHLY LOSS" guardrails: concrete rules so the bot stops
+   trading for the month once a drawdown/loss threshold is hit, protecting the
+   month-end P&L. Tie these to the existing portfolio drawdown guard and
+   cash-reserve cap where possible.
+5. GIVE A REALISTIC GROWTH PLAN from ₹10k (stepping +₹10k/month) toward
+   sustainable monthly profit, with honest milestones and timelines.
 
 OUTPUT FORMAT — produce a single Markdown report with EXACTLY these sections:
 ## Executive Summary
@@ -103,7 +128,7 @@ OUTPUT FORMAT — produce a single Markdown report with EXACTLY these sections:
 (specific reasons the current strategy loses money — e.g. low win rate, exit logic, regime mismatch)
 ## "No Monthly Loss" Guardrails
 (concrete, implementable rules to guarantee a positive month-end P&L, tied to the existing portfolio drawdown guard + cash reserve)
-## Realistic Growth Plan (₹5k/₹10k → ₹1L/month)
+## Realistic Growth Plan (₹10k → +₹10k/month stepping)
 (honest milestones, capital compounding, and a revised timeline if the 1-year target is unrealistic)
 ## Prioritized Action Items
 (numbered, highest impact first, each with file reference)

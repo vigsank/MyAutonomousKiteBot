@@ -275,26 +275,15 @@ The profitability plan (`docs/plan/`) reports this gate as **VALIDATED — 36.99
 annualized, +26.84pp over Nifty**, and the older vision plan reported a
 smaller-window **+25.35% annualized, 215 OOS months**.
 
-**Honest status (verify before relying on it):**
-- The momentum backtest harnesses **exist** and the plan documents a validated
-  edge, but the momentum/live engine (`src/server/MomentumStrategy.ts`) **is not
-  wired into `index.ts`** and **does not currently type-check cleanly** — the
-  TypeScript compiler reports errors against the current `AppConfig` / `Ledger`
-  surface (e.g. `getStrategyParam`, `momentumTopN`, `momentumLookbackMonths`,
-  `newsVetoThreshold`, `minCapital`, `eventBlackoutTypes`).
-- There is **no `npm run validate:momentum` script** in `package.json`, so you
-  must run the harness directly:
-  ```bash
-  npx ts-node test/backtest/momentum_walk_forward.ts
-  ```
-- Several npm scripts referenced by `docs/plan` are **absent** from the current
-  `package.json`: `ci`, `validate:momentum`, `test:unit`, `test:momentum`,
-  `score:shadow`, `status:golive`, `attribute:leaks`, `estimate:survivorship`.
-  The functionality those plans describe (shadow scoring, go-live ladder,
-  leak/survivorship estimation) is represented by source files, but the one-shot
-  `npm run` entry points have not been (re)wired.
-- The momentum harness itself prints a survivorship-bias floor reference that
-  names `npm run estimate:survivorship` — that script does not exist; use
-  `npx ts-node test/backtest/survivorship_bias.ts` directly.
+**Status:** the momentum engine is **wired** and type-checks cleanly. Run the
+gate with:
+
+```bash
+npm run validate:momentum          # == npx ts-node test/backtest/momentum_walk_forward.ts
+```
+
+The related one-shot scripts (`ci`, `test:unit`, `test:momentum`, `score:shadow`,
+`status:golive`, `attribute:leaks`, `estimate:survivorship`) are all present in
+`package.json`. `npm run ci` = unit suite + `validate:momentum`.
 
 Same survivorship caveat applies: the universe is current-listed names only.

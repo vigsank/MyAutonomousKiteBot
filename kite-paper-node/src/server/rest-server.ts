@@ -60,6 +60,17 @@ export class RestServer {
     res.json({ status: 'success', data });
   }
 
+  /**
+   * Run a state-mutating operation then persist the broker state to SQLite
+   * (no-op when persistence is disabled). Wraps the mutation handlers so the
+   * mock survives restarts like a real broker.
+   */
+  private mutate(fn: () => any): any {
+    const out = fn();
+    this.deps.engine.persist();
+    return out;
+  }
+
   /** Parse a query date param, falling back to a numeric timestamp. */
   private parseDate(value: any, fallback: number): Date {
     if (value === undefined || value === null || value === '') return new Date(fallback);
@@ -80,13 +91,13 @@ export class RestServer {
 
     // /orders/*
     this.app.post('/orders/:variety', (req: any, res: any) =>
-      this.ok(res, deps.orderService.placeOrder(req.params.variety, req.body))
+      this.ok(res, this.mutate(() => deps.orderService.placeOrder(req.params.variety, req.body)))
     );
     this.app.put('/orders/:variety/:order_id', (req: any, res: any) =>
-      this.ok(res, deps.orderService.modifyOrder(req.params.variety, req.params.order_id, req.body))
+      this.ok(res, this.mutate(() => deps.orderService.modifyOrder(req.params.variety, req.params.order_id, req.body)))
     );
     this.app.delete('/orders/:variety/:order_id', (req: any, res: any) =>
-      this.ok(res, deps.orderService.cancelOrder(req.params.variety, req.params.order_id))
+      this.ok(res, this.mutate(() => deps.orderService.cancelOrder(req.params.variety, req.params.order_id)))
     );
     this.app.get('/orders', (_req: any, res: any) => this.ok(res, deps.orderService.getOrders()));
     this.app.get('/orders/:order_id', (req: any, res: any) =>
@@ -97,7 +108,7 @@ export class RestServer {
     );
     this.app.get('/trades', (_req: any, res: any) => this.ok(res, deps.orderService.getTrades()));
     this.app.post('/orders/:variety/:order_id/exit', (req: any, res: any) =>
-      this.ok(res, deps.engine.exitOrder(req.params.variety, req.params.order_id))
+      this.ok(res, this.mutate(() => deps.engine.exitOrder(req.params.variety, req.params.order_id)))
     );
 
     // /portfolio/*
@@ -108,7 +119,7 @@ export class RestServer {
       this.ok(res, deps.holdingService.getHoldings())
     );
     this.app.post('/portfolio/positions', (req: any, res: any) =>
-      this.ok(res, deps.engine.convertPosition(req.body))
+      this.ok(res, this.mutate(() => deps.engine.convertPosition(req.body)))
     );
 
     // /margins/*
@@ -154,7 +165,7 @@ export class RestServer {
 
     // /gtt/*
     this.app.post('/gtt/triggers', (req: any, res: any) => {
-      const trigger = deps.gttService.createTrigger(req.body);
+      const trigger = this.mutate(() => deps.gttService.createTrigger(req.body));
       this.ok(res, { trigger_id: trigger.id });
     });
     this.app.get('/gtt/triggers', (_req: any, res: any) => this.ok(res, deps.gttService.getGTTs()));
@@ -162,11 +173,11 @@ export class RestServer {
       this.ok(res, deps.gttService.getGTT(req.params.trigger_id))
     );
     this.app.delete('/gtt/triggers/:trigger_id', (req: any, res: any) => {
-      deps.gttService.deleteGTT(req.params.trigger_id);
+      this.mutate(() => deps.gttService.deleteGTT(req.params.trigger_id));
       this.ok(res, { trigger_id: req.params.trigger_id });
     });
     this.app.put('/gtt/triggers/:trigger_id', (req: any, res: any) =>
-      this.ok(res, deps.gttService.modifyTrigger(req.params.trigger_id, req.body))
+      this.ok(res, this.mutate(() => deps.gttService.modifyTrigger(req.params.trigger_id, req.body)))
     );
 
     // Debug endpoints (R7).

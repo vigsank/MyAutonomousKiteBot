@@ -65,8 +65,9 @@ const auditTasks = [
 
 AUDIT FOCUS (in priority order):
 1. Architectural soundness: dependency cycles, tight coupling, god objects, missing separation of concerns, and whether the dependency-injection wiring in index.ts is correct and complete.
-2. Multi-tool / agentic failure modes: how MarketAgent orchestrates the streamer, ledger, risk engine, trader, LLM, news, and options engines. Look for unbounded loops, missing error handling, swallowed exceptions, retry storms, deadlocks, and state that can drift between components.
-3. API execution safety: every place that places orders, mutates the ledger, or calls external APIs (Kite, LLM, Tavily, Telegram). Flag missing try/catch, unvalidated inputs, unsafe type casts, and any path that could place a trade or persist state without going through the RiskEngine gatekeeper.
+2. Multi-tool / agentic failure modes: how MarketAgent orchestrates the streamer, ledger, risk engine, trader, LLM, news, and options engines, and how the agent fleet (domains A–H + blackboard) publishes to the shared blackboard. Look for unbounded loops, missing error handling, swallowed exceptions, retry storms, deadlocks, and state that can drift between components.
+3. API execution safety: every place that places orders, mutates the ledger, or calls external APIs (Kite, LLM, TinyFish, Telegram, MCP). Flag missing try/catch, unvalidated inputs, unsafe type casts, and any path that could place a trade or persist state without going through the RiskEngine gatekeeper.
+4. Authority model: momentum ORIGINATES trade candidates; the AI layer (agent fleet + DailyReportEngine) only vetoes/shrinks/re-ranks; the RiskEngine is the immutable execution gate. Flag any path where the AI could originate or upsize a trade.
 
 OUTPUT FORMAT — produce a single Markdown report with EXACTLY these sections:
 ## Executive Summary
@@ -91,7 +92,7 @@ Rules: cite exact file paths and line numbers from the code; never speculate bey
     prompt: `You are a security and data-integrity auditor specializing in financial systems and LLM pipelines. Perform a rigorous audit of this trading bot, grounded ONLY in the code below.
 
 AUDIT FOCUS (in priority order):
-1. Data validation & integrity: every point where external data enters the system (Kite ticks/quotes, RSS news, Tavily search results, LLM JSON output, config/env). Flag missing validation, unvalidated type casts, and trust of unverified external input.
+1. Data validation & integrity: every point where external data enters the system (Kite ticks/quotes, RSS news, TinyFish search results, LLM JSON output, config/env). Flag missing validation, unvalidated type casts, and trust of unverified external input.
 2. Prompt / input injection: how LLM prompts are constructed from news articles, search results, and symbol names. Identify any place where untrusted text is interpolated into a prompt without sanitization, and any risk of prompt injection or command injection.
 3. Math hallucination & numeric correctness: indicator math (RSI/ADX/ATR), PnL/drawdown/capital calculations, and any place a wrong formula or floating-point issue could produce incorrect trading decisions. Flag integer/float misuse, division by zero, and sign errors.
 4. Secret handling: any hardcoded keys, tokens, or credentials; confirm secrets come from env/config and are never logged.

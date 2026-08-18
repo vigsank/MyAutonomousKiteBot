@@ -11,6 +11,7 @@ import { RiskEngine } from "../server/RiskEngine";
 import { KiteMcpClient } from "../server/KiteMcpClient";
 import { runPass } from "./orchestrator";
 import { AgentContext } from "./types";
+import { Blackboard } from "./blackboard";
 
 /**
  * Runnable dry-run of the agent orchestration skeleton.
@@ -56,6 +57,7 @@ async function main(): Promise<void> {
     risk,
     trader,
     mcp,
+    blackboard: new Blackboard(),
   };
 
   const results = await runPass(ctx);
