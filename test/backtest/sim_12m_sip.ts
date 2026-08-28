@@ -11,9 +11,10 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { resolveDataDir } from './_dataDir';
 
 // ── constants ──────────────────────────────────────────────────────────────
-const DATA_DIR    = path.join(__dirname, '../../kite-paper-node/data');
+const DATA_DIR    = resolveDataDir();
 const OUT_FILE    = path.join(__dirname, 'results/sim_12m_sip_report.md');
 const TOP_N       = 5;
 const BAND        = 8;          // hysteresis band (validated OOS setting)

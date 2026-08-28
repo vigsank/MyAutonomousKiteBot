@@ -1,23 +1,73 @@
-# 🪁 My Autonomous Kite Bot
+<div align="center">
 
-**Personal agentic stock trading bot** for the **Zerodha Kite** ecosystem, written
-in pure **TypeScript/Node.js** — no Python. It uses a **hybrid** design: a
-validated **momentum** strategy is the single originator of trade candidates, an
-extensible **agent fleet** (domains A–H on a shared blackboard) plus an **LLM**
-(OpenAI, Ollama Cloud, or LiteLLM) add news sentiment and a 3-stage daily
-report that **veto/shrink/re-rank** those candidates, and the deterministic
-**RiskEngine** is the immutable execution gate. It ships in **paper-trading mode**
-through a local `kite-paper-node` mock (which can persist state like a real
-broker), with a full **web dashboard**, and is built to be validated on paper
-before any real money is involved.
 
-> ⚠️ **Paper-only by default.** The bot never places real Kite orders. Every
-> buy/sell is simulated and persisted to a local SQLite ledger. Real execution is
-> a deliberate, gated step behind `ALLOW_LIVE_ORDERS` (see "Live trading?" below).
+<img src="assets/logo.gif" alt="MyAutonomousKiteBot" width="140" height="140" />
+
+# 🪁 MyAutonomousKiteBot
+
+**An autonomous, AI-backed equity trading bot for the Indian (NSE) market.**
+
+A validated **momentum** strategy picks the trade candidates, an **agent fleet +
+LLM** reads the news and sentiment to veto / shrink / re-rank them, and a
+deterministic **RiskEngine** is the final gate before any order goes out — all
+paper-traded against a realistic Zerodha mock before a single rupee is risked.
+
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](tsconfig.json)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](Agents.md)
+[![Paper-only](https://img.shields.io/badge/status-paper--only-orange.svg)](#live-trading)
+
+**Momentum originates. AI filters. RiskEngine decides. Paper first, always.**
+
+</div>
 
 ---
 
-## Highlights
+## 📖 What is this?
+
+`MyAutonomousKiteBot` is a **personal, agentic, paper-trading stock bot** for the
+Indian equity market, written in pure **TypeScript / Node.js** (no Python). It
+combines three layers that are deliberately kept separate:
+
+| Layer | Role | Never does |
+|-------|------|-----------|
+| 🏆 **Momentum engine** | The **single originator** of trade candidates (cross-sectional 12-month momentum, top-N with rank hysteresis, monthly rebalance) | Never invents a symbol from news |
+| 🧠 **Agent fleet + LLM** | Reads news/sentiment and may **veto, shrink or re-rank** the momentum ranking | Never originates a live trade on its own |
+| 🛡️ **RiskEngine** | The **immutable execution gate** — drawdown, per-trade / stock / sector caps, cash reserve, risk-at-stop | Never overridden by AI or agents |
+
+Everything is **paper-traded** through [`kite-paper-node`](https://github.com/vigsank/kite-paper-node)
+(a separate repo/package that persists state like a real broker), with a full
+**web dashboard**, and is built to be **validated on paper before any real money**.
+
+> ⚠️ **Paper-only by default.** The bot never places real Kite orders. Every
+> buy/sell is simulated and persisted to a local SQLite ledger. Real execution is
+> a deliberate, gated step behind `ALLOW_LIVE_ORDERS` (see [Live trading?](#live-trading)).
+
+---
+
+## ✨ Why I built this
+
+I wanted an **autonomous, AI-backed trading bot** for the Indian (NSE) market —
+not just another technical-indicator script, but something that could:
+
+- **Read the news and sentiment** every morning (and react to breaking news
+  intraday), the way a human trader would.
+- **Pick trade candidates** with a statistically validated edge, not gut feel.
+- **Let AI advise but never let it gamble** — a deterministic risk engine has the
+  final say on every order.
+- **Prove itself on paper** — months of backtests, walk-forward validation, and
+  mock trading — before a single rupee of real capital is involved.
+
+The result is a **hybrid** design: a validated momentum strategy is the *brain*
+that originates candidates, an extensible **agent fleet** (domains A–H on a shared
+blackboard) plus an **LLM** (OpenAI, Ollama Cloud, or LiteLLM) add news sentiment
+and a 3-stage daily report that *veto / shrink / re-rank* those candidates, and the
+deterministic **RiskEngine** is the immutable execution gate.
+
+---
+
+## 🚀 Highlights
 
 - 🏆 **Momentum is the brain** — cross-sectional 12-month momentum (skip-1),
   top-N with rank hysteresis, monthly rebalance, liquidity floor + event
@@ -28,7 +78,7 @@ before any real money is involved.
   (09:00 / 11:00 / 15:15 IST) read the momentum ranking from a shared blackboard
   and may **veto, shrink or re-rank** it — never add to it. AI-originated ideas
   outside the ranking are logged as a **shadow book** (`score:shadow`) and graded
-  by `AiAuthorityPolicy` (PROMOTE/HOLD/RETIRE).
+  by `AiAuthorityPolicy` (PROMOTE / HOLD / RETIRE).
 - 🛡️ **RiskEngine** — the single immutable arbiter: drawdown (incl. unrealized
   PnL), per-trade / single-stock / sector caps, cash reserve, risk-at-stop.
   Every decision is audited to the DB.
@@ -36,8 +86,9 @@ before any real money is involved.
   sentiment, portfolio, decision, post-trade, governance) publish to a per-pass
   blackboard; a failed agent degrades its dependents to `skipped`, never
   poisons them.
-- 💾 **`kite-paper-node` mock as a real broker** — the mock serves real NSE CSVs
-  (~210 symbols) and can persist orders/positions/ledger to SQLite
+- 💾 **`kite-paper-node` mock as a real broker** — a **separate repo/package**
+  consumed via npm (SDK drop-in) + network (REST/WS/MCP). It serves real NSE
+  CSVs (~210 symbols) and can persist orders/positions/ledger to SQLite
   (`--state-file`), so it survives restarts like a live Zerodha backend.
 - 🎯 **Trade-quality gates:** optional regime gating, evidence-based signal
   confidence floor, minimum reward:risk, ATR-based adaptive stops, circuit
@@ -57,7 +108,7 @@ before any real money is involved.
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 src/
@@ -71,6 +122,7 @@ src/
 │   ├── Ledger.ts      # SQLite persistence + query layer
 │   ├── DailyReportEngine.ts # 3-stage AI daily report
 │   ├── NewsSentimentEngine.ts # RSS + TinyFish + LLM sentiment
+│   ├── NewsMonitorEngine.ts   # event-driven news monitor (defensive/opportunistic)
 │   ├── LlmManager.ts  # OpenAI/Ollama/LiteLLM provider (+ trace)
 │   ├── KiteStreamer.ts / providers/  # live + historical data
 │   └── api/           # Express routes + read queries + WebSocket
@@ -78,7 +130,21 @@ src/
 └── client/            # React dashboard (Vite + shadcn/ui)
 ```
 
-## Quick start
+The **authority model** is the heart of the design:
+
+```
+momentum ranking ──► blackboard ──► agent fleet + LLM (veto/shrink/re-rank)
+                                        │
+                                        ▼
+                              RiskEngine (immutable gate)
+                                        │
+                                        ▼
+                              PaperTrader / LiveTrader
+```
+
+---
+
+## ⚡ Quick start
 
 ```bash
 # 1. Install dependencies (root server + client)
@@ -101,7 +167,7 @@ npm run validate:momentum
 
 ---
 
-## Commands
+## 🛠️ Commands
 
 | Command | Description |
 | ------- | ----------- |
@@ -109,7 +175,7 @@ npm run validate:momentum
 | `npm run build` / `npm start` | Compile / run server `dist/` |
 | `npm run typecheck` / `typecheck:test` / `typecheck:ui` | Type-check server / tests / client |
 | `npm run build:ui` / `dev:ui` / `mock:ui` | Dashboard build / dev / mock UI |
-| `npm run test:unit` | All 11 unit suites (momentum, risk, indicators, live, feedback, agents, execution, tax, shadow, authority, ladder) |
+| `npm run test:unit` | All 12 unit suites (momentum, risk, indicators, live, feedback, agents, execution, tax, shadow, authority, ladder, newsmonitor) |
 | `npm run ci` | `test:unit` + `validate:momentum` |
 | `npm run validate:momentum` | **OOS walk-forward gate** → VALIDATED / NOT VALIDATED |
 | `npm run validate:strategy` | Legacy RSI walk-forward (old MarketAgent harness) |
@@ -122,7 +188,7 @@ npm run validate:momentum
 
 ---
 
-## Live trading?
+## 🔴 Live trading?
 
 **Today the bot is paper-only** (through `kite-paper-node`). The live execution
 path is **built** — `LiveTrader` behind a hard `ALLOW_LIVE_ORDERS` gate with
@@ -133,7 +199,9 @@ SDK, and only after passing `npm run validate:momentum` and clearing the
 `GoLiveLadder` kill criteria. See `docs/CAPABILITIES.md` and
 `docs/STRATEGIES_TECHNIQUES.md` §6.
 
-## Documentation
+---
+
+## 📚 Documentation
 
 - [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md) — every configurable entity
 - [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) — what the bot can do
@@ -141,9 +209,21 @@ SDK, and only after passing `npm run validate:momentum` and clearing the
 - [`docs/STRATEGIES_TECHNIQUES.md`](docs/STRATEGIES_TECHNIQUES.md) — deep strategy/technique analysis
 - [`docs/UI_DASHBOARD.md`](docs/UI_DASHBOARD.md) — the web dashboard + mock UI
 - [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — LLM audit scripts + `llm_traces`
+- [`docs/plan/plan.md`](docs/plan/plan.md) — the profitability roadmap
+- [`docs/plan/TODO.md`](docs/plan/TODO.md) — the agentic execution queue
 - [`Agents.md`](Agents.md) — contribution guide & engineering practices
 
-## Legal & license
+---
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome! See
+[`Agents.md`](Agents.md) for the engineering practices and safety invariants that
+govern this repo.
+
+---
+
+## 📄 Legal & license
 
 - **License:** GPL-3.0 (copyleft — fine for personal/private use).
 - **"Kite"** is a trademark of Zerodha; this project is unofficial and not

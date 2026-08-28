@@ -16,6 +16,11 @@ import { Tick } from './types';
 import { AgentsRuntime } from './AgentsRuntime';
 import { DailyReportEngine } from './DailyReportEngine';
 import { EodEngine } from './EodEngine';
+import { OrderGuard } from './OrderGuard';
+import { LiveTrader } from './LiveTrader';
+import { LiveDataService } from './LiveDataService';
+import { MomentumStrategy } from './MomentumStrategy';
+import { NewsMonitorEngine } from './NewsMonitorEngine';
 
 const NEWS_LOOP_MS = Number(process.env.NEWS_LOOP_MS) || 30 * 60 * 1000;
 
@@ -80,6 +85,13 @@ async function main(): Promise<void> {
   const optionsTrader = new OptionsTrader(config, options, ledger, risk);
   const report = new DailyReportEngine(config, ledger, news, risk, llm);
   const eod = new EodEngine(config, ledger, risk, trader, news);
+
+  // --- Momentum strategy brain + event-driven news monitor (Phase 4.4) ------
+  const guard = new OrderGuard(ledger);
+  const liveTrader = new LiveTrader(config, ledger, trader, guard, null, null);
+  const liveData = new LiveDataService();
+  const momentum = new MomentumStrategy(config, ledger, risk, trader, liveData, liveTrader);
+  const newsMonitor = new NewsMonitorEngine(config, ledger, news, momentum);
 
   // --- Strategy brain ------------------------------------------------------
   const agent = new MarketAgent(
@@ -190,6 +202,16 @@ async function main(): Promise<void> {
     });
   }, NEWS_DETAIL_LOOP_MS);
 
+  // --- Event-driven news monitor (Phase 4.4) -------------------------------
+  const newsMonitorTimer = setInterval(() => {
+    newsMonitor.poll(new Date()).catch((err) => {
+      logger.error({ err: err?.message }, 'News monitor poll error');
+    });
+  }, config.newsMonitor.intervalMs);
+  if (config.newsMonitor.enabled) {
+    logger.info({ intervalMs: config.newsMonitor.intervalMs }, 'News monitor enabled');
+  }
+
   // --- Shutdown handling ---------------------------------------------------
   let shuttingDown = false;
   const shutdown = async () => {
@@ -200,6 +222,7 @@ async function main(): Promise<void> {
     clearInterval(healthTimer);
     clearInterval(newsTimer);
     clearInterval(newsDetailTimer);
+    clearInterval(newsMonitorTimer);
 
     // Compute and persist the daily summary.
     try {

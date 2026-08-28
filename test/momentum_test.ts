@@ -270,5 +270,55 @@ function wireStrategy(regimeScore: number | null): MomentumStrategy {
   assert(s.currentRegimeMultiplier() === 1, 'neutral / no report is full size');
 }
 
+/* ------------------------------------------------------------------ */
+/* Shrink-not-block veto (Initiative 6b)                                */
+/* ------------------------------------------------------------------ */
+
+function wireStrategyWithBias(bias: string, vetoMode: 'block' | 'shrink'): MomentumStrategy {
+  const config = loadConfig();
+  config.risk.availableCapital = 1_000_000;
+  config.strategy.momentumTopN = 4;
+  config.strategy.momentumRegimeEnabled = true;
+  config.strategy.momentumRegimeRiskOffThreshold = -0.3;
+  config.strategy.momentumRegimeDefensiveThreshold = 0;
+  config.strategy.momentumRegimeFloorMultiplier = 0.4;
+  config.strategy.momentumVetoMode = vetoMode;
+  config.strategy.momentumVetoShrinkPct = 50;
+  config.risk.maxSingleStockPct = 100;
+  config.risk.maxTradeAllocation = 1_000_000;
+  const ledger = new Ledger(':memory:');
+  ledger.runMigrations();
+  ledger.recordDailyReport({
+    reportType: 'pre_open',
+    reportDate: '2026-01-01',
+    reportJson: JSON.stringify({
+      report_type: 'pre_open',
+      summary: 'test',
+      market_regime: { overall_sentiment: 'NEUTRAL', regime_score: 0, primary_catalyst: 'test' },
+      capital_management: { available_capital: 1_000_000, recommended_cash_reserve_pct: 20, suggested_total_deployment_pct: 80 },
+      portfolio_recommendations: [{ symbol: 'ACME', action_bias: bias, suggested_allocation_inr: 0 }],
+    }),
+  });
+  const risk = new RiskEngine(config, ledger);
+  const trader = new PaperTrader(config, ledger);
+  return new MomentumStrategy(config, ledger, risk, trader, new LiveDataService());
+}
+
+// 25. In 'shrink' mode, an AVOID name is sized down (not fully blocked).
+//    Full slot = 80% of 1M / 4 = 200k; shrink 50% → 100k → 1000 shares @ ₹100.
+{
+  const s = wireStrategyWithBias('AVOID', 'shrink');
+  const qty = s.sizeFor('ACME', 100);
+  assert(qty === 1000, `shrink mode sizes AVOID at 50% of slot (got ${qty}, want 1000)`);
+}
+
+// 26. In 'block' mode, sizing is NOT shrunk (the block happens in the rebalance
+//    loop, not in sizing) — so sizeFor returns the full slot.
+{
+  const s = wireStrategyWithBias('AVOID', 'block');
+  const qty = s.sizeFor('ACME', 100);
+  assert(qty === 2000, `block mode leaves sizing full (got ${qty}, want 2000)`);
+}
+
 console.log(failures === 0 ? '\nALL MOMENTUM TESTS PASSED' : `\n${failures} TEST(S) FAILED`);
 process.exit(failures === 0 ? 0 : 1);

@@ -20,7 +20,8 @@ import { PaperTrader } from '../../src/server/PaperTrader';
 import { MomentumStrategy } from '../../src/server/MomentumStrategy';
 import { LiveDataService } from '../../src/server/LiveDataService';
 import { ClosePoint } from '../../src/server/signals/momentum';
-import { createMockServer } from '../../kite-paper-node/src/index';
+import { createMockServer } from 'kite-paper-node';
+import { resolveDataDir } from './_dataDir';
 
 // The 10 mock-backtest case capitals (from run_all_cases.ts).
 const CASES = [
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
   // 1. Start the kite-paper-node mock REST server (serves real NSE daily CSVs).
   console.log(`Starting kite-paper-node mock server (${symbols.length} symbols)...`);
   const server = await createMockServer({
-    dataDir: 'kite-paper-node/data',
+    dataDir: resolveDataDir(),
     ticker: { mode: 'random-walk', randomWalk: { seedSymbols: symbols } },
     server: { port: 4123, host: '127.0.0.1' },
   });

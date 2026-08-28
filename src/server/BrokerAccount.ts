@@ -7,8 +7,8 @@
  * the reconciler and LiveTrader can be tested against a stub without dragging in
  * the whole Kite streamer.
  *
- * Both the real `kiteconnect` SDK and `kite-paper-node`'s drop-in mock satisfy
- * this shape, so the same code path runs in paper and live.
+ * Both the real `kiteconnect` SDK and the `kite-paper-node` npm package's
+ * drop-in mock satisfy this shape, so the same code path runs in paper and live.
  */
 
 export interface BrokerHolding {

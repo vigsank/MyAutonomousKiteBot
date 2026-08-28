@@ -556,6 +556,91 @@ decision rule** so the AI can never sit in limbo forever:
   All pass. No live shadow history yet, so `score:shadow` still reports "no
   scorable proposals" — the rule activates as real data accrues.
 
+**4.4 — Event-driven news monitor (defensive exit + opportunistic entry)** `[x]`
+
+> **Status: built. Focus is now the DEFENSIVE path only; opportunistic is
+deprecated (off by default).** Validation below. The AI defensive exit is the
+one AI feature worth pursuing — the live system reacts to REAL negative news to
+protect held positions between rebalances.
+
+> Closes the "monthly gap": a pure monthly-rebalance book is blind to news
+> between rebalances — it rides a crash to the stop-loss (defensive miss) and
+> misses a strong mover until next month (opportunistic miss). This layer reacts
+> to news **as it happens**, without the cost of literal hourly polling.
+
+**Design (poll → diff → detail → AI → strategy):**
+
+```
+Google News RSS (watchlist)  --poll 15 min-->  diff vs seen  --new news-->
+  ├─ HELD symbol  -> TinyFish detail -> AI sentiment -> strategy: EXIT/SHRINK if negative   (defensive)
+  └─ non-held momentum candidate -> AI sentiment -> strategy: OPPORTUNISTIC ENTRY if breakout (pull-forward)
+```
+
+**Components:**
+1. **News feed poller** — polls Google News RSS per watchlist symbol (reuses
+   `NewsSentimentEngine.fetchGoogleNewsArticles`), diffs against a **seen-article
+   store** (persisted URL/title per symbol) to detect *new* items. Interval
+   **15 min** (configurable).
+2. **Seen-article store** — SQLite table (or persisted map) of seen article URLs
+   per symbol, so a story is processed once, not re-triggered every poll.
+3. **Detail fetcher** — on new news, fetch the article body via TinyFish
+   (`NewsSentimentEngine.fetchPage`) for context.
+4. **AI sentiment** — score the new news via the LLM (`aiSentiment`), producing a
+   per-symbol sentiment score.
+5. **Strategy trigger** — two paths, both routed through `MomentumStrategy` so
+   the RiskEngine stays the final arbiter:
+   - **Defensive exit/shrink**: if a HELD symbol's new-news sentiment <
+     `NEWS_MONITOR_SENTIMENT_EXIT_THRESHOLD`, momentum exits or shrinks that
+     position immediately (news-risk exit) — the crash-catch that prevents the
+     stop-loss drag.
+   - **Opportunistic entry**: if a non-held **momentum candidate** (already in
+     the ranking, near the top) shows a strong price breakout **and** positive
+     news, enter a **partial position** early — a pull-forward of the monthly
+     entry, confirmed/finished at the next rebalance. **DEPRECATED — off by
+default (`NEWS_MONITOR_OPPORTUNISTIC_ENABLED=false`).** It added churn/cost and
+is an AI-as-originator signal role that failed validation.
+
+**Authority model (unchanged):** momentum stays the originator. The opportunistic
+entry only fires on symbols already in the momentum ranking; the AI can boost/shrink
+but never invent a symbol outside it (out-of-ranking ideas stay shadow-only). The
+defensive exit is a risk overlay on held positions.
+
+**Cost:** event-driven — LLM calls are proportional to *news volume*, not time.
+Production-friendly with a dedicated LLM account; throttled in dev/testing via
+`NEWS_MONITOR_ENABLED` / `NEWS_MONITOR_INTERVAL_MS`.
+
+**Config (new):** `NEWS_MONITOR_ENABLED`, `NEWS_MONITOR_INTERVAL_MS` (default
+900000 = 15 min), `NEWS_MONITOR_SENTIMENT_EXIT_THRESHOLD`,
+`NEWS_MONITOR_OPPORTUNISTIC_ENABLED`, `NEWS_MONITOR_OPPORTUNISTIC_PARTIAL_PCT`.
+
+**Validation (before live):**
+- Defensive path: does exiting on negative news avoid crashes (lower left-tail)
+  without excessive whipsaw? Walk-forward on the 5-year CSV data.
+- Opportunistic path: does early entry on breakouts beat waiting for the monthly
+  rebalance? Walk-forward, net of the extra turnover/costs.
+- Both must pass walk-forward before the ladder promotes them (Phase 5).
+
+**Validation result (Adhoc 20–22):** the defensive path was walk-forwarded
+(momentum vs momentum + defensive, all 37 rolling 12-month windows) and
+tested with REAL date-scoped news over 4 non-overlapping windows. Findings:
+
+- **Price-proxy trigger** (exit on any 5% drop): cuts maxDD 40.2% → 24.2% but
+  halves return (21.97% → 11.83% annualized) and worsens Sharpe (0.80 → 0.69);
+  keeps returns in only 8/37 windows. Not worth it.
+- **Real-news confirmation**: only 12/48 (25%) of sharp drops are genuinely
+  news-driven (75% whipsaw) — real news fires ~4x less than the price proxy.
+  The premise holds.
+- **But a real-news-only defensive book does NOT consistently help**: aggregate
+  annualized 40.82% → 26.24%, Sharpe 1.13 → 0.89, cuts maxDD in only 2/4
+  windows, keeps returns in only 1/4. Genuine news crashes often mean-revert, so
+  selling on bad news locks in a dip that would have bounced.
+
+**Verdict: keep the defensive exit gated OFF (`NEWS_MONITOR_ENABLED=false`).**
+The AI defensive layer does not reliably earn its seat. The honest end of
+pursuing AI features: deterministic momentum remains the only thing that beats
+the market; AI sentiment/news does not add value as a signal, an overlay, or a
+defensive trigger.
+
 ---
 
 ## Phase 5 — Go-live ladder
@@ -596,3 +681,28 @@ the drawdown ceiling). `recommendLadderStage()` is one-directional on bad news:
 re-earning each step — capital never resumes on a hunch. `npm run status:golive`
 prints the ladder, the current stage (`LADDER_STAGE` env), and the
 recommendation. Covered by `test:ladder`.
+
+---
+
+## Phase 6 — A-core, B-earned: shadow blackboard promotion path `[x] — REJECTED & REMOVED`
+
+**Status: TRIED, REJECTED, CODE REMOVED (2026-08-20).**
+
+The idea: let a multi-signal AI blackboard (momentum + mean-reversion + regime)
+run in shadow and earn a co-originator seat only if it beat momentum
+out-of-sample. The framework was built and tested honestly, and the answer was
+**no**:
+
+- **Full-window backtest** (2022-09 → 2026-08): the blackboard blend (B) badly
+  underperformed momentum (13.88% vs 31.54% annualized) — it dilutes the edge.
+- **Regime-conditional overlay (C)** looked promising in one backtest (+4.3pp),
+  but the **5-year walk-forward** (`shadow_blackboard_walkforward.ts`) showed C
+  beats A in only **17/37 rolling windows (45.95%)** — the edge was over-fit to
+  the 2025 H1 risk-off cluster, not robust.
+
+**Verdict: the blackboard does not earn a co-originator seat, and its
+regime-conditional risk-off role does not reliably beat momentum.** All Phase 6
+code was stripped: `signals/meanReversion.ts`, the three shadow-blackboard
+harnesses, the overlay logic in `MomentumStrategy.ts`, the config fields, and
+their tests/scripts. Momentum (A) remains the sole validated originator.
+Full detail in `docs/plan/adhoc-change.md` (Adhoc 12–19).

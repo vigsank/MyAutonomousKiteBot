@@ -964,6 +964,28 @@ export class Ledger {
     return res.changes > 0;
   }
 
+  /**
+   * Record that the news monitor has processed an article URL for a symbol.
+   * Returns true when it is NEW (first time seen), false when already seen.
+   */
+  recordSeenArticle(symbol: string, url: string, title?: string): boolean {
+    const res = this.db
+      .prepare(
+        `INSERT OR IGNORE INTO seen_articles (symbol, url, title)
+         VALUES (?, ?, ?)`,
+      )
+      .run(symbol, url, title ?? null);
+    return res.changes > 0;
+  }
+
+  /** True when the news monitor has already processed this article URL. */
+  isArticleSeen(symbol: string, url: string): boolean {
+    const row = this.db
+      .prepare(`SELECT 1 FROM seen_articles WHERE symbol = ? AND url = ?`)
+      .get(symbol, url);
+    return !!row;
+  }
+
   /** Read persisted news for a symbol (for pattern / summary runs). */
   getNewsArticles(
     symbol: string,

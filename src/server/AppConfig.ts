@@ -74,6 +74,18 @@ export interface AppConfig {
     /** Event-driven LLM trigger (breaking-news listener) — deferred, OFF by default. */
     eventDrivenEnabled: boolean;
   };
+  /** Event-driven news monitor (Phase 4.4) — poll RSS, react to new news. */
+  newsMonitor: {
+    enabled: boolean;
+    /** Poll interval in ms (default 15 min). */
+    intervalMs: number;
+    /** New-news sentiment below this exits/shrinks a HELD position (defensive). */
+    sentimentExitThreshold: number;
+    /** Allow opportunistic partial entries on momentum candidates with breakout + positive news. */
+    opportunisticEnabled: boolean;
+    /** Partial-entry size as % of the equal-weight slot (pull-forward). */
+    opportunisticPartialPct: number;
+  };
   telegram: {
     botToken: string;
     chatId: string;
@@ -208,6 +220,10 @@ export interface AppConfig {
     momentumRegimeDefensiveThreshold: number;
     /** Floor on the regime sizing multiplier (0 = go to cash on risk-off). */
     momentumRegimeFloorMultiplier: number;
+    /** AI AVOID handling: 'block' (hard veto) or 'shrink' (allow at reduced size). */
+    momentumVetoMode: 'block' | 'shrink';
+    /** When vetoMode='shrink', AVOID names are sized at this % of their slot. */
+    momentumVetoShrinkPct: number;
     /** News sentiment below this vetoes momentum entries / forces exits. */
     newsVetoThreshold: number;
     /** Binary corporate-action types that trigger the event blackout. */
@@ -434,6 +450,13 @@ export function loadConfig(): AppConfig {
       forceSignalSymbol: str('AGENTS_FORCE_SIGNAL_SYMBOL', 'ITC'),
       eventDrivenEnabled: str('AGENTS_EVENT_DRIVEN') === 'true',
     },
+    newsMonitor: {
+      enabled: str('NEWS_MONITOR_ENABLED') === 'true',
+      intervalMs: num('NEWS_MONITOR_INTERVAL_MS', 15 * 60 * 1000),
+      sentimentExitThreshold: num('NEWS_MONITOR_SENTIMENT_EXIT_THRESHOLD', -0.5),
+      opportunisticEnabled: str('NEWS_MONITOR_OPPORTUNISTIC_ENABLED') === 'true',
+      opportunisticPartialPct: num('NEWS_MONITOR_OPPORTUNISTIC_PARTIAL_PCT', 50),
+    },
     telegram: {
       botToken: str('TELEGRAM_BOT_TOKEN'),
       chatId: str('TELEGRAM_CHAT_ID'),
@@ -530,6 +553,8 @@ export function loadConfig(): AppConfig {
       momentumRegimeRiskOffThreshold: num('MOMENTUM_REGIME_RISK_OFF_THRESHOLD', -0.3),
       momentumRegimeDefensiveThreshold: num('MOMENTUM_REGIME_DEFENSIVE_THRESHOLD', 0),
       momentumRegimeFloorMultiplier: num('MOMENTUM_REGIME_FLOOR_MULTIPLIER', 0.4),
+      momentumVetoMode: str('MOMENTUM_VETO_MODE') === 'shrink' ? 'shrink' : 'block',
+      momentumVetoShrinkPct: num('MOMENTUM_VETO_SHRINK_PCT', 50),
       newsVetoThreshold: num('NEWS_VETO_THRESHOLD', -0.5),
       eventBlackoutTypes: csv(str('EVENT_BLACKOUT_TYPES', 'EARNINGS,RESULTS,RATING,REGULATORY,MERGER,DEMERGER,AGM,BOARD_MEETING,SPLIT,BONUS,RIGHTS_ISSUE')),
       eventBlackoutDays: num('EVENT_BLACKOUT_DAYS', 3),

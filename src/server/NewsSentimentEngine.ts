@@ -184,6 +184,31 @@ export class NewsSentimentEngine {
       .slice(0, this.config.tinyfish.maxResults);
   }
 
+  /**
+   * Date-scoped TinyFish search for an ARBITRARY query (not just a symbol). Used
+   * to backfill macro headlines for a historical date so the LLM sees the news
+   * from that period rather than today's. Falls back to live Google RSS when the
+   * date-scoped TinyFish call returns nothing.
+   */
+  async fetchArticlesForQueryDate(query: string, date: string): Promise<NewsArticle[]> {
+    const q = encodeURIComponent(query);
+    const next = new Date(`${date}T00:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    const before = next.toISOString().slice(0, 10);
+    const url = `${this.tinyfishSearchUrl}?query=${q}&domain_type=news&after_date=${date}&before_date=${before}`;
+    const data = await this.tinyfishGet(url);
+    if (!data) return [];
+    return (data.results ?? [])
+      .map((r: TinyFishArticle) => ({
+        title: r.title,
+        link: r.url,
+        summary: r.snippet,
+        pubDate: r.date ?? r.publisher,
+        source: 'TinyFish',
+      }))
+      .slice(0, this.config.tinyfish.maxResults);
+  }
+
   /** Free, keyless Google News RSS fallback for a symbol. */
   async fetchGoogleNewsArticles(symbol: string): Promise<NewsArticle[]> {
     const url = `https://news.google.com/rss/search?q=${encodeURIComponent(symbol + ' stock')}&hl=en-IN&gl=IN&ceid=IN:en`;
@@ -241,6 +266,30 @@ export class NewsSentimentEngine {
       };
     }
 
+    if (this.aiConfigured) {
+      return this.aiSentiment(symbol, articles);
+    }
+    return this.heuristicSentiment(symbol, articles);
+  }
+
+  /**
+   * Date-scoped sentiment: score news as-of `date` (YYYY-MM-DD) using the
+   * TinyFish time-range filter. Used by backtests so the AI sentiment reflects
+   * the historical period being rebalanced, not today's live headlines. Falls
+   * back to neutral when no articles from that window are findable.
+   */
+  async sentimentForDate(symbol: string, date: string): Promise<SentimentResult | null> {
+    const articles = await this.fetchArticlesForDate(symbol, date);
+    if (articles.length === 0) {
+      return {
+        symbol,
+        score: 0,
+        label: 'neutral',
+        summary: `No news found for ${symbol} around ${date}.`,
+        sources: [],
+        timestamp: new Date(),
+      };
+    }
     if (this.aiConfigured) {
       return this.aiSentiment(symbol, articles);
     }

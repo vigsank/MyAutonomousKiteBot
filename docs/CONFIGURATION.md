@@ -205,8 +205,8 @@ LIVE_PROVIDER=kite
 
 - **`kite` (default):** Zerodha Kite websocket — real-time ticks + live history.
   The production choice for paper/real trading. When `PAPER_TRADING=true`, the
-  in-process `kite-paper-node` mock provides simulated fills against the same
-  provider interface.
+  `kite-paper-node` mock (a separate repo/package, consumed via npm) provides
+  simulated fills against the same provider interface.
 
 > **Rule of thumb:** keep `BACKTEST_PROVIDER=yahoo` (free, no account) and
 > `LIVE_PROVIDER=kite`. Backtests run free; live runs need Kite.
@@ -506,6 +506,28 @@ de-duplicated by title and capped per symbol per cycle.
 
 > **News-first philosophy:** the LLM is used only to *score* the headlines, not
 > to discover them. The primary signal stays deterministic and keyless.
+
+### 3.1 Event-driven news monitor (Phase 4.4)
+
+Closes the "monthly gap": a pure monthly-rebalance book is blind to news between
+rebalances. The monitor polls Google News RSS for the watchlist, diffs against a
+seen-article store, and reacts to **new** news with two paths:
+
+- **Defensive** — a HELD symbol with strongly negative news is exited/shrunk
+  immediately (crash-catch before the stop-loss drag).
+- **Opportunistic** — a non-held momentum candidate with positive news gets a
+  PARTIAL entry (pull-forward of the monthly entry).
+
+Momentum stays the originator; the RiskEngine is the final arbiter. Event-driven,
+so LLM calls scale with news volume, not time.
+
+| Variable | Meaning | Default |
+| -------- | ------- | ------- |
+| `NEWS_MONITOR_ENABLED` | Master switch (off by default) | `false` |
+| `NEWS_MONITOR_INTERVAL_MS` | Poll interval | `900000` (15 min) |
+| `NEWS_MONITOR_SENTIMENT_EXIT_THRESHOLD` | New-news sentiment below this exits a held name | `-0.5` |
+| `NEWS_MONITOR_OPPORTUNISTIC_ENABLED` | Allow opportunistic partial entries | `true` |
+| `NEWS_MONITOR_OPPORTUNISTIC_PARTIAL_PCT` | Partial-entry size as % of the slot | `50` |
 
 ---
 
@@ -1017,6 +1039,8 @@ Defaults (see §Environment variables overview for the full list):
 | `MOMENTUM_REGIME_RISK_OFF_THRESHOLD` | `-0.3` | regime_score at/below this → risk-off (to the floor) |
 | `MOMENTUM_REGIME_DEFENSIVE_THRESHOLD` | `0` | regime_score at/below this starts de-risking (linear) |
 | `MOMENTUM_REGIME_FLOOR_MULTIPLIER` | `0.4` | Floor on the regime sizing multiplier (0 = go to cash) |
+| `MOMENTUM_VETO_MODE` | `block` | AI AVOID handling: `block` (hard veto) or `shrink` (allow at reduced size) |
+| `MOMENTUM_VETO_SHRINK_PCT` | `50` | When `MOMENTUM_VETO_MODE=shrink`, AVOID names are sized at this % of their slot |
 | `NEWS_VETO_THRESHOLD` | `-0.5` | News score below this vetoes/forces exit |
 | `EVENT_BLACKOUT_DAYS` | `3` | Days before a binary event to blackout (0 disables) |
 | `EVENT_BLACKOUT_TYPES` | 8 types + SPLIT/BONUS/RIGHTS_ISSUE | Blackout event types |

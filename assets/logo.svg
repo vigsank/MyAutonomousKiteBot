@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="MyAutonomousKiteBot logo">
+  <defs>
+    <!-- Colorful diagonal gradient, top-left light source -->
+    <linearGradient id="kiteGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="30%" stop-color="#8b5cf6"/>
+      <stop offset="60%" stop-color="#d946ef"/>
+      <stop offset="82%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+
+    <!-- Soft glossy highlight -->
+    <radialGradient id="gloss" cx="0.35" cy="0.28" r="0.6">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Drop shadow -->
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#4c1d95" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <!-- whole mark, tilted at a flying angle -->
+  <g transform="rotate(-12 256 256)">
+
+    <!-- kite diamond (taller than wide) -->
+    <g filter="url(#shadow)">
+      <polygon points="256,48 420,256 256,464 92,256" fill="url(#kiteGrad)"/>
+    </g>
+
+    <!-- glossy highlight -->
+    <polygon points="256,48 420,256 256,464 92,256" fill="url(#gloss)"/>
+
+    <!-- candlestick chart (rising trend) -->
+    <g stroke-linecap="round">
+      <!-- wicks -->
+      <line x1="160" y1="280" x2="160" y2="330" stroke="#22c55e" stroke-width="2"/>
+      <line x1="205" y1="290" x2="205" y2="335" stroke="#ef4444" stroke-width="2"/>
+      <line x1="250" y1="255" x2="250" y2="320" stroke="#22c55e" stroke-width="2"/>
+      <line x1="295" y1="225" x2="295" y2="285" stroke="#22c55e" stroke-width="2"/>
+      <line x1="340" y1="185" x2="340" y2="255" stroke="#22c55e" stroke-width="2"/>
+
+      <!-- bodies -->
+      <rect x="151" y="290" width="18" height="30" fill="#22c55e"/>
+      <rect x="196" y="300" width="18" height="25" fill="#ef4444"/>
+      <rect x="241" y="265" width="18" height="45" fill="#22c55e"/>
+      <rect x="286" y="235" width="18" height="40" fill="#22c55e"/>
+      <rect x="331" y="195" width="18" height="50" fill="#22c55e"/>
+
+      <!-- rising trend line -->
+      <polyline points="160,290 205,300 250,265 295,235 340,195" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" opacity="0.9"/>
+
+      <!-- upward arrow -->
+      <line x1="340" y1="215" x2="340" y2="175" stroke="#ffffff" stroke-width="5"/>
+      <polygon points="328,187 352,187 340,167" fill="#ffffff"/>
+    </g>
+
+  </g>
+
+  <!-- tail: connects to the diamond's bottom vertex and curves to center -->
+  <g filter="url(#shadow)">
+    <path d="M212 458 C 225 475, 243 490, 256 500" stroke="#a855f7" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M256 498 L 262 504 L 256 510 L 250 504 Z" fill="#d946ef"/>
+  </g>
+</svg>

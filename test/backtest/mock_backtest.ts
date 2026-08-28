@@ -20,8 +20,9 @@ import { OptionsTrader } from '../../src/server/OptionsTrader';
 import { Candle, TradeRequest } from '../../src/server/types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { resolveDataDir } from './_dataDir';
 
-const DATA_DIR = path.join(process.cwd(), 'kite-paper-node', 'data');
+const DATA_DIR = resolveDataDir();
 
 /** Reject a promise after `ms` so a hung network/LLM call can't block the run. */
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {

@@ -105,6 +105,26 @@ export class MomentumStrategy {
     return bias === 'AVOID' || bias === 'EXIT_FULL';
   }
 
+  /** The latest report's action_bias for a symbol, or undefined. */
+  private reportBiasFor(symbol: string): string | undefined {
+    this.loadReportBias();
+    return this.reportBias.get(symbol)?.action_bias;
+  }
+
+  /**
+   * True when the report fully BLOCKS a new entry for a symbol.
+   *
+   * EXIT_FULL always blocks. AVOID blocks only in 'block' mode; in 'shrink'
+   * mode an AVOID name is allowed but sized down (see quantityFor), so the AI
+   * can't fully miss a quiet momentum winner while still trimming exposure.
+   */
+  private reportBlocksEntry(symbol: string): boolean {
+    const bias = this.reportBiasFor(symbol);
+    if (bias === 'EXIT_FULL') return true;
+    if (bias === 'AVOID' && this.config.strategy.momentumVetoMode === 'block') return true;
+    return false;
+  }
+
   /**
    * AI sentiment-regime switching (Initiative 6).
    *
@@ -346,7 +366,7 @@ export class MomentumStrategy {
       (sym) =>
         !currentSymbols.has(sym) &&
         !veto(sym) &&
-        !this.reportVetoes(sym) &&
+        !this.reportBlocksEntry(sym) &&
         !this.hasUpcomingEvent(sym, now) &&
         (prices.get(sym) ?? 0) > 0,
     );
@@ -361,8 +381,8 @@ export class MomentumStrategy {
         skipped.push(`${sym}: news veto`);
         continue;
       }
-      if (this.reportVetoes(sym)) {
-        skipped.push(`${sym}: report veto (${this.reportBias.get(sym)?.action_bias})`);
+      if (this.reportBlocksEntry(sym)) {
+        skipped.push(`${sym}: report veto (${this.reportBiasFor(sym)})`);
         continue;
       }
       if (this.hasUpcomingEvent(sym, now)) {
@@ -519,6 +539,56 @@ export class MomentumStrategy {
   }
 
   /**
+   * Defensive exit (Phase 4.4): exit a HELD position immediately on negative
+   * news, before the price fully reflects it. Routes through RiskEngine +
+   * LiveTrader. Returns true when the position was closed.
+   */
+  defensiveExit(symbol: string, price: number, now: Date, reason: string): boolean {
+    const pos = this.ledger.getPosition(symbol, 'NSE');
+    if (!pos) return false;
+    const trade: TradeRequest = {
+      symbol,
+      exchange: 'NSE',
+      quantity: pos.quantity,
+      direction: pos.direction === 'LONG' ? 'SHORT' : 'LONG',
+      entryPrice: price,
+      reason,
+      ticketSize: pos.quantity * price,
+      timestamp: now,
+      product: 'CNC',
+    };
+    const decision = this.risk.evaluate(trade);
+    if (!decision.allowed) return false;
+    return this.submit(trade, 'NEWS_DEFENSIVE_EXIT', istHourBucket(now));
+  }
+
+  /**
+   * Opportunistic entry (Phase 4.4): enter a PARTIAL position on a momentum
+   * candidate with a strong breakout + positive news, pulling forward the
+   * monthly entry. Sized at `newsMonitor.opportunisticPartialPct` of the slot.
+   * Routes through RiskEngine + LiveTrader. Returns true when the entry filled.
+   */
+  opportunisticEntry(symbol: string, price: number, now: Date, reason: string): boolean {
+    const full = this.sizeFor(symbol, price, this.topN);
+    if (full <= 0) return false;
+    const qty = Math.max(1, Math.floor((full * this.config.newsMonitor.opportunisticPartialPct) / 100));
+    const trade: TradeRequest = {
+      symbol,
+      exchange: 'NSE',
+      quantity: qty,
+      direction: 'LONG',
+      entryPrice: price,
+      reason,
+      ticketSize: qty * price,
+      timestamp: now,
+      product: 'CNC',
+    };
+    const decision = this.risk.evaluate(trade);
+    if (!decision.allowed) return false;
+    return this.submit(trade, 'NEWS_OPPORTUNISTIC_ENTRY', istHourBucket(now));
+  }
+
+  /**
    * Sizing: equal-weight against a FIXED denominator, optionally shrunk by the
    * advisor (A2) and the adaptation multiplier (F2), then capped by risk.
    *
@@ -559,6 +629,15 @@ export class MomentumStrategy {
 
     // Sentiment-regime switching: scale exposure by the AI report's regime_score.
     perSymbol *= this.currentRegimeMultiplier();
+
+    // Shrink-not-block: in 'shrink' mode an AVOID name is allowed but sized down
+    // to a fraction of its slot, so the AI can't fully miss a quiet winner.
+    if (this.config.strategy.momentumVetoMode === 'shrink') {
+      const bias = this.reportBiasFor(symbol);
+      if (bias === 'AVOID') {
+        perSymbol *= this.config.strategy.momentumVetoShrinkPct / 100;
+      }
+    }
 
     // Never propose more than is actually free right now.
     perSymbol = Math.min(perSymbol, capital.available);

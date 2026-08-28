@@ -53,8 +53,9 @@ wrong numbers.
   `def(...)` helper wraps every agent so it never throws. `registry.ts` combines
   them; `orchestrator.ts` runs the pass (parallel/sequential by `deps`).
 - **Client** (`src/client/`): React + Vite + shadcn/ui dashboard.
-- **Mock** (`kite-paper-node/`): local mock Kite SDK + mock MCP (tool parity with
-  Zerodha's `kite-mcp-server`). Used when `PAPER_TRADING=true`.
+- **Mock** (`kite-paper-node`, a **separate repo/package**): mock Kite SDK + mock
+  MCP (tool parity with Zerodha's `kite-mcp-server`). Consumed via npm (SDK
+  drop-in) + network (REST/WS/MCP). Used when `PAPER_TRADING=true`.
 
 ## Safety invariants (never break)
 

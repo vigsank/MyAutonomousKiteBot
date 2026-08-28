@@ -36,12 +36,22 @@ export class DailyReportEngine {
     private readonly llm: LlmManager,
   ) {}
 
-  /** Generate a report for one stage of the daily cycle. */
-  async generate(reportType: ReportType, symbols: string[], now: Date): Promise<DailyReport | null> {
+  /**
+   * Generate a report for one stage of the daily cycle.
+   * @param asOf  optional YYYY-MM-DD. When set, per-symbol news sentiment is
+   *              fetched via the TinyFish time-range filter for that date, so
+   *              backtests see the news the bot would have had then (no look-ahead).
+   */
+  async generate(
+    reportType: ReportType,
+    symbols: string[],
+    now: Date,
+    asOf?: string,
+  ): Promise<DailyReport | null> {
     try {
-      const macro = await fetchGlobalMacro();
-      const macroNews = await this.fetchMacroNews();
-      const analyzed = await this.analyzeSymbols(symbols);
+      const macro = await fetchGlobalMacro(asOf);
+      const macroNews = await this.fetchMacroNews(asOf);
+      const analyzed = await this.analyzeSymbols(symbols, asOf);
       const capital = this.risk.capitalSnapshot();
 
       const prompt = this.buildPrompt(reportType, now, macro, macroNews, analyzed, capital);
@@ -78,24 +88,31 @@ export class DailyReportEngine {
   }
 
   /** Global-macro headlines: TinyFish primary, Google News RSS fallback. */
-  private async fetchMacroNews(): Promise<NewsArticle[]> {
+  private async fetchMacroNews(asOf?: string): Promise<NewsArticle[]> {
     const query = 'global market India Dalal Street overnight';
     if (this.news.tinyfishConfigured) {
-      const tf = await this.news.fetchTinyFishArticles(query).catch(() => []);
+      // Date-scoped to the rebalance date when backtesting (no look-ahead);
+      // otherwise the live query.
+      const tf = asOf
+        ? await this.news.fetchArticlesForQueryDate(query, asOf).catch(() => [])
+        : await this.news.fetchTinyFishArticles(query).catch(() => []);
       if (tf.length > 0) return tf;
     }
     return this.news.fetchGoogleNewsArticles(query).catch(() => []);
   }
 
   /** Per-symbol context: price, previous-day change, sentiment, holding status. */
-  private async analyzeSymbols(symbols: string[]): Promise<SymbolContext[]> {
+  private async analyzeSymbols(symbols: string[], asOf?: string): Promise<SymbolContext[]> {
     const out: SymbolContext[] = [];
     for (const symbol of symbols) {
       try {
         const inst = this.ledger.getInstrumentBySymbol(symbol, 'NSE');
         const price = inst?.last_price ?? 0;
         const prevDayChange = this.previousDayChange(symbol);
-        const sentiment = (await this.news.sentimentFor(symbol).catch(() => null))?.score ?? 0;
+        // Date-scoped sentiment when backtesting; live sentiment otherwise.
+        const sentiment = asOf
+          ? (await this.news.sentimentForDate(symbol, asOf).catch(() => null))?.score ?? 0
+          : (await this.news.sentimentFor(symbol).catch(() => null))?.score ?? 0;
         const pos = this.ledger.getPosition(symbol, 'NSE');
         const weightPct = pos && price > 0
           ? (pos.quantity * price / this.config.risk.availableCapital) * 100

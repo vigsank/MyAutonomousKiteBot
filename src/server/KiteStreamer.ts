@@ -12,12 +12,12 @@ import {
 /**
  * Resolve the Kite SDK classes.
  *
- * When PAPER_TRADING=true, use the local kite-paper-node mock (drop-in
+ * When PAPER_TRADING=true, use the kite-paper-node mock (drop-in
  * replacement) instead of the real kiteconnect SDK. The mock exposes the
  * same API surface (MockKiteConnect/MockKiteTicker extend the real classes).
  *
- * `kite-paper-node` is used locally (not yet published to npm) via a
- * relative require to its compiled `dist/`. Build it once with:
+ * `kite-paper-node` is consumed as a package (npm link for local dev, or a
+ * git/npm dependency in production). Build it once with:
  *   cd kite-paper-node && npm run build
  */
 function resolveKiteSdk(): {
@@ -26,7 +26,7 @@ function resolveKiteSdk(): {
 } {
   if (process.env.PAPER_TRADING === 'true') {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mock = require('../../kite-paper-node/dist');
+    const mock = require('kite-paper-node');
     return {
       KiteConnect: mock.KiteConnect ?? mock.MockKiteConnect,
       KiteTicker: mock.KiteTicker ?? mock.MockKiteTicker,

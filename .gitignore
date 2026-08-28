@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# kite-paper-node is now a separate repo (sibling checkout / npm package)
+kite-paper-node/
+
 # Build output
 dist/
 
@@ -43,3 +46,6 @@ Thumbs.db
 
 # Regenerable backtest caches (price data) — never commit
 test/backtest/results/**/.cache/
+
+# direnv (local env — GH_HOST=github.com)
+.envrc

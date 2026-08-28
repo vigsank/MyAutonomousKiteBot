@@ -24,7 +24,7 @@ Status legend: `[x]` done · `[~]` in progress · `[ ]` not started
    orders/positions/ledger/GTT to a **separate** SQLite DB via `--state-file`
    (StatePersistence module, wired into the REST mutation handlers and the
    MockEngine). Restarting the mock restores the account, so it behaves like a
-   real Zerodha backend. See `kite-paper-node/docs/RUN-WITH-PARENT.md` §2c.
+   real Zerodha backend. See `kite-paper-node/docs/RUN-IN-MYAUTONOMOUSKITEBOT.md` §2c.
 5. `[x]` **Profit/loss target algorithm (30–40% take / 10% stop, configurable).**
    **Verified already coded**: `STOP_LOSS_PERCENT` (default 4%) is a hard exit
    in `holdingsReview`/`MarketAgent`; `HOLDINGS_PROFIT_TARGET_PCT` (default 8%)
@@ -74,6 +74,41 @@ Status legend: `[x]` done · `[~]` in progress · `[ ]` not started
     backtest reliably, and LLM catalyst-detection is noisy. MUST be shadow-book
     gated (`agent_proposals` as SHADOW, executed=0) and promoted to live only after
     it beats the momentum baseline over many months. Not yet built.
+15. `[~]` **Event-driven news monitor (Phase 4.4).** Closes the "monthly gap" —
+    react to news as it happens instead of only at the monthly rebalance. Poll
+    Google News RSS (15 min) → diff vs a seen-article store → TinyFish detail →
+    AI sentiment → strategy, with TWO paths: (a) **defensive** exit/shrink a held
+    name on negative news (crash-catch), (b) **opportunistic** partial entry on a
+    momentum candidate with a strong breakout + positive news (pull-forward of the
+    monthly entry). Momentum stays the originator; AI can boost/shrink but never
+    invent a symbol. Config: `NEWS_MONITOR_ENABLED`, `NEWS_MONITOR_INTERVAL_MS`
+    (900000), `NEWS_MONITOR_SENTIMENT_EXIT_THRESHOLD`,
+    `NEWS_MONITOR_OPPORTUNISTIC_ENABLED`, `NEWS_MONITOR_OPPORTUNISTIC_PARTIAL_PCT`.
+    Full design in `docs/plan/plan.md` §4.4. **Core built** (seen-article store,
+    `NewsMonitorEngine`, `defensiveExit`/`opportunisticEntry`, wired into
+    `index.ts`, tests pass — see adhoc #9). **Walk-forward + mock-harness done**
+    (adhoc #10): price-proxy validation shows the defensive path halves max
+    drawdown (40.9% → 20.9%); the mock harness consumes the news monitor and
+    fires defensive/opportunistic actions end-to-end. **Refined (adhoc #10b/c):**
+    opportunistic proxy now sizes against one slot and caps at 2 concurrent
+    positions (no more +1067% inflation); the mock harness refreshes the momentum
+    ranking daily so the candidacy check is fresh. **Real-news validation done
+    (adhoc #11):** price proxies align only weakly (57%) with real news, and a
+    6-month news-monitor mock returned ~0% (churn) — the aggressive triggers
+    subtract value. **Remaining:** tighten the news-monitor triggers (higher
+    thresholds, fewer opportunities) and prefer real date-scoped news over price
+    proxies before the ladder promotes the paths.
+16. `[~]` **Split `kite-paper-node` into a standalone GitHub repo.** See
+    `docs/plan/kite-paper-node-split.md`. **Done:** code decoupling (SDK mock via
+    `require('kite-paper-node')`, `createMockServer` via package import, data
+    paths via `test/backtest/_dataDir.ts` + `KITE_PAPER_DATA_DIR`), git history
+    extracted to a sibling repo (`/Users/i312327/SAPDevelop/kite-paper-node`,
+    remote `github.com/vigsank/kite-paper-node`), parent untracked it + added to
+    `.gitignore`, `package.json` now depends on `github:vigsank/kite-paper-node#main`,
+    `npm link` wired for local dev, `npm run ci` green + mock smoke test passed.
+    **Remaining (needs user):** push the sibling repo to github.com (gh CLI here is
+    authenticated to SAP enterprise, not github.com), then `npm install` to pull the
+    git dependency.
 
 ---
 

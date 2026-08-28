@@ -25,7 +25,8 @@ market (NSE equities). It:
 
 - Watches a **214-symbol watchlist** (`data/watchlist.json`).
 - Streams **real market data** (live ticks or historical candles) from Zerodha
-  Kite, with a local `kite-paper-node` mock for paper trading.
+  Kite, with the `kite-paper-node` mock (a separate repo/package) for paper
+  trading.
 - Runs a **regime-adaptive technical strategy** (`MarketAgent`) that picks a
   mean-reversion / pullback-trend / breakout mode from RSI(14), ADX(14), ATR and
   SMA structure each cycle.
@@ -51,8 +52,8 @@ walk-forward validation, and simulations before ever considering real money.
 
 ### 2.1 Market data
 - **Live real-time ticks** via Zerodha Kite websocket (`KiteStreamer`).
-  With `PAPER_TRADING=true` it uses a local `kite-paper-node/dist` mock as a
-  drop-in replacement instead of the real `kiteconnect` SDK.
+  With `PAPER_TRADING=true` it uses the `kite-paper-node` package (a separate
+  repo) as a drop-in replacement instead of the real `kiteconnect` SDK.
 - **30-day historical warmup** at boot (5-minute candles per enabled watchlist
   symbol) to seed RSI/ADX/ATR/SMA indicators before live ticks arrive.
 - **Historical candles for backtesting** via an account-free provider (Yahoo

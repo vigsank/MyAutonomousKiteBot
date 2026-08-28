@@ -42,29 +42,35 @@ const GLOBAL_SYMBOLS: Array<{ symbol: string; name: string }> = [
 /**
  * Fetch global market numbers and derive a regime score. Never throws — returns
  * a snapshot with whatever readings succeeded (empty readings on total failure).
+ *
+ * @param asOf  optional YYYY-MM-DD. When set, each index's % change is computed
+ *              from Yahoo chart history for THAT date (close vs prior close),
+ *              so backtests see the macro tone the market actually had then.
+ *              When omitted, uses the live quote snapshot.
  */
-export async function fetchGlobalMacro(): Promise<GlobalMacroSnapshot> {
+export async function fetchGlobalMacro(asOf?: string): Promise<GlobalMacroSnapshot> {
   const fetchedAt = new Date();
   const readings: GlobalMacroReading[] = [];
 
   try {
     const client = new YahooFinance({ suppressNotices: ['ripHistorical'] });
-    const quotes = await client.quote(GLOBAL_SYMBOLS.map((s) => s.symbol));
-    const list = Array.isArray(quotes) ? quotes : [quotes];
-
-    for (const q of list) {
-      const meta = GLOBAL_SYMBOLS.find((s) => s.symbol === q.symbol);
-      if (!meta) continue;
-      const price = q.regularMarketPrice;
-      const changePct = q.regularMarketChangePercent;
-      if (typeof price !== 'number' || !Number.isFinite(price)) continue;
-      if (typeof changePct !== 'number' || !Number.isFinite(changePct)) continue;
-      readings.push({
-        symbol: meta.symbol,
-        name: meta.name,
-        price,
-        changePct,
-      });
+    if (asOf) {
+      for (const meta of GLOBAL_SYMBOLS) {
+        const reading = await readingAt(client, meta.symbol, meta.name, asOf);
+        if (reading) readings.push(reading);
+      }
+    } else {
+      const quotes = await client.quote(GLOBAL_SYMBOLS.map((s) => s.symbol));
+      const list = Array.isArray(quotes) ? quotes : [quotes];
+      for (const q of list) {
+        const meta = GLOBAL_SYMBOLS.find((s) => s.symbol === q.symbol);
+        if (!meta) continue;
+        const price = q.regularMarketPrice;
+        const changePct = q.regularMarketChangePercent;
+        if (typeof price !== 'number' || !Number.isFinite(price)) continue;
+        if (typeof changePct !== 'number' || !Number.isFinite(changePct)) continue;
+        readings.push({ symbol: meta.symbol, name: meta.name, price, changePct });
+      }
     }
   } catch (err) {
     logger.warn({ err: err?.message }, 'GlobalMacro fetch failed (best-effort)');
@@ -72,9 +78,45 @@ export async function fetchGlobalMacro(): Promise<GlobalMacroSnapshot> {
 
   const regimeScore = computeRegimeScore(readings);
   const regimeLabel = labelFor(regimeScore);
-  const summary = summarize(readings, regimeScore, regimeLabel);
+  const summary = summarize(readings, regimeScore, regimeLabel, asOf);
 
   return { readings, regimeScore, regimeLabel, summary, fetchedAt };
+}
+
+/**
+ * Historical reading for one symbol as-of `asOf` (YYYY-MM-DD): close price and
+ * day-over-day % change on that date, from Yahoo chart history. Returns null on
+ * any failure (missing series, no data on/before the date, etc.).
+ */
+async function readingAt(
+  client: YahooFinance,
+  symbol: string,
+  name: string,
+  asOf: string,
+): Promise<GlobalMacroReading | null> {
+  const end = new Date(`${asOf}T00:00:00Z`);
+  const period2 = Math.floor(end.getTime() / 1000) + 86_400; // allow the asOf day itself
+  const period1 = period2 - 21 * 24 * 3600; // ~3 weeks of daily history before it
+  const res = await client.chart(symbol, { period1, period2, interval: '1d' });
+  const quotes = (res.quotes ?? [])
+    .filter((q: any) => q.date && typeof q.close === 'number' && Number.isFinite(q.close))
+    .map((q: any) => ({
+      date: new Date(q.date).toISOString().slice(0, 10),
+      close: q.close as number,
+    }))
+    .sort((a: any, b: any) => (a.date < b.date ? -1 : 1));
+  if (quotes.length < 2) return null;
+
+  // Close on/before asOf, and the prior session's close.
+  let idx = -1;
+  for (let i = quotes.length - 1; i >= 0; i--) {
+    if (quotes[i].date <= asOf) { idx = i; break; }
+  }
+  if (idx <= 0) return null;
+  const price = quotes[idx].close;
+  const prev = quotes[idx - 1].close;
+  if (price <= 0 || prev <= 0) return null;
+  return { symbol, name, price, changePct: (price / prev - 1) * 100 };
 }
 
 /**
@@ -136,12 +178,14 @@ function summarize(
   readings: GlobalMacroReading[],
   score: number,
   label: GlobalMacroSnapshot['regimeLabel'],
+  asOf?: string,
 ): string {
   if (readings.length === 0) {
     return 'Global macro data unavailable. Proceeding on domestic news alone.';
   }
+  const when = asOf ? ` (as of ${asOf})` : '';
   const parts = readings.map((r) => `${r.name} ${r.changePct >= 0 ? '+' : ''}${r.changePct.toFixed(2)}%`);
-  return `Regime ${label} (score ${score.toFixed(2)}). ${parts.join('; ')}.`;
+  return `Regime ${label} (score ${score.toFixed(2)})${when}. ${parts.join('; ')}.`;
 }
 
 function clamp(v: number, lo: number, hi: number): number {

@@ -25,13 +25,14 @@ import { LiveDataService } from '../../src/server/LiveDataService';
 import { MomentumStrategy } from '../../src/server/MomentumStrategy';
 import { BrokerAccount, BrokerHolding } from '../../src/server/BrokerAccount';
 import { ClosePoint } from '../../src/server/signals/momentum';
-import { createMockServer } from '../../kite-paper-node/src/index';
+import { createMockServer } from 'kite-paper-node';
+import { resolveDataDir } from './_dataDir';
 
 // ── tunables ────────────────────────────────────────────────────────────────
 const MONTHS = numEnv('MONTHS', 6);
 const CAPITAL = numEnv('CAPITAL', 1_00_000);
 const TOP_N = numEnv('TOP_N', 5);
-const DATA_DIR = path.join(__dirname, '../../kite-paper-node/data');
+const DATA_DIR = resolveDataDir();
 const OUT_FILE = path.join(__dirname, 'results', `mock_trade_report_${MONTHS}m.md`);
 
 function numEnv(key: string, fallback: number): number {
@@ -168,7 +169,7 @@ async function main(): Promise<void> {
   // 1. Start the kite-paper-node mock REST server (real NSE daily CSVs).
   console.log(`Starting kite-paper-node mock server (${symbols.length} symbols)...`);
   const server = await createMockServer({
-    dataDir: 'kite-paper-node/data',
+    dataDir: DATA_DIR,
     ticker: { mode: 'random-walk', randomWalk: { seedSymbols: symbols } },
     server: { port: 4124, host: '127.0.0.1' },
   });

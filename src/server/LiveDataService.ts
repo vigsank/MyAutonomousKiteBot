@@ -3,14 +3,15 @@ import * as path from 'path';
 import { logger } from './Logger';
 
 /**
- * LiveDataService — reads live market-context data served by kite-paper-node
- * (treated as the live provider). Provides the data the deferred pieces need:
+ * LiveDataService — reads the parent project's own market-context data files
+ * (NOT served by kite-paper-node). Provides the data the deferred pieces need:
  *   - Economic calendar (B1)
  *   - Corporate actions (B2)
  *   - FII/DII institutional flows (B5)
  *
- * The Kite API/MCP shape is unchanged; these are additional data files the
- * live provider serves, read directly by the bot.
+ * These are static reference datasets generated into the parent's `data/` dir
+ * (see scripts/generate_market_data.ts) because Zerodha Kite does not provide
+ * them in live trading.
  */
 
 export interface EconomicEvent {
