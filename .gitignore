@@ -46,6 +46,7 @@ Thumbs.db
 
 # Regenerable backtest caches (price data) — never commit
 test/backtest/results/**/.cache/
+test/backtest/results/e2e_verify/
 
 # direnv (local env — GH_HOST=github.com)
 .envrc

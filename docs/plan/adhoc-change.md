@@ -606,3 +606,20 @@ is authenticated to SAP's GitHub Enterprise (`github.tools.sap` / `github.wdf.sa
 NOT `github.com`, so I could not create/push the public repo. After the user pushes,
 run `npm install` in the parent to pull the git dependency (replacing the `npm link`
 symlink).
+
+## Ad-hoc: E2E verification harness (`verify:e2e`) — INDmoney stack
+
+**What:** New `test/backtest/verify_e2e_indmoney.ts` (`npm run verify:e2e`) — one
+command that boots the full production wiring (broker stack factory →
+DailyReportEngine with live momentum map → MomentumStrategy → RiskEngine →
+LiveTrader) against an ISOLATED SQLite ledger and prints a PASS/FAIL checklist
+per layer, plus failure-injection drills (expired token, rate-limit halt, risk
+cap rejection, duplicate-intent suppression).
+
+**Result (first full run): ALL PASS.** Momentum rebalance bought AUBANK /
+SUNPHARMA / GLENMARK via the AI report + live momentum, RiskEngine gated every
+trade, broker_order_snapshots captured the STUBBED INDmoney payloads, all
+order_intents EXECUTED, drills degraded gracefully without crashes.
+
+**Why:** user asked "how to confirm the bot is in good shape with everything
+together" — this is the repeatable one-command answer.

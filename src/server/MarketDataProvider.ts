@@ -46,6 +46,8 @@ export interface LiveDataProvider {
   startTicker(tokens: number[], onTick: (ticks: Tick[]) => void): void;
   /** Stop the live ticker. */
   stopTicker(): void;
+  /** Optional: proactively verify the broker access token (INDmoney). */
+  verifyToken?(): Promise<boolean>;
 }
 
 /** Map a Kite interval string to a Yahoo Finance interval. */

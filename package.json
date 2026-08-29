@@ -40,7 +40,8 @@
     "test:authority": "ENV_FILE=.env.test ts-node test/ai_authority_test.ts",
     "test:ladder": "ENV_FILE=.env.test ts-node test/go_live_ladder_test.ts",
     "test:newsmonitor": "ENV_FILE=.env.test ts-node test/news_monitor_test.ts",
-    "test:unit": "npm run test:momentum && npm run test:risk && npm run test:indicators && npm run test:live && npm run test:feedback && npm run test:agents && npm run test:execution && npm run test:tax && npm run test:shadow && npm run test:authority && npm run test:ladder && npm run test:newsmonitor",
+    "test:indmoney": "ENV_FILE=.env.test ts-node test/indmoney_test.ts",
+    "test:unit": "npm run test:momentum && npm run test:risk && npm run test:indicators && npm run test:live && npm run test:feedback && npm run test:agents && npm run test:execution && npm run test:tax && npm run test:shadow && npm run test:authority && npm run test:ladder && npm run test:newsmonitor && npm run test:indmoney",
     "validate:momentum": "ENV_FILE=.env.test ts-node test/backtest/momentum_walk_forward.ts",
     "score:shadow": "ENV_FILE=.env.test ts-node scripts/score_shadow_book.ts",
     "status:golive": "ENV_FILE=.env.test ts-node scripts/go_live_status.ts",
@@ -48,6 +49,8 @@
     "estimate:survivorship": "ENV_FILE=.env.test ts-node test/backtest/survivorship_bias.ts",
     "validate:defensive": "ENV_FILE=.env.test ts-node test/backtest/defensive_exit_validation.ts",
     "validate:defensive:real": "ENV_FILE=.env ts-node test/backtest/news_defensive_real.ts",
+    "backtest:indmoney": "ENV_FILE=.env.test ts-node test/backtest/indmoney_momentum.ts",
+    "verify:e2e": "ENV_FILE=.env ts-node test/backtest/verify_e2e_indmoney.ts",
     "ci": "npm run test:unit && npm run validate:momentum"
   },
   "keywords": [

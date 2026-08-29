@@ -9,7 +9,8 @@ import { OptionsEngine } from './OptionsEngine';
 import { OptionsTrader } from './OptionsTrader';
 import { MarketAgent } from './MarketAgent';
 import { NotificationService } from './NotificationService';
-import { createLiveProvider } from './providers/factory';
+import { createBrokerStack } from './providers/factory';
+import { configureIndMoneyRateLimiter, getIndMoneyRateLimiter } from './brokers/IndMoneyRateLimiter';
 import { startUiServer } from './api/server';
 import { logger } from './Logger';
 import { Tick } from './types';
@@ -18,6 +19,7 @@ import { DailyReportEngine } from './DailyReportEngine';
 import { EodEngine } from './EodEngine';
 import { OrderGuard } from './OrderGuard';
 import { LiveTrader } from './LiveTrader';
+import { Reconciler } from './Reconciler';
 import { LiveDataService } from './LiveDataService';
 import { MomentumStrategy } from './MomentumStrategy';
 import { NewsMonitorEngine } from './NewsMonitorEngine';
@@ -54,6 +56,16 @@ async function main(): Promise<void> {
   ledger.runMigrations();
   logger.info('Migrations complete.');
 
+  // Persist the INDmoney daily rate-limit counter in the ledger so a restart
+  // does not reset the budget (the client configures the limits; this sets the
+  // store).
+  if (config.broker.provider === 'indmoney') {
+    configureIndMoneyRateLimiter({}, {
+      getDailyCount: (k) => ledger.getIndMoneyDailyCount(k),
+      setDailyCount: (k, c) => ledger.setIndMoneyDailyCount(k, c),
+    });
+  }
+
   // --- UI server (dashboard REST + WebSocket) -----------------------------
   const ui = await startUiServer(config, ledger);
   logger.info('Dashboard UI available at the configured UI_PORT.');
@@ -69,9 +81,11 @@ async function main(): Promise<void> {
     'Notification service ready',
   );
 
-  // --- Kite connectivity ---------------------------------------------------
-  // LIVE provider: real-time ticks (and warmup history). Default Zerodha Kite.
-  const streamer = createLiveProvider(config);
+  // --- Broker connectivity -------------------------------------------------
+  // LIVE provider: real-time ticks (and warmup history). Selected by
+  // BROKER_PROVIDER (kite default, or indmoney for data-only paper trading).
+  const stack = createBrokerStack(config);
+  const streamer = stack.streamer;
 
   // --- LLM ----------------------------------------------------------------
   const llm = new LlmManager(config.llm);
@@ -88,7 +102,8 @@ async function main(): Promise<void> {
 
   // --- Momentum strategy brain + event-driven news monitor (Phase 4.4) ------
   const guard = new OrderGuard(ledger);
-  const liveTrader = new LiveTrader(config, ledger, trader, guard, null, null);
+  const reconciler = new Reconciler(config, ledger, stack.account);
+  const liveTrader = new LiveTrader(config, ledger, trader, guard, stack.account, reconciler);
   const liveData = new LiveDataService();
   const momentum = new MomentumStrategy(config, ledger, risk, trader, liveData, liveTrader);
   const newsMonitor = new NewsMonitorEngine(config, ledger, news, momentum);
@@ -182,6 +197,17 @@ async function main(): Promise<void> {
     ledger.recordHealthCheck('KITE_STREAMER', streamer.isConfigured ? 'OK' : 'DOWN');
     ledger.recordHealthCheck('LLM', llm.configured ? 'OK' : 'DEGRADED');
     ledger.recordHealthCheck('TELEGRAM', telegram.enabled ? 'OK' : 'DEGRADED');
+    // INDmoney token health (only when the INDmoney provider is active).
+    if (streamer.verifyToken) {
+      streamer
+        .verifyToken()
+        .then((ok) => ledger.recordHealthCheck('INDMONEY_TOKEN', ok ? 'OK' : 'EXPIRED'))
+        .catch(() => ledger.recordHealthCheck('INDMONEY_TOKEN', 'UNKNOWN'));
+    }
+    // INDmoney rate-limit / circuit-breaker state.
+    if (config.broker.provider === 'indmoney') {
+      ledger.recordHealthCheck('INDMONEY_RATE_LIMIT', getIndMoneyRateLimiter().currentState);
+    }
   }, 5 * 60 * 1000);
 
   // --- News/AI sentiment loop (10 min) -------------------------------------
@@ -254,6 +280,7 @@ async function main(): Promise<void> {
   const agentsRuntime = new AgentsRuntime({
     config, ledger, news, risk, trader, report, eod,
     symbols: config.watchlist.filter((s) => s.enabled).map((s) => s.tradingsymbol),
+    streamer,
   });
   try {
     agentsRuntime.start();

@@ -45,6 +45,33 @@ export interface AppConfig {
     accessToken: string;
     root: string;
   };
+  /** Broker selection: `kite` (default) or `indmoney` (data-only for now). */
+  broker: {
+    provider: 'kite' | 'indmoney';
+    indmoney: {
+      accessToken: string;
+      baseUrl: string;
+      wsPricesUrl: string;
+      algoIdNse: string;
+      algoIdBse: string;
+      timeoutMs: number;
+      /** Throttle before each request (ms) to stay under the rate limit. */
+      rateDelayMs: number;
+      /** Max attempts on 429 / transient 5xx. */
+      maxRetries: number;
+      /** Base backoff (ms) for retries. */
+      retryBaseMs: number;
+      /** Rate-limit / circuit-breaker settings. */
+      ratePerSecond: number;
+      ratePerDay: number;
+      rateWarnPct: number;
+      rateMaxWaitMs: number;
+      rateHaltOn429: boolean;
+      rate429Threshold: number;
+      rateCooldownMs: number;
+      rateHaltOnLimit: boolean;
+    };
+  };
   llm: LlmConfig;
   /** Free live web-search via TinyFish (Search/Fetch free; Agent/Browser cost credits). */
   tinyfish: {
@@ -426,6 +453,28 @@ export function loadConfig(): AppConfig {
       apiSecret: str('KITE_API_SECRET'),
       accessToken: str('KITE_ACCESS_TOKEN'),
       root: str('KITE_ROOT', 'https://api.kite.trade'),
+    },
+    broker: {
+      provider: str('BROKER_PROVIDER', 'kite').toLowerCase() === 'indmoney' ? 'indmoney' : 'kite',
+      indmoney: {
+        accessToken: str('INDMONEY_ACCESS_TOKEN'),
+        baseUrl: str('INDMONEY_BASE_URL', 'https://api.indstocks.com'),
+        wsPricesUrl: str('INDMONEY_WS_PRICES_URL', 'wss://ws-prices.indstocks.com/api/v1/ws/prices'),
+        algoIdNse: str('INDMONEY_ALGO_ID_NSE', '99999'),
+        algoIdBse: str('INDMONEY_ALGO_ID_BSE', '9999999999999999'),
+        timeoutMs: num('INDMONEY_TIMEOUT_MS', 15000),
+        rateDelayMs: num('INDMONEY_RATE_DELAY_MS', 300),
+        maxRetries: num('INDMONEY_MAX_RETRIES', 4),
+        retryBaseMs: num('INDMONEY_RETRY_BASE_MS', 500),
+        ratePerSecond: num('INDMONEY_RATE_PER_SECOND', 5),
+        ratePerDay: num('INDMONEY_RATE_PER_DAY', 100000),
+        rateWarnPct: num('INDMONEY_RATE_WARN_PCT', 80),
+        rateMaxWaitMs: num('INDMONEY_RATE_MAX_WAIT_MS', 5000),
+        rateHaltOn429: str('INDMONEY_RATE_HALT_ON_429') !== 'false',
+        rate429Threshold: num('INDMONEY_RATE_429_THRESHOLD', 5),
+        rateCooldownMs: num('INDMONEY_RATE_COOLDOWN_MS', 900000),
+        rateHaltOnLimit: str('INDMONEY_RATE_HALT_ON_LIMIT') !== 'false',
+      },
     },
     llm: resolveLlm(),
     tinyfish: {
