@@ -9,6 +9,12 @@ import {
   selectWithHysteresis,
   averageDailyValue,
   applyLiquidityFloor,
+  sma,
+  applyDmaGuard,
+  dailyReturnStd,
+  combineMomentumAndVolatility,
+  rankByMomentumWithTilt,
+  MomentumVolatility,
   regimeMultiplier,
   MomentumInput,
   MomentumScore,
@@ -319,6 +325,114 @@ function wireStrategyWithBias(bias: string, vetoMode: 'block' | 'shrink'): Momen
   const qty = s.sizeFor('ACME', 100);
   assert(qty === 2000, `block mode leaves sizing full (got ${qty}, want 2000)`);
 }
+
+/* ------------------------------------------------------------------ */
+/* DMA trend guard (master-class 200/220-DMA)                          */
+/* ------------------------------------------------------------------ */
+
+// A series that ends ABOVE its trailing SMA (recent jump up).
+function jumpSeries(): Array<{ date: string; close: number }> {
+  const out: Array<{ date: string; close: number }> = [];
+  const d = new Date('2024-01-01T00:00:00Z');
+  for (let i = 0; i < 20; i++) {
+    const dt = new Date(d);
+    dt.setUTCDate(d.getUTCDate() + i);
+    out.push({ date: dt.toISOString().slice(0, 10), close: 100 });
+  }
+  const last = new Date(d);
+  last.setUTCDate(d.getUTCDate() + 20);
+  out.push({ date: last.toISOString().slice(0, 10), close: 150 });
+  return out;
+}
+
+// A series that ends BELOW its trailing SMA (recent drop).
+function dropSeries(): Array<{ date: string; close: number }> {
+  const out: Array<{ date: string; close: number }> = [];
+  const d = new Date('2024-01-01T00:00:00Z');
+  for (let i = 0; i < 20; i++) {
+    const dt = new Date(d);
+    dt.setUTCDate(d.getUTCDate() + i);
+    out.push({ date: dt.toISOString().slice(0, 10), close: 100 });
+  }
+  const last = new Date(d);
+  last.setUTCDate(d.getUTCDate() + 20);
+  out.push({ date: last.toISOString().slice(0, 10), close: 50 });
+  return out;
+}
+
+// 27. sma computes the trailing average of the last n closes.
+const smaVal = sma(jumpSeries(), 20);
+assert(smaVal !== null && Math.abs(smaVal - 102.5) < 1e-9, `sma = mean of last 20 closes (got ${smaVal})`);
+
+// 28. sma returns null on insufficient data.
+assert(sma(jumpSeries().slice(0, 10), 20) === null, 'sma returns null on insufficient data');
+
+// 29. applyDmaGuard keeps a name whose last close is above its SMA.
+const dmaKept = applyDmaGuard([{ symbol: 'UP', closes: jumpSeries() }], 20);
+assert(dmaKept.kept.length === 1 && dmaKept.kept[0].symbol === 'UP', 'close above SMA → kept');
+
+// 30. applyDmaGuard drops a name whose last close is below its SMA.
+const dmaDropped = applyDmaGuard([{ symbol: 'DOWN', closes: dropSeries() }], 20);
+assert(dmaDropped.kept.length === 0, 'close below SMA → dropped');
+assert(dmaDropped.droppedForDma.join(',') === 'DOWN', 'guard reports the dropped name');
+
+// 31. period 0 disables the guard (no-op).
+assert(applyDmaGuard([{ symbol: 'UP', closes: jumpSeries() }], 0).kept.length === 1, 'period 0 disables the guard');
+
+// 32. Fail-open: insufficient history is kept, never silently dropped.
+const dmaFailOpen = applyDmaGuard([{ symbol: 'SHORT', closes: jumpSeries().slice(0, 10) }], 220);
+assert(dmaFailOpen.kept.some((i) => i.symbol === 'SHORT'), 'insufficient history is kept (fail-open)');
+
+/* ------------------------------------------------------------------ */
+/* Multi-factor tilt (low-volatility)                                  */
+/* ------------------------------------------------------------------ */
+
+// A choppy series: alternating +5% / -5% daily moves (high volatility).
+function choppySeries(start: number, days: number): Array<{ date: string; close: number }> {
+  const out: Array<{ date: string; close: number }> = [];
+  let price = start;
+  const d = new Date('2024-01-01T00:00:00Z');
+  for (let i = 0; i < days; i++) {
+    const dt = new Date(d);
+    dt.setUTCDate(d.getUTCDate() + i);
+    out.push({ date: dt.toISOString().slice(0, 10), close: price });
+    price *= i % 2 === 0 ? 1.05 : 0.95;
+  }
+  return out;
+}
+
+// 33. dailyReturnStd: a flat series has zero volatility.
+assert(dailyReturnStd(flat, 20) === 0, 'flat series has zero daily-return std');
+
+// 34. dailyReturnStd: a choppy series has positive volatility.
+const choppy = choppySeries(100, 30);
+const vol = dailyReturnStd(choppy, 20);
+assert(vol !== null && vol > 0, `choppy series has positive std (got ${vol?.toFixed(4)})`);
+
+// 35. combineMomentumAndVolatility: tiltWeight 0 is pure momentum.
+const scored: MomentumVolatility[] = [
+  { symbol: 'A', momentum: 0.3, volatility: 0.01 },
+  { symbol: 'B', momentum: 0.31, volatility: 0.05 },
+  { symbol: 'C', momentum: 0.2, volatility: 0.02 },
+];
+assert(
+  combineMomentumAndVolatility(scored, 0).map((s) => s.symbol).join(',') === 'B,A,C',
+  'tiltWeight 0 = pure momentum order',
+);
+
+// 36. combineMomentumAndVolatility: a low-vol name overtakes a high-vol name.
+assert(
+  combineMomentumAndVolatility(scored, 10).map((s) => s.symbol).join(',') === 'A,C,B',
+  'low-vol overtakes high-vol with a tilt',
+);
+
+// 37. rankByMomentumWithTilt with tiltWeight 0 matches rankByMomentum.
+const r1 = rankByMomentum(inputs, 12, 1);
+const r2 = rankByMomentumWithTilt(inputs, 12, 1, 0, 252);
+assert(
+  r1.map((s) => s.symbol).join(',') === r2.map((s) => s.symbol).join(','),
+  'tiltWeight 0 matches rankByMomentum',
+);
 
 console.log(failures === 0 ? '\nALL MOMENTUM TESTS PASSED' : `\n${failures} TEST(S) FAILED`);
 process.exit(failures === 0 ? 0 : 1);

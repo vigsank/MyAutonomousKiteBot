@@ -23,6 +23,7 @@ import { Reconciler } from './Reconciler';
 import { LiveDataService } from './LiveDataService';
 import { MomentumStrategy } from './MomentumStrategy';
 import { NewsMonitorEngine } from './NewsMonitorEngine';
+import { DmaBreakMonitor } from './DmaBreakMonitor';
 
 const NEWS_LOOP_MS = Number(process.env.NEWS_LOOP_MS) || 30 * 60 * 1000;
 
@@ -107,6 +108,7 @@ async function main(): Promise<void> {
   const liveData = new LiveDataService();
   const momentum = new MomentumStrategy(config, ledger, risk, trader, liveData, liveTrader);
   const newsMonitor = new NewsMonitorEngine(config, ledger, news, momentum);
+  const dmaBreakMonitor = new DmaBreakMonitor(config, ledger, momentum, streamer);
 
   // --- Strategy brain ------------------------------------------------------
   const agent = new MarketAgent(
@@ -238,6 +240,16 @@ async function main(): Promise<void> {
     logger.info({ intervalMs: config.newsMonitor.intervalMs }, 'News monitor enabled');
   }
 
+  // --- Daily DMA-break stop (master-class 220-DMA) -------------------------
+  const dmaBreakTimer = setInterval(() => {
+    dmaBreakMonitor.check(new Date()).catch((err) => {
+      logger.error({ err: err?.message }, 'DMA-break check error');
+    });
+  }, config.strategy.entryTrackerIntervalMs);
+  if (config.strategy.entryTrackerEnabled) {
+    logger.info({ intervalMs: config.strategy.entryTrackerIntervalMs }, 'DMA-break monitor enabled');
+  }
+
   // --- Shutdown handling ---------------------------------------------------
   let shuttingDown = false;
   const shutdown = async () => {
@@ -249,6 +261,7 @@ async function main(): Promise<void> {
     clearInterval(newsTimer);
     clearInterval(newsDetailTimer);
     clearInterval(newsMonitorTimer);
+    clearInterval(dmaBreakTimer);
 
     // Compute and persist the daily summary.
     try {

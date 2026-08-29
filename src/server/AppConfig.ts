@@ -251,6 +251,30 @@ export interface AppConfig {
     momentumVetoMode: 'block' | 'shrink';
     /** When vetoMode='shrink', AVOID names are sized at this % of their slot. */
     momentumVetoShrinkPct: number;
+    /** Master-class 200/220-DMA trend guard: drop names below their DMA (entry + exit). */
+    momentumDmaGuardEnabled: boolean;
+    /** SMA period for the DMA guard (220 = the class's guard/stop). */
+    momentumDmaGuardPeriod: number;
+    /** Multi-factor tilt: blend a second factor into the momentum score. */
+    momentumFactorTilt: 'none' | 'lowvol';
+    /** Weight of the tilt factor relative to momentum (0 = pure momentum). */
+    momentumFactorTiltWeight: number;
+    /** Number of daily returns for the low-volatility factor (≈252 = 12m). */
+    momentumFactorVolDays: number;
+    /** Weekend entry screen (master-class 1-2-3): enable the screen. */
+    entryScreenEnabled: boolean;
+    /** SMA period for the entry screen's DMA guard (220). */
+    entryScreenDmaPeriod: number;
+    /** A name is "near ATH" when its close is within this % of the ATH. */
+    entryScreenNearAthPct: number;
+    /** Daily tracker: recompute the DMA and ENTER/EXIT on breakout/break. */
+    entryTrackerEnabled: boolean;
+    /** Daily tracker: require an uptrend (higher highs/lows) before ENTER. */
+    entryTrackerRequireUptrend: boolean;
+    /** Number of bars for the uptrend confirmation. */
+    entryTrackerUptrendWindow: number;
+    /** Daily tracker: check interval in ms (default 6h). */
+    entryTrackerIntervalMs: number;
     /** News sentiment below this vetoes momentum entries / forces exits. */
     newsVetoThreshold: number;
     /** Binary corporate-action types that trigger the event blackout. */
@@ -604,6 +628,18 @@ export function loadConfig(): AppConfig {
       momentumRegimeFloorMultiplier: num('MOMENTUM_REGIME_FLOOR_MULTIPLIER', 0.4),
       momentumVetoMode: str('MOMENTUM_VETO_MODE') === 'shrink' ? 'shrink' : 'block',
       momentumVetoShrinkPct: num('MOMENTUM_VETO_SHRINK_PCT', 50),
+      momentumDmaGuardEnabled: str('MOMENTUM_DMA_GUARD_ENABLED') === 'true',
+      momentumDmaGuardPeriod: num('MOMENTUM_DMA_GUARD_PERIOD', 220),
+      momentumFactorTilt: str('MOMENTUM_FACTOR_TILT', 'none') === 'lowvol' ? 'lowvol' : 'none',
+      momentumFactorTiltWeight: num('MOMENTUM_FACTOR_TILT_WEIGHT', 0.5),
+      momentumFactorVolDays: num('MOMENTUM_FACTOR_VOL_DAYS', 252),
+      entryScreenEnabled: str('ENTRY_SCREEN_ENABLED') === 'true',
+      entryScreenDmaPeriod: num('ENTRY_SCREEN_DMA_PERIOD', 220),
+      entryScreenNearAthPct: num('ENTRY_SCREEN_NEAR_ATH_PCT', 10),
+      entryTrackerEnabled: str('ENTRY_TRACKER_ENABLED') === 'true',
+      entryTrackerRequireUptrend: str('ENTRY_TRACKER_REQUIRE_UPTREND') === 'true',
+      entryTrackerUptrendWindow: num('ENTRY_TRACKER_UPTREND_WINDOW', 3),
+      entryTrackerIntervalMs: num('ENTRY_TRACKER_INTERVAL_MS', 6 * 60 * 60 * 1000),
       newsVetoThreshold: num('NEWS_VETO_THRESHOLD', -0.5),
       eventBlackoutTypes: csv(str('EVENT_BLACKOUT_TYPES', 'EARNINGS,RESULTS,RATING,REGULATORY,MERGER,DEMERGER,AGM,BOARD_MEETING,SPLIT,BONUS,RIGHTS_ISSUE')),
       eventBlackoutDays: num('EVENT_BLACKOUT_DAYS', 3),
