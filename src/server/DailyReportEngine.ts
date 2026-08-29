@@ -47,11 +47,12 @@ export class DailyReportEngine {
     symbols: string[],
     now: Date,
     asOf?: string,
+    momentumBySymbol?: Map<string, number>,
   ): Promise<DailyReport | null> {
     try {
       const macro = await fetchGlobalMacro(asOf);
       const macroNews = await this.fetchMacroNews(asOf);
-      const analyzed = await this.analyzeSymbols(symbols, asOf);
+      const analyzed = await this.analyzeSymbols(symbols, asOf, momentumBySymbol);
       const capital = this.risk.capitalSnapshot();
 
       const prompt = this.buildPrompt(reportType, now, macro, macroNews, analyzed, capital);
@@ -101,8 +102,12 @@ export class DailyReportEngine {
     return this.news.fetchGoogleNewsArticles(query).catch(() => []);
   }
 
-  /** Per-symbol context: price, previous-day change, sentiment, holding status. */
-  private async analyzeSymbols(symbols: string[], asOf?: string): Promise<SymbolContext[]> {
+  /** Per-symbol context: price, previous-day change, sentiment, momentum, holding status. */
+  private async analyzeSymbols(
+    symbols: string[],
+    asOf?: string,
+    momentumBySymbol?: Map<string, number>,
+  ): Promise<SymbolContext[]> {
     const out: SymbolContext[] = [];
     for (const symbol of symbols) {
       try {
@@ -113,6 +118,7 @@ export class DailyReportEngine {
         const sentiment = asOf
           ? (await this.news.sentimentForDate(symbol, asOf).catch(() => null))?.score ?? 0
           : (await this.news.sentimentFor(symbol).catch(() => null))?.score ?? 0;
+        const momentum = momentumBySymbol?.get(symbol) ?? null;
         const pos = this.ledger.getPosition(symbol, 'NSE');
         const weightPct = pos && price > 0
           ? (pos.quantity * price / this.config.risk.availableCapital) * 100
@@ -122,6 +128,7 @@ export class DailyReportEngine {
           price,
           prevDayChange,
           sentiment,
+          momentum,
           holdingStatus: pos ? 'HELD' : 'NONE',
           weightPct,
           pivots: this.pivotsFor(symbol),
@@ -130,7 +137,7 @@ export class DailyReportEngine {
       } catch (err) {
         logger.warn({ symbol, err: err?.message }, 'Symbol analysis failed');
         out.push({
-          symbol, price: 0, prevDayChange: null, sentiment: 0,
+          symbol, price: 0, prevDayChange: null, sentiment: 0, momentum: null,
           holdingStatus: 'NONE', weightPct: 0, pivots: null, supportResistance: null,
         });
       }
@@ -215,7 +222,8 @@ export class DailyReportEngine {
     const symbolLines = analyzed
       .map((s) =>
         `- ${s.symbol}: price ${s.price || 'n/a'}, prev-day ${s.prevDayChange === null ? 'n/a' : s.prevDayChange.toFixed(2) + '%'}, ` +
-        `sentiment ${s.sentiment.toFixed(2)}, holding ${s.holdingStatus}, weight ${s.weightPct.toFixed(1)}%, ` +
+        `sentiment ${s.sentiment.toFixed(2)}, momentum ${s.momentum === null ? 'n/a' : (s.momentum * 100).toFixed(1) + '%'}, ` +
+        `holding ${s.holdingStatus}, weight ${s.weightPct.toFixed(1)}%, ` +
         `pivots ${s.pivots ? `P ${s.pivots.pivot.toFixed(1)} R1 ${s.pivots.r1.toFixed(1)} S1 ${s.pivots.s1.toFixed(1)}` : 'n/a'}, ` +
         `S/R ${s.supportResistance ? `S ${s.supportResistance.support.toFixed(1)} R ${s.supportResistance.resistance.toFixed(1)}` : 'n/a'}`, 
       )
@@ -237,16 +245,16 @@ CAPITAL SNAPSHOT (INR):
 - Available for new trades: ${capital.available}
 - Risk appetite: ${this.config.risk.riskAppetite}
 
-WATCHLIST SYMBOLS (price, prev-day %, sentiment -1..+1, holding, weight % of capital):
+WATCHLIST SYMBOLS (price, prev-day %, sentiment -1..+1, momentum 12m %, holding, weight % of capital):
 ${symbolLines}
 
 TASK:
 1. Summarise the overall market sentiment and any major events impacting Dalal Street today.
-2. For EACH symbol, give an action bias:
+2. For EACH symbol, give an action bias, weighing BOTH the news sentiment AND the 12-month momentum (a bullish-news + strong-momentum name is the highest conviction; a bearish-news + weak-momentum name is the lowest):
    - HELD: HOLD, TRIM_25, TRIM_50, EXIT_FULL, or BUY_ACCUMULATE (add).
    - NOT HELD: CONSIDER_LONG (buy) or AVOID.
 3. Suggest an ADVISORY share quantity and allocation (INR) per symbol based on the available capital, price, risk appetite, and diversification. Do NOT deploy all capital — keep the cash reserve and leave room for future opportunities. These are suggestions only; the risk engine enforces the final size.
-4. List the top "stocks to watch" for the day.
+4. List the top "stocks to watch" for the day (prefer names with both bullish sentiment and positive momentum).
 5. Provide a concise, readable summary.
 
 Return STRICT JSON only, no markdown, matching this exact schema:
@@ -301,6 +309,8 @@ interface SymbolContext {
   price: number;
   prevDayChange: number | null;
   sentiment: number;
+  /** Trailing 12-month momentum (fractional return), or null when unavailable. */
+  momentum: number | null;
   holdingStatus: 'NONE' | 'HELD';
   weightPct: number;
   pivots: ReturnType<typeof computePivots> | null;

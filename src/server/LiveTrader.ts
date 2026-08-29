@@ -105,9 +105,40 @@ export class LiveTrader {
     } as const;
 
     if (this.mode === 'SHADOW') {
+      // Persist the exact payload the bot *would* have sent, for later audit.
+      this.ledger.recordBrokerOrderSnapshot({
+        broker: this.config.broker.provider,
+        tradeId: fill.tradeId,
+        symbol: request.symbol,
+        exchange: request.exchange,
+        side: directionToSide(request.direction),
+        quantity: request.quantity,
+        product: request.product ?? 'CNC',
+        orderType: 'MARKET',
+        price: request.entryPrice,
+        intent,
+        payloadJson: JSON.stringify(payload),
+        status: 'STUBBED',
+      });
       logger.info({ payload, intent }, 'SHADOW: order NOT sent (LIVE_SHADOW_MODE=true)');
       return;
     }
+
+    // Persist the snapshot as SENT before firing the broker call.
+    this.ledger.recordBrokerOrderSnapshot({
+      broker: this.config.broker.provider,
+      tradeId: fill.tradeId,
+      symbol: request.symbol,
+      exchange: request.exchange,
+      side: directionToSide(request.direction),
+      quantity: request.quantity,
+      product: request.product ?? 'CNC',
+      orderType: 'MARKET',
+      price: request.entryPrice,
+      intent,
+      payloadJson: JSON.stringify(payload),
+      status: 'SENT',
+    });
 
     // Fire-and-log: the ledger already reflects the intended state, so a broker
     // error surfaces as reconciliation drift on the next cycle rather than

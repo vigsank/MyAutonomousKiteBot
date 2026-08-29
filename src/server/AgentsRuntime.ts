@@ -14,6 +14,8 @@ import { AgentContext } from "../agents/types";
 import { istMinutes } from "../agents/scheduler";
 import { KiteMcpClient } from "./KiteMcpClient";
 import { Blackboard } from "../agents/blackboard";
+import { LiveDataProvider } from "./MarketDataProvider";
+import { computeMomentumMap } from "./MomentumDataService";
 
 /** How often the probe scheduler checks the IST clock. */
 const PROBE_TICK_MS = 60 * 1000;
@@ -29,6 +31,8 @@ interface AgentsRuntimeOptions {
   report: DailyReportEngine;
   eod: EodEngine;
   symbols: string[];
+  /** Live data provider (INDmoney/Kite) for momentum in the pre-open report. */
+  streamer?: LiveDataProvider;
 }
 
 /** The three scheduled probe windows, keyed by their config time. */
@@ -197,8 +201,26 @@ export class AgentsRuntime {
       });
 
     // Daily report cycle (Reasoning Layer): one comprehensive report per window.
-    this.opts.report
-      .generate(runType, this.opts.symbols, new Date())
+    // For pre-open, compute the momentum map from live data so the AI can weigh
+    // news sentiment against price trend.
+    (async () => {
+      let momentumBySymbol: Map<string, number> | undefined;
+      if (runType === "pre_open" && this.opts.streamer?.isConfigured) {
+        momentumBySymbol = await computeMomentumMap(
+          this.opts.streamer,
+          this.opts.symbols,
+          this.opts.config.strategy.momentumLookbackMonths,
+          1,
+        );
+      }
+      return this.opts.report.generate(
+        runType,
+        this.opts.symbols,
+        new Date(),
+        undefined,
+        momentumBySymbol,
+      );
+    })()
       .then((report) => {
         logger.info(
           { runType, hasReport: !!report, summary: report?.summary },

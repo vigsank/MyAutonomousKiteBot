@@ -1220,6 +1220,100 @@ export class Ledger {
       .run(brokerOrderId, tradeId);
   }
 
+  /* ---- broker-order snapshots (V017, INDmoney integration) ---- */
+
+  /**
+   * Persist the exact broker payload the bot *would* have sent, for later audit.
+   * Used when order execution is stubbed (INDmoney data-only mode).
+   */
+  recordBrokerOrderSnapshot(s: {
+    broker: string;
+    tradeId?: string | null;
+    symbol: string;
+    exchange: string;
+    side: string;
+    quantity: number;
+    product?: string | null;
+    orderType?: string | null;
+    price?: number | null;
+    intent?: string | null;
+    payloadJson: string;
+    status?: string;
+  }): void {
+    this.db
+      .prepare(
+        `INSERT INTO broker_order_snapshots
+           (broker, trade_id, symbol, exchange, side, quantity, product,
+            order_type, price, intent, payload_json, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        s.broker,
+        s.tradeId ?? null,
+        s.symbol,
+        s.exchange,
+        s.side,
+        s.quantity,
+        s.product ?? null,
+        s.orderType ?? null,
+        s.price ?? null,
+        s.intent ?? null,
+        s.payloadJson,
+        s.status ?? 'STUBBED',
+      );
+  }
+
+  /** Most recent broker-order snapshots, newest-first (for audit). */
+  getBrokerOrderSnapshots(limit = 100): Array<{
+    snapshotId: number;
+    broker: string;
+    tradeId: string | null;
+    symbol: string;
+    exchange: string;
+    side: string;
+    quantity: number;
+    product: string | null;
+    orderType: string | null;
+    price: number | null;
+    intent: string | null;
+    payloadJson: string;
+    status: string;
+    createdAt: string;
+  }> {
+    return this.db
+      .prepare(
+        `SELECT snapshot_id AS snapshotId, broker, trade_id AS tradeId, symbol,
+                exchange, side, quantity, product, order_type AS orderType,
+                price, intent, payload_json AS payloadJson, status,
+                created_at AS createdAt
+           FROM broker_order_snapshots
+          ORDER BY snapshot_id DESC LIMIT ?`,
+      )
+      .all(limit) as any[];
+  }
+
+  /* ---- INDmoney rate-limit state (V018) ---- */
+
+  /** Read the persisted INDmoney daily request count for an IST day key. */
+  getIndMoneyDailyCount(dayKey: string): number {
+    const row = this.db
+      .prepare('SELECT count FROM indmoney_rate_state WHERE day_key = ?')
+      .get(dayKey) as { count: number } | undefined;
+    return row?.count ?? 0;
+  }
+
+  /** Persist the INDmoney daily request count for an IST day key. */
+  setIndMoneyDailyCount(dayKey: string, count: number): void {
+    this.db
+      .prepare(
+        `INSERT INTO indmoney_rate_state (day_key, count, updated_at)
+         VALUES (?, ?, datetime('now'))
+         ON CONFLICT(day_key) DO UPDATE SET
+           count = excluded.count, updated_at = datetime('now')`,
+      )
+      .run(dayKey, count);
+  }
+
   /* ---- reconciliation log (V012, E2) ---- */
 
   /** Record a ledger ⇄ broker reconciliation finding. */

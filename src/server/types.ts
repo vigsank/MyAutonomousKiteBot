@@ -95,6 +95,8 @@ export interface Instrument {
   instrument_type: InstrumentType;
   segment: Segment;
   exchange: Segment;
+  /** INDstocks (INDmoney) numeric security id, when the broker is INDmoney. */
+  security_id?: string;
 }
 
 /** A symbol in the watchlist. */

@@ -190,6 +190,9 @@ BACKTEST_PROVIDER=yahoo
   `OPENBB_BASE_URL` (default `http://127.0.0.1:6900`). -- **NOT TESTED THOUGH! PROBABLY FUTURE?**
 - **`kite`:** uses real Zerodha Kite history. Requires `KITE_API_KEY` and
   `KITE_ACCESS_TOKEN`.
+- **`indmoney`:** uses real INDstocks history. Requires `INDMONEY_ACCESS_TOKEN`.
+  Pages backwards in max-range windows (5 instruments per call, 1-year max for
+  daily/weekly/monthly, 7–15 days for intraday).
 
 > ⚠️ **Yahoo caveat:** Yahoo's free historical endpoint is sometimes rate-limited
 > or geo-blocked (it may briefly return `Data doesn't exist` / `Too Many
@@ -210,6 +213,68 @@ LIVE_PROVIDER=kite
 
 > **Rule of thumb:** keep `BACKTEST_PROVIDER=yahoo` (free, no account) and
 > `LIVE_PROVIDER=kite`. Backtests run free; live runs need Kite.
+
+---
+
+## 1b. Broker provider (Kite vs INDmoney)
+
+The bot can run against **either** Zerodha Kite **or** INDmoney (INDstocks),
+switched by one env var. INDstocks API access is **free**; only order execution
+costs (flat ₹10/order).
+
+```dotenv
+BROKER_PROVIDER=kite        # default — Zerodha Kite
+# BROKER_PROVIDER=indmoney  # INDmoney / INDstocks
+```
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `BROKER_PROVIDER` | `kite` or `indmoney` | `kite` |
+| `INDMONEY_ACCESS_TOKEN` | INDstocks access token (24h, manual) | — |
+| `INDMONEY_BASE_URL` | INDstocks REST base | `https://api.indstocks.com` |
+| `INDMONEY_WS_PRICES_URL` | Price feed WebSocket | `wss://ws-prices.indstocks.com/api/v1/ws/prices` |
+| `INDMONEY_ALGO_ID_NSE` | `algo_id` for NSE orders (snapshot only) | `99999` |
+| `INDMONEY_ALGO_ID_BSE` | `algo_id` for BSE orders (snapshot only) | `9999999999999999` |
+| `INDMONEY_TIMEOUT_MS` | Per-request timeout | `15000` |
+| `INDMONEY_RATE_DELAY_MS` | Throttle before each request (ms) | `300` |
+| `INDMONEY_MAX_RETRIES` | Max attempts on 429 / transient 5xx | `4` |
+| `INDMONEY_RETRY_BASE_MS` | Base backoff (ms) for retries | `500` |
+| `INDMONEY_RATE_PER_SECOND` | Max requests/sec (token bucket) | `5` |
+| `INDMONEY_RATE_PER_DAY` | Max requests/IST day (persisted) | `100000` |
+| `INDMONEY_RATE_WARN_PCT` | Warn threshold (% of daily budget) | `80` |
+| `INDMONEY_RATE_MAX_WAIT_MS` | Halt if a per-second slot needs a longer wait | `5000` |
+| `INDMONEY_RATE_HALT_ON_429` | Reactive halt on consecutive 429s | `true` |
+| `INDMONEY_RATE_429_THRESHOLD` | Consecutive 429s before halting | `5` |
+| `INDMONEY_RATE_COOLDOWN_MS` | Cooldown before a non-sticky halt clears | `900000` |
+| `INDMONEY_RATE_HALT_ON_LIMIT` | Master switch for the proactive halt | `true` |
+
+**INDmoney is a data source for paper trading in this pass.** The bot uses the
+real INDstocks GET surface (market data, quotes, historical candles, holdings,
+positions, funds) to paper-trade on live prices. **Order execution is stubbed**
+— every buy/sell decision is captured as a `broker_order_snapshots` DB row (the
+exact payload the bot *would* have sent) instead of a real `POST /order`. No real
+orders are ever sent.
+
+> **Token expiry:** INDstocks tokens are valid 24h and must be regenerated
+> manually (TOTP auto-refresh is deferred). The bot surfaces a clear
+> "token expired" health state rather than silently degrading.
+
+### Rate limiting & circuit breaker
+
+INDstocks enforces **5 req/sec** (data/quote) and **100,000 req/day**. The bot
+respects these with a shared `IndMoneyRateLimiter`:
+
+- **Token bucket** throttles the per-second rate (never exceeds 5/sec).
+- **Persisted daily counter** (in the ledger) enforces the per-day budget across
+  restarts.
+- **Circuit breaker** hard-stops all INDmoney calls on: daily budget exhausted
+  (sticky, until the next IST day), N consecutive 429s (cooldown), or a
+  pathological per-second backlog (cooldown).
+- **States** `OK` → `WARN` (≥80% daily) → `HALTED`, each logged distinctly and
+  surfaced in the health check as `INDMONEY_RATE_LIMIT`.
+
+When halted, the client returns `null` (no data) instead of hammering the API,
+and the health check records `INDMONEY_RATE_LIMIT = HALTED`.
 
 ---
 
