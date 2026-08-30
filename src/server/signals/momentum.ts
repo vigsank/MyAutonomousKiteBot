@@ -214,6 +214,141 @@ export function applyLiquidityFloor(
   return { kept, droppedForLiquidity: dropped };
 }
 
+/**
+ * Simple moving average of the last `n` closes, or null when there are fewer
+ * than `n` observations. Pure and deterministic — the same shape as
+ * `computeMomentum`, so it slots into the same unit-test harness.
+ */
+export function sma(closes: ClosePoint[], n: number): number | null {
+  if (n <= 0 || closes.length < n) return null;
+  const sorted = [...closes].sort((a, b) => (a.date < b.date ? -1 : 1));
+  const window = sorted.slice(-n);
+  const sum = window.reduce((s, c) => s + c.close, 0);
+  return sum / n;
+}
+
+/**
+ * Filter the universe to names whose latest close is at/above their `period`-day
+ * SMA (the master-class 200/220-DMA trend guard).
+ *
+ * This is a *universe* filter, not a signal: a name below its DMA is dropped
+ * from the ranking entirely, so it can neither be bought (entry guard) nor
+ * retained (exit/stop — an incumbent below its DMA falls out of the ranking and
+ * is sold at the next rebalance). One guard therefore implements both the
+ * class's "avoid buying below the DMA" and "stop out below the 220-DMA" rules.
+ *
+ * Fail-open: a symbol with fewer than `period` observations is kept, so the
+ * guard never silently empties the universe on a data gap. In practice this is
+ * moot — the 12-month momentum lookback already requires ~13 months of history,
+ * so any ranked name has enough data for a 220-day SMA.
+ */
+export function applyDmaGuard(
+  inputs: MomentumInput[],
+  period: number,
+): { kept: MomentumInput[]; droppedForDma: string[] } {
+  if (period <= 0) return { kept: inputs, droppedForDma: [] };
+  const kept: MomentumInput[] = [];
+  const dropped: string[] = [];
+  for (const input of inputs) {
+    const avg = sma(input.closes, period);
+    if (avg === null) {
+      kept.push(input); // fail-open: insufficient history → let momentum decide
+      continue;
+    }
+    const sorted = [...input.closes].sort((a, b) => (a.date < b.date ? -1 : 1));
+    const last = sorted[sorted.length - 1].close;
+    if (last >= avg) kept.push(input);
+    else dropped.push(input.symbol);
+  }
+  return { kept, droppedForDma: dropped };
+}
+
+/**
+ * Trailing daily-return standard deviation over the last `days` returns (needs
+ * `days + 1` closes). This is the low-volatility factor: lower std = steadier
+ * price path = the "low-volatility anomaly" (low-vol names tend to outperform
+ * risk-adjusted). Returns null on insufficient data or a non-positive close.
+ */
+export function dailyReturnStd(closes: ClosePoint[], days: number): number | null {
+  if (days < 2 || closes.length < days + 1) return null;
+  const sorted = [...closes].sort((a, b) => (a.date < b.date ? -1 : 1));
+  const window = sorted.slice(-(days + 1));
+  const returns: number[] = [];
+  for (let i = 1; i < window.length; i++) {
+    const prev = window[i - 1].close;
+    if (prev <= 0) return null;
+    returns.push(window[i].close / prev - 1);
+  }
+  if (returns.length < 2) return null;
+  const mean = returns.reduce((s, r) => s + r, 0) / returns.length;
+  const variance = returns.reduce((s, r) => s + (r - mean) ** 2, 0) / returns.length;
+  return Math.sqrt(variance);
+}
+
+/** A symbol's momentum and (optional) volatility, for the multi-factor blend. */
+export interface MomentumVolatility {
+  symbol: string;
+  momentum: number;
+  volatility: number | null;
+}
+
+/**
+ * Combine momentum (higher = better) with a low-volatility tilt (lower vol =
+ * better) using cross-sectional ranks, so the two factors are on a comparable
+ * scale regardless of their raw units.
+ *
+ *   score = momentumRank + tiltWeight · volatilityRank   (lower = better)
+ *
+ * `tiltWeight = 0` is pure momentum (identical to `rankByMomentum`). A null
+ * volatility is treated as the most volatile (worst rank) — conservative, and
+ * moot in practice since the momentum lookback already requires ~13 months of
+ * history.
+ */
+export function combineMomentumAndVolatility(
+  scored: MomentumVolatility[],
+  tiltWeight: number,
+): MomentumScore[] {
+  if (tiltWeight <= 0) {
+    return [...scored]
+      .sort((a, b) => b.momentum - a.momentum)
+      .map(({ symbol, momentum }) => ({ symbol, momentum }));
+  }
+  const byMomentum = [...scored].sort((a, b) => b.momentum - a.momentum);
+  const byVolatility = [...scored].sort((a, b) => (a.volatility ?? Infinity) - (b.volatility ?? Infinity));
+  const momentumRank = new Map<string, number>();
+  const volatilityRank = new Map<string, number>();
+  byMomentum.forEach((s, i) => momentumRank.set(s.symbol, i));
+  byVolatility.forEach((s, i) => volatilityRank.set(s.symbol, i));
+  const combined = scored.map((s) => ({
+    symbol: s.symbol,
+    momentum: s.momentum,
+    score: (momentumRank.get(s.symbol) ?? 0) + tiltWeight * (volatilityRank.get(s.symbol) ?? 0),
+  }));
+  combined.sort((a, b) => a.score - b.score);
+  return combined.map(({ symbol, momentum }) => ({ symbol, momentum }));
+}
+
+/**
+ * Rank by momentum with an optional low-volatility tilt (factor indexing).
+ * `tiltWeight = 0` is identical to `rankByMomentum`. `volDays` is the number of
+ * daily returns for the volatility factor (≈252 for 12 months).
+ */
+export function rankByMomentumWithTilt(
+  inputs: MomentumInput[],
+  lookbackMonths: number,
+  skipMonths: number,
+  tiltWeight: number,
+  volDays: number,
+): MomentumScore[] {
+  const scored: MomentumVolatility[] = [];
+  for (const input of inputs) {
+    const momentum = computeMomentum(input.closes, lookbackMonths, skipMonths);
+    if (momentum === null) continue;
+    scored.push({ symbol: input.symbol, momentum, volatility: dailyReturnStd(input.closes, volDays) });
+  }
+  return combineMomentumAndVolatility(scored, tiltWeight);
+}
+
 /** Close on or before a date, or null. */
 function closeOnOrBefore(sorted: ClosePoint[], date: string): number | null {
   for (let i = sorted.length - 1; i >= 0; i--) {

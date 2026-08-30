@@ -4,7 +4,7 @@ import { RiskEngine } from './RiskEngine';
 import { PaperTrader } from './PaperTrader';
 import { logger } from './Logger';
 import { TradeRequest } from './types';
-import { rankByMomentum, selectWithHysteresis, applyLiquidityFloor, regimeMultiplier, ClosePoint } from './signals/momentum';
+import { rankByMomentum, rankByMomentumWithTilt, selectWithHysteresis, applyLiquidityFloor, applyDmaGuard, regimeMultiplier, ClosePoint } from './signals/momentum';
 import { LiveDataService } from './LiveDataService';
 import { LiveTrader } from './LiveTrader';
 import { StrategyAdaptation } from './StrategyAdaptation';
@@ -189,8 +189,31 @@ export class MomentumStrategy {
         'Liquidity floor excluded symbols',
       );
     }
+    // DMA trend guard (master-class 200/220-DMA): drop names below their SMA
+    // before ranking. One filter implements both the entry guard and the
+    // exit/stop — an incumbent below its DMA falls out of the ranking and is
+    // sold at the next rebalance. Disabled (period 0) is a no-op.
+    const { kept: dmaKept, droppedForDma } = applyDmaGuard(
+      kept,
+      this.config.strategy.momentumDmaGuardEnabled ? this.config.strategy.momentumDmaGuardPeriod : 0,
+    );
+    if (droppedForDma.length > 0) {
+      logger.debug(
+        { dropped: droppedForDma.length, period: this.config.strategy.momentumDmaGuardPeriod },
+        'DMA guard excluded symbols',
+      );
+    }
     const lookback = this.config.strategy.momentumLookbackMonths;
-    const ranked = rankByMomentum(kept, lookback, 1);
+    const ranked =
+      this.config.strategy.momentumFactorTilt === 'lowvol'
+        ? rankByMomentumWithTilt(
+            dmaKept,
+            lookback,
+            1,
+            this.config.strategy.momentumFactorTiltWeight,
+            this.config.strategy.momentumFactorVolDays,
+          )
+        : rankByMomentum(dmaKept, lookback, 1);
     // Risk-off gate (Initiative 4, optional): if enabled and the median momentum
     // is negative (broad weakness), go to cash. Off by default — it reduced
     // returns in validation (missed recoveries).

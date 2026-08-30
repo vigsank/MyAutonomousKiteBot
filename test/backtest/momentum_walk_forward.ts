@@ -26,7 +26,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { loadConfig } from '../../src/server/AppConfig';
 import { createHistoricalProvider } from '../../src/server/providers/factory';
-import { ClosePoint } from '../../src/server/signals/momentum';
+import { ClosePoint, sma, dailyReturnStd, combineMomentumAndVolatility } from '../../src/server/signals/momentum';
 
 const LOOKBACK_MONTHS = 12;
 const SKIP_MONTHS = 1;
@@ -83,6 +83,18 @@ const CADENCES: number[] = (process.env.CADENCES ?? '1')
   .map((s) => Number(s.trim()))
   .filter((n) => Number.isFinite(n) && n >= 1);
 
+/**
+ * Feature flags for A/B testing the master-class overlays against the baseline.
+ * These are FIXED features (not swept parameters): the walk-forward still
+ * selects topN/band/cadence out-of-sample, and the overlay is applied uniformly
+ * across training and test. Run the gate once per configuration and compare.
+ */
+const DMA_GUARD_ENABLED = process.env.DMA_GUARD === '1';
+const DMA_PERIOD = numEnv('DMA_PERIOD', 220);
+const FACTOR_TILT = process.env.FACTOR_TILT === 'lowvol' ? 'lowvol' : 'none';
+const FACTOR_TILT_WEIGHT = numEnv('FACTOR_TILT_WEIGHT', 0.5);
+const FACTOR_VOL_DAYS = numEnv('FACTOR_VOL_DAYS', 252);
+
 /** One-way cost as a fraction of notional (mirrors PaperTrader). */
 function oneWayCostPct(): number {
   const c = loadConfig().costs;
@@ -132,13 +144,41 @@ function runMomentum(
       const lookbackDate = addMonths(rebalDate, -(LOOKBACK_MONTHS + SKIP_MONTHS));
 
       const scored: Array<{ symbol: string; mom: number }> = [];
+      const volBySymbol = new Map<string, number | null>();
       for (const [sym, pts] of closesBySymbol) {
         const start = closeOnOrBefore(pts, lookbackDate);
         const end = closeOnOrBefore(pts, skipDate);
-        if (start && end && start > 0) scored.push({ symbol: sym, mom: end / start - 1 });
+        if (!start || !end || start <= 0) continue;
+
+        // DMA trend guard: drop names whose close is below their SMA at the
+        // rebalance date (the master-class 200/220-DMA rule).
+        if (DMA_GUARD_ENABLED) {
+          const upTo = pts.filter((p) => p.date <= rebalDate);
+          const avg = sma(upTo, DMA_PERIOD);
+          const last = closeOnOrBefore(pts, rebalDate);
+          if (avg !== null && last !== null && last < avg) continue;
+        }
+
+        scored.push({ symbol: sym, mom: end / start - 1 });
+
+        if (FACTOR_TILT === 'lowvol') {
+          const upTo = pts.filter((p) => p.date <= rebalDate);
+          volBySymbol.set(sym, dailyReturnStd(upTo, FACTOR_VOL_DAYS));
+        }
       }
       if (scored.length < topN) continue;
-      scored.sort((a, b) => b.mom - a.mom);
+
+      // Factor tilt: blend momentum with low-volatility via cross-sectional ranks.
+      if (FACTOR_TILT === 'lowvol') {
+        const combined = combineMomentumAndVolatility(
+          scored.map((s) => ({ symbol: s.symbol, momentum: s.mom, volatility: volBySymbol.get(s.symbol) ?? null })),
+          FACTOR_TILT_WEIGHT,
+        );
+        scored.length = 0;
+        for (const c of combined) scored.push({ symbol: c.symbol, mom: c.momentum });
+      } else {
+        scored.sort((a, b) => b.mom - a.mom);
+      }
       const rank = new Map(scored.map((s, idx) => [s.symbol, idx]));
 
       // Target set: incumbents survive while inside the wider band, then the
@@ -414,6 +454,9 @@ async function main(): Promise<void> {
     `  OOS months: ${n} | Windows: ${windows.length} | One-way cost: ${(oneWay * 100).toFixed(3)}%`,
   );
   console.log(`  Sweep: topN ${TOPN_MIN}..${TOPN_MAX} × band [${BANDS.join(',')}] × every [${CADENCES.join(',')}]m`);
+  console.log(
+    `  Features: DMA guard=${DMA_GUARD_ENABLED ? `on(${DMA_PERIOD})` : 'off'} | factor tilt=${FACTOR_TILT}${FACTOR_TILT === 'lowvol' ? `(w=${FACTOR_TILT_WEIGHT})` : ''}`,
+  );
   console.log(`  Avg monthly return (net): ${(avg * 100).toFixed(2)}%`);
   console.log(`  Annualized (net, pre-tax): ${(annualized * 100).toFixed(2)}%`);
   console.log(`  Nifty 50, same months:      ${(benchAnn * 100).toFixed(2)}%`);
